@@ -42,8 +42,7 @@ with open("./proceso_crudos_reportes/test-heavy.ndjson","r") as archivo:
             #
 
             #Fecha y hora salen a partir de procesar tiempo
-            Tiempo = datetime.datetime.fromtimestamp(linea["clock"]).strftime('%c').split()
-            Fecha = " ".join(Tiempo[0:2])+" "+Tiempo[-1]
+            Tiempo = datetime.datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
             #
 
             #Paso los bits a mega para picos y avg
@@ -53,7 +52,7 @@ with open("./proceso_crudos_reportes/test-heavy.ndjson","r") as archivo:
             #termine de extraer datos
 
             #por ahora printeo para mirar como me estan saliendo los datos, usare return? o vuelco todo a archivo?
-            print("Nodo:", Nodo,"\n","Puerto:", Puerto,"\n","Direccion:", Direccion,"\n","Hora:", Tiempo[3],"\n","Fecha:", Fecha,"\n","Promedio:", Promedio,"\n","Pico:", Pico)
+            print("Nodo:", Nodo,"\n","Puerto:", Puerto[2:],"\n","Direccion:", Direccion,"\n","Hora:", Tiempo[1],"\n","Fecha:", Tiempo[0],"\n","Promedio:", Promedio,"\n","Pico:", Pico)
             #Todas las variables (incluidos los slicing) son str menos menos promedios y picos que son float.
         else:
             print("No entraste en el if que querias")

@@ -1,14 +1,16 @@
 import mysql.connector
+import csv
+import pickle
 
+#coneccion a la BD
 mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="diarios_crudos")
 mycursor = mydb.cursor()
 
-sql = "INSERT INTO `crudos` (`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES ('{}','{}','{}','{}','{}',{},{})".format("Nodo2",'Puerto4','RX','23:30:00','2020-08-21',16.5,21.2)
-#sql = "INSERT INTO `Prueba` (`test1`, `test2`) VALUES ('check1','check2')"
-mycursor.execute(sql)
+with open ('./proceso_crudos_reportes/test-pickle2', 'rb') as lista:
+    lista_tuplas = pickle.load(lista)
+    sql = "INSERT INTO `crudos` (`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+    mycursor.executemany(sql, lista_tuplas)
 
-mydb.commit()
+    mydb.commit()
 
-print(mycursor.rowcount, "Ingresado.")
-
-print("1 record inserted, ID:", mycursor.lastrowid) 
+    print(mycursor.rowcount, "Ingresado.")

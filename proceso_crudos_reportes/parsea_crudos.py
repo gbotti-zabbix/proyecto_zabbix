@@ -1,5 +1,5 @@
 #Traigo datetime para formatear epoch, json para proserar el archivo y re para filtrarlo
-import datetime
+from datetime import datetime,date
 import json
 import re
 import pickle
@@ -10,7 +10,6 @@ contador_error = 0
 lista_tuplas = []
 
 #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
-#with open("./proceso_crudos_reportes/test","r") as archivo:
 with open("./proceso_crudos_reportes/test-heavy.ndjson","r") as archivo:
     #archivo parseado
     with open("./proceso_crudos_reportes/test-pickle","wb") as archivo2:
@@ -48,7 +47,7 @@ with open("./proceso_crudos_reportes/test-heavy.ndjson","r") as archivo:
                 #
 
                 #Fecha y hora salen a partir de procesar tiempo
-                Tiempo = datetime.datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
+                Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
                 #
 
                 #Paso los bits a mega para picos y avg

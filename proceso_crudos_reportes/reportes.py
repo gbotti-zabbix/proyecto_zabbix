@@ -4,6 +4,7 @@ import pickle
 from datetime import datetime, date
 import json
 import re
+import sys
 
 def parsea_crudos():
 
@@ -74,6 +75,8 @@ def parsea_crudos():
     print("{} lineas ingresadas. {} lineas no ingresadas".format(contador_carga,contador_error))
 
 def pusheo_crudos_diarios():
+
+
     print(datetime.now())
     archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
     contador_insert = 0
@@ -105,3 +108,11 @@ def pusheo_crudos_diarios():
     contador_final.append(mycursor.rowcount)
     print("Total Ingresado",sum(contador_final))
     print(datetime.datetime.now())
+
+
+#Llamadas a la funcion
+
+if sys.argv[1] == "parseo":
+    parsea_crudos()
+elif sys.argv[1] == "pusheo":
+    pusheo_crudos_diarios()

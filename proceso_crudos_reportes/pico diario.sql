@@ -1,1 +1,1 @@
-insert into picos_diarios (nodo, puerto, direccion, hora, fecha, promedio, pico) select nodo,puerto,direccion,hora,fecha,MAX(promedio) as promedio, MAX(pico) as pico from crudos_diarios group by nodo, puerto,direccion;
+insert into picos_diarios (tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select tipo,nodo,puerto,direccion,hora,fecha,MAX(promedio) as promedio, MAX(pico) as pico from crudos_diarios group by nodo, puerto,direccion;

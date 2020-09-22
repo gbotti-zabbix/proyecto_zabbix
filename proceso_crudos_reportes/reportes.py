@@ -11,11 +11,12 @@ def parsea_crudos():
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
-
+    archivo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
+    archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
     #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
-    with open("./proceso_crudos_reportes/test-heavy.ndjson","r") as archivo:
+    with open(archivo,"r") as archivo:
         #archivo parseado
-        with open("./proceso_crudos_reportes/test-pickle","wb") as archivo2:
+        with open(archivo_pickle,"wb") as archivo2:
             archivo = archivo.read().splitlines()
             #
             
@@ -27,6 +28,13 @@ def parsea_crudos():
 
                 #con este if filtro los que no son C300 o MA5800
                 if "C300" in linea["groups"] or "MA5800" in linea["groups"]:
+
+                    #saco grupo
+                    if "C300"  in linea["groups"]:
+                        Tipo = "C300"
+                    elif "MA5800" in linea["groups"]:
+                        Tipo = "MA5800" 
+                    #
 
                     #empiezo a extraer los datos
                     Nodo = linea["host"]
@@ -60,7 +68,7 @@ def parsea_crudos():
 
                     #creo lista de tuplas para picklear y ademas filtro
                     if (Pico < 2500 and Promedio < 2500) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000):
-                        tupla = (Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
+                        tupla = (Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         lista_tuplas.append(tupla)
                         contador_carga = contador_carga + 1
                     else:
@@ -82,7 +90,7 @@ def pusheo_crudos_diarios():
     contador_insert = 0
     lista_final = []
     contador_final = []
-    sql = "INSERT INTO `crudos_diarios` (`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `crudos_diarios` (`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
 
 
     with open (archivo_pickle, 'rb') as lista:

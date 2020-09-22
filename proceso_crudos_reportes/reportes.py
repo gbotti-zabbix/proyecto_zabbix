@@ -98,7 +98,7 @@ def pusheo_crudos_diarios():
         lista_tuplas = pickle.load(lista)
         #
 
-    mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
     mycursor = mydb.cursor()
 
     for dato in lista_tuplas:
@@ -115,7 +115,7 @@ def pusheo_crudos_diarios():
     mydb.commit()
     contador_final.append(mycursor.rowcount)
     print("Total Ingresado",sum(contador_final))
-    print(datetime.datetime.now())
+    print(datetime.now())
 
 
 #Llamadas a la funcion

@@ -40,14 +40,13 @@ def parseo_ont():
                 Promedio = float(linea["avg"])/1024/1024
                 Pico = float(linea['max'])/1024/1024
                 #
-
                 #Puerto (que dios me perdone)
-                Puerto = ""
                 for x in lista_puerto_etiqueta:
                     if Nombre == x[0]:
                         Puerto = x[1]
                 #
                 #termine de extraer datos
+
                 #creo lista de tuplas para picklear y ademas filtro
                 if (Pico < 2500 and Promedio < 2500):
                     tupla = (Tipo,Nodo,Nombre,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
@@ -77,7 +76,8 @@ def puerto_etiqueta():
                 Tupla = (Nombre,Puerto)
                 lista_puerto_etiqueta.append(Tupla)
 
-parseo_ont()
 puerto_etiqueta()
+parseo_ont()
+
 
 print(lista_tuplas)

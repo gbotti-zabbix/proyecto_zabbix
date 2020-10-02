@@ -1,4 +1,5 @@
-import json
+#!/usr/bin/python
+import mysql.connector
 import pickle
 from datetime import datetime, date
 import json
@@ -12,10 +13,12 @@ lista_puerto_etiqueta = []
 def parseo_ont():
     contador_carga = 0
     contador_error = 0
+    crudo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
+    archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-ONT-" + str(date.today()) + ".pickle"
     #abro el archivo en read y separo en listas de json
-    with open("test-heavy.ndjson","r") as crudo:
+    with open(crudo,"r") as crudo:
         #archivo parseado
-        with open("test-pickle-ont","wb") as archivo_pickle:
+        with open(archivo_pickle,"wb") as archivo_pickle:
             crudo = crudo.read().splitlines()
             #
             
@@ -57,7 +60,7 @@ def parseo_ont():
 
                     #creo lista de tuplas para picklear y ademas filtro
                     if (Pico < 2500 and Promedio < 2500):
-                        tupla = (Tipo,Nodo,Nombre,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
+                        tupla = (Tipo,Nodo,Puerto,Nombre,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         lista_tuplas.append(tupla)
                         contador_carga = contador_carga + 1
                     else:
@@ -77,6 +80,48 @@ def puerto_etiqueta():
                 Puerto = match_puerto.group()[3:]
                 Tupla = (Nombre,Puerto)
                 lista_puerto_etiqueta.append(Tupla)
+
+def pusheo_crudos_diarios():
+    print(datetime.now())
+    archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-ONT-" + str(date.today()) + ".pickle"
+    contador_insert = 0
+    lista_final = []
+    contador_final = []
+    sql = "INSERT INTO `crudos_diarios` (`tipo`,`nodo`, `puerto`, `nombre`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+    with open (archivo_pickle, 'rb') as lista:
+        #carga de lista
+        lista_tuplas = pickle.load(lista)
+        #
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
+    mycursor = mydb.cursor()
+
+    for dato in lista_tuplas:
+        lista_final.append(dato)
+        contador_insert = contador_insert + 1
+        if contador_insert == 10000:
+            mycursor.executemany(sql, lista_final)
+            mydb.commit()
+            contador_final.append(mycursor.rowcount)
+            contador_insert = 0
+            lista_final.clear()
+
+    mycursor.executemany(sql, lista_final)
+    mydb.commit()
+    contador_final.append(mycursor.rowcount)
+    print("Total Ingresado",sum(contador_final))
+    print(datetime.now())
+
+def extractor_puertos():
+    pass
+
+#Llamadas a la funcion
+if sys.argv[1] == "parseo":
+    puerto_etiqueta()
+    parseo_ont()
+elif sys.argv[1] == "pusheo":
+    pusheo_crudos_diarios()
+elif sys.argv[1] == "extractor":
+    extractor_puertos()
 
 puerto_etiqueta()
 parseo_ont()

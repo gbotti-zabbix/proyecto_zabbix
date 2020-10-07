@@ -13,4 +13,4 @@ import subprocess
 proc = subprocess.Popen(["ping", "192.168.1.1"], stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 (out, err) = proc.communicate()
 print (out)
-print (test)
+print (test nuevo)

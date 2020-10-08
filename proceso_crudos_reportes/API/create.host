@@ -1,0 +1,29 @@
+curl -H "Content-Type: application/json-rpc" -X POST http://127.0.0.1/zabbix/api_jsonrpc.php -d'
+{
+    "jsonrpc": "2.0",
+    "method": "host.create",
+    "params": {
+        "host": "LA-PALOMA-01Z",
+        "interfaces": [
+            {
+                "type": 2,
+                "main": 1,
+                "useip": 1,
+                "ip": "192.168.201.81",
+                "dns": "",
+                "port": "161"
+            }
+        ],
+        "groups": [
+            {
+                "groupid": "15"
+            }
+        ],
+        "templates": [
+            {
+                "templateid": "10190"
+            }
+    },
+    "auth": "cd51b2b22f1d52ecceee7c3d84e2a0e8",
+    "id": 2
+}'

@@ -28,7 +28,6 @@ def parsea_crudos():
 
                 #con este if filtro los que no son C300 o MA5800
                 if "C300" in linea["groups"] or "MA5800" in linea["groups"]:
-
                     #saco grupo
                     if "C300"  in linea["groups"]:
                         Tipo = "C300"
@@ -40,7 +39,7 @@ def parsea_crudos():
                     Nodo = linea["host"]
                     #para puerto y direccion preciso regex para estaer lo que quiero de la clave name.
                     Nombre = linea["name"]
-                    match_puerto = re.search("[0-9][/-]([0-9]{1}|[0-9]{2})[/-]([0-9]{1}|[0-9]{2})",Nombre)
+                    match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",Nombre)
                     match_tx = re.search("Bits sent",Nombre)
                     match_rx = re.search("Bits received",Nombre)
                     if match_puerto:

@@ -116,10 +116,25 @@ def pusheo_crudos_diarios():
     print("Total Ingresado",sum(contador_final))
     print(datetime.now())
 
+def reporte():
+    contador = 0
+    mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM reporte_semanal order by pico")
+    myresult = mycursor.fetchall()
+    for x in myresult:
+        contador = contador + 1
+        print('Tipo {},Nodo {}, Puerto {}, Direccion {}, Hora {}, Fecha {}, Promedio Hora {}, Promedio Semana {}, Pico {}'.format(x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]))
+        if contador > 10:
+            break
 
 #Llamadas a la funcion
 
-if sys.argv[1] == "parseo":
-    parsea_crudos()
-elif sys.argv[1] == "pusheo":
-    pusheo_crudos_diarios()
+# if sys.argv[1] == "parseo":
+#     parsea_crudos()
+# elif sys.argv[1] == "pusheo":
+#     pusheo_crudos_diarios()
+# elif sys.argv[1] == "reporte":
+#     reporte()
+
+reporte()

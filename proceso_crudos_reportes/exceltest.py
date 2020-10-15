@@ -68,7 +68,7 @@ def crear_encabezados(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
 def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
     mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM reporte_semanal order by pico")
+    mycursor.execute("SELECT * FROM reporte_semanal order by pico DESC")
     resultado = mycursor.fetchall()
     for dato in resultado:
         tipo = dato[1]

@@ -1,7 +1,9 @@
 from openpyxl import Workbook
 import mysql.connector
+from datetime import datetime, date, timedelta
 
-filename = "prueba.xlsx"
+#Creo archivo y lo abro
+filename = "Reporte" + " "+ str(date.today()) + ".xlsx"
 workbook = Workbook()
 encabezados = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios",""]
 
@@ -91,13 +93,6 @@ def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios]
             subida_pon.append(lista_append)
     return workbook
-
-# celda = sheet["A2"]
-
-# celda.value = "Bue"
-
-# sheet["B10"] = "test"
-
 
 #Llamadas a la funcion y creacion de documento
 crear_hojas(workbook)

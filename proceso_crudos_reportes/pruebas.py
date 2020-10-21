@@ -29,25 +29,26 @@ with open ("Merged-Trends-2020-10-08.pickle","rb") as archivo:
             break
 """
 
-import json
-import re
-contador = 0
-with open ("Merged-Trends-2020-10-08.ndjson","r") as archivo:
-    archivo = archivo.read().splitlines()
-    for linea in archivo:
-        linea = json.loads(linea)
-        if "C300" in linea["groups"]:
-            #Nombre = linea["name"].split("/")
-            #print(Nombre)
-            #contador = contador + 1
-        #if contador == 50:
-        #    break
-        #    Placa = int(Nombre[1])
-        #    print(Placa)
-            Nombre = linea["name"]
-            print(Nombre)
-            match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",Nombre)
-            if match_puerto:
-                Puerto = match_puerto.group()
-                print(Puerto[2:])
+# import json
+# import re
+# contador = 0
+# with open ("Merged-Trends-2020-10-08.ndjson","r") as archivo:
+#     archivo = archivo.read().splitlines()
+#     for linea in archivo:
+#         linea = json.loads(linea)
+#         if "C300" in linea["groups"]:
+#             #Nombre = linea["name"].split("/")
+#             #print(Nombre)
+#             #contador = contador + 1
+#         #if contador == 50:
+#         #    break
+#         #    Placa = int(Nombre[1])
+#         #    print(Placa)
+#             Nombre = linea["name"]
+#             print(Nombre)
+#             match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",Nombre)
+#             if match_puerto:
+#                 Puerto = match_puerto.group()
+#                 print(Puerto[2:])
             
+help(type)

@@ -1,4 +1,5 @@
 from openpyxl import Workbook
+from openpyxl.styles import NamedStyle, Font, Border, Alignment, Side
 import mysql.connector
 from datetime import datetime, date, timedelta
 
@@ -65,6 +66,17 @@ def crear_encabezados(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
 
     return workbook
 
+def encabezados_style(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
+    header = NamedStyle(name="header")
+    header.font = Font(bold=True)
+    header.border = Border(bottom=Side(border_style="thin"))
+    header.alignment = Alignment(horizontal="center", vertical="center")
+
+    header_row = subida_pon[1]
+    for cell in header_row:
+        cell.style = header
+    subida_pon["A6"].style = header
+
 def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
     mycursor = mydb.cursor()
@@ -94,14 +106,15 @@ def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
             subida_pon.append(lista_append)
     return workbook
 
-#Llamadas a la funcion y creacion de documento
-crear_hojas(workbook)
-crear_encabezados(workbook["Subida PON"],workbook["Bajada PON"],workbook["Subida Uplink"],workbook["Bajada Uplink"])
-apend_data(workbook["Subida PON"],workbook["Bajada PON"],workbook["Subida Uplink"],workbook["Bajada Uplink"])
-workbook.save(filename=filename)
-
+def llamadas():
+    crear_hojas(workbook)
+    crear_encabezados(workbook["Subida PON"],workbook["Bajada PON"],workbook["Subida Uplink"],workbook["Bajada Uplink"])
+    #encabezados_style(workbook["Subida PON"],workbook["Bajada PON"],workbook["Subida Uplink"],workbook["Bajada Uplink"])
+    apend_data(workbook["Subida PON"],workbook["Bajada PON"],workbook["Subida Uplink"],workbook["Bajada Uplink"])
+    workbook.save(filename=filename)
 
 def print_rows():
     for row in sheet.iter_rows(values_only=True):
         print(row)
 
+llamadas()

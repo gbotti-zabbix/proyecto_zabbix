@@ -8,7 +8,7 @@ def conector_insert(sql):
     cursor = mydb.cursor()
     cursor.execute(sql)
     mydb.commit()
-    print(cursos.rowcount)
+    print(cursor.rowcount)
     mydb.cursor().close()
     mydb.close()
 #SEMANAL

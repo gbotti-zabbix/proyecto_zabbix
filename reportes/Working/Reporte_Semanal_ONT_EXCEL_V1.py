@@ -6,7 +6,7 @@ import mysql.connector
 from datetime import datetime, date, timedelta
 
 #Creo archivo y lo abro
-filename = "Reporte" + "_"+ str(date.today()) + ".xlsx"
+filename = "/var/lib/reportes-zabbix/reportes_semanales/Reporte" + "_"+ str(date.today()) + ".xlsx"
 workbook = Workbook()
 encabezados = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios",""]
 

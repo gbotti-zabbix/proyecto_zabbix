@@ -35,15 +35,15 @@ def insert_resaldo_semanal():#LISTO
 
 #MENSUAL
 
-def insert_picos_diarios_mensual():#LISTO
+def insert_picos_diarios_mensual():#TEST
     sql = "insert into picos_diarios_mensual (tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from crudos_diarios t2) t1 where t1.rn =1;"
     return sql
 
-def insert_promedio_mensual():#LISTO
+def insert_promedio_mensual():#TEST
     sql = "insert into promedio_mensual(tipo,nodo,puerto,direccion,promedio_mes) select tipo,nodo, puerto, direccion, avg(pico) as promedio_mes from picos_diarios_mensual group by tipo, nodo, puerto, direccion;"
     return sql
 
-def insert_picos_mensual():#LISTO
+def insert_picos_mensual():#TEST
     sql = "insert into picos_mensual (tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from picos_diarios_mensual t2) t1 where t1.rn =1;"
     return sql
 

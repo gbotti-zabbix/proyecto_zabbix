@@ -12,7 +12,7 @@ def parsea_crudos():
     contador_error = 0
     lista_tuplas = []
     archivo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
-    archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
 
 #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(archivo,"r") as archivo:
@@ -87,7 +87,7 @@ def pusheo_crudos_diarios():
 
     #variables que uso mas adelante y consulta sql
     print(datetime.now())
-    archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
     contador_insert = 0
     lista_final = []
     contador_final = []

@@ -78,7 +78,7 @@ def encabezados_style(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     subida_pon["A6"].style = header
 
 def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
-    mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
     mycursor = mydb.cursor()
     mycursor.execute("SELECT * FROM reporte_semanal order by pico DESC")
     resultado = mycursor.fetchall()

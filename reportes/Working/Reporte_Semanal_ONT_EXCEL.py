@@ -117,7 +117,7 @@ if sys.argv[1] == "semanal":
     workbook.save(filename=filename)
 elif sys.argv[1] == "mensual":
     #Creo archivo y lo abro
-    filename = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Mensual_" + str(date.today()) + ".xlsx"
+    filename = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + ".xlsx"
     workbook = Workbook()
     #
     crear_hojas(workbook)

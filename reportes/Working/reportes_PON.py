@@ -13,13 +13,14 @@ def parsea_crudos():
     lista_tuplas = []
     archivo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
     archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
-    #abro el archivo en read y separo en listas de json
+
+#abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(archivo,"r") as archivo:
         #archivo parseado
         with open(archivo_pickle,"wb") as archivo2:
             archivo = archivo.read().splitlines()
             #
-            
+
             for linea in archivo:
 
                 #cada linea se pasa de json a dicc
@@ -28,6 +29,7 @@ def parsea_crudos():
 
                 #con este if filtro los que no son C300 o MA5800
                 if "C300" in linea["groups"] or "MA5800" in linea["groups"]:
+
                     #saco grupo
                     if "C300"  in linea["groups"]:
                         Tipo = "C300"
@@ -83,14 +85,14 @@ def parsea_crudos():
 
 def pusheo_crudos_diarios():
 
-
+    #variables que uso mas adelante y consulta sql
     print(datetime.now())
     archivo_pickle = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".pickle"
     contador_insert = 0
     lista_final = []
     contador_final = []
     sql = "INSERT INTO `crudos_diarios` (`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-
+    #
 
     with open (archivo_pickle, 'rb') as lista:
         #carga de lista
@@ -116,25 +118,10 @@ def pusheo_crudos_diarios():
     print("Total Ingresado",sum(contador_final))
     print(datetime.now())
 
-def reporte():
-    contador = 0
-    mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
-    mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM reporte_semanal order by pico")
-    myresult = mycursor.fetchall()
-    for x in myresult:
-        contador = contador + 1
-        print('Tipo {},Nodo {}, Puerto {}, Direccion {}, Hora {}, Fecha {}, Promedio Hora {}, Promedio Semana {}, Pico {}'.format(x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8],x[9]))
-        if contador > 10:
-            break
 
 #Llamadas a la funcion
 
-# if sys.argv[1] == "parseo":
-#     parsea_crudos()
-# elif sys.argv[1] == "pusheo":
-#     pusheo_crudos_diarios()
-# elif sys.argv[1] == "reporte":
-#     reporte()
-
-reporte()
+if sys.argv[1] == "parseo":
+    parsea_crudos()
+elif sys.argv[1] == "pusheo":
+    pusheo_crudos_diarios()

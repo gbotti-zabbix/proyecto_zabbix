@@ -16,11 +16,11 @@ def analizar_equ_tlk(equipo):
     return (modelo[nro_modelo])
 
 
-#nombre_archivo_origen = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
-#nombre_archivo_destino = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_parseado.csv"
+nombre_archivo_origen = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
+nombre_archivo_destino = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_parseado.csv"
 
-nombre_archivo_origen = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_procesado.TXT"
-nombre_archivo_destino = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_parseado.TXT"
+#nombre_archivo_origen = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_procesado.TXT"
+#nombre_archivo_destino = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_parseado.TXT"
 
 #print (path_archivo)
 

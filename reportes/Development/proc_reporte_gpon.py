@@ -18,8 +18,8 @@ def analizar_equ_tlk(equipo):
 #nombre_archivo_origen = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
 #nombre_archivo_destino = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_parseado.csv"
 
-nombre_archivo_origen = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_procesado.TXT"
-nombre_archivo_destino = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_parseado.TXT"
+nombre_archivo_origen = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
+nombre_archivo_destino = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_parseado.TXT"
 
 #print (path_archivo)
 
@@ -84,6 +84,6 @@ with open(nombre_archivo_origen,'r') as archivo:
             #contador para hacer arhvio chio
             contador = contador+1
             if contador == 30:
-               break
+                break
     
 

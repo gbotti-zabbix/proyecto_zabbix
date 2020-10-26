@@ -2,7 +2,7 @@
 import pickle
 import csv
 
-import diccionario_tlk_gestion
+from diccionario_tlk_gestion import f_nombre_gestion
 
 
 def analizar_equ_tlk(equipo):
@@ -39,7 +39,8 @@ with open(nombre_archivo_origen,'r') as archivo:
                 nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
                 tipo_equipo = analizar_equ_tlk(linea_parseada[1])          # cambio el 70 por c300    
                 nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
-                nombre_gestion= diccionario_tlk_gestion.f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
+                #nombre_gestion= diccionario_tlk_gestion.f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
+                nombre_gestion= f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
                 #print (nro_nodo)
                 slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 
                 puerto = linea_parseada[1][7:9]                             #estraigo del numero equipo el nuermo de puerto    

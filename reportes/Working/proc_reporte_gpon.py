@@ -15,17 +15,19 @@ def analizar_equ_tlk(equipo):
         return ("NULL")
     return (modelo[nro_modelo])
 
-
+#--- Direcciones para producción---------#
 nombre_archivo_origen = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
 nombre_archivo_destino = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_parseado.csv"
+#------------------------------------#
 
+
+#-----Direcciones para pruebas----#
 #nombre_archivo_origen = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_procesado.TXT"
-#ombre_archivo_destino = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_parseado.TXT"
+#nombre_archivo_destino = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_parseado.TXT"
+#------------------------------------#
 
-#print (path_archivo)
 
 contador=0
-
 with open(nombre_archivo_origen,'r') as archivo:
     #archivo parseado
     with open(nombre_archivo_destino,"w", newline="") as archivo2:
@@ -36,13 +38,11 @@ with open(nombre_archivo_origen,'r') as archivo:
             if contador_salto > 1:
                 linea_parseada = linea.split (";")                          #divido linea a linea por punto y coma
                 #print (linea_parseada)
-                cod_telelink = linea_parseada[0][:10]                            # codigo TLK
+                cod_telelink = linea_parseada[0][:10]                       # codigo TLK
                 nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
-                tipo_equipo = analizar_equ_tlk(linea_parseada[1])          # cambio el 70 por c300    
+                tipo_equipo = analizar_equ_tlk(linea_parseada[1])           # cambio el 70 por c300    
                 nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
                 nombre_gestion= f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
-                #nombre_gestion =""
-                #print (nro_nodo)
                 slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 
                 puerto = linea_parseada[1][7:9]                             #estraigo del numero equipo el nuermo de puerto    
                 ont =   linea_parseada[1][9:12]                             #estraigo del numero equipo el nuermo de ont
@@ -78,15 +78,12 @@ with open(nombre_archivo_origen,'r') as archivo:
 
                 linea_nueva= [cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
                 #print (linea_nueva)
-                                
                 wr.writerow(linea_nueva)
-
-
-
             contador_salto = contador_salto + 1 #solo elimina la primera linea
-            #contador para hacer arhvio chio
+#----------------------------------------------------
+#descomentar para procesar 30 lineas
             #contador = contador+1
             #if contador == 30:
             #   break
-    
+#------------------------------------------------------
 

@@ -7,6 +7,8 @@ def f_diccionario_t_nodo_letra(nombre_nodo):
         'C300':'Z',
         'ISAM FX':'N'
     }
+    if nombre_nodo not in diccionario_t_nodo_letra:
+        return  ("NULL")
     return diccionario_t_nodo_letra[nombre_nodo]
 
 #diccionario para cada código telelink devuelve el nombre de gestión
@@ -259,8 +261,12 @@ def f_diccionario_tlk_gestion(cod_tlk):
         'RIVVCHDR01':'VICHADERO',
         'RNGYOUNG01':'YOUNG',
         'LAVZPCAN01':'ZAPICAN',
-        'RNGZFFYB01':'ZF-FRAY-B'
+        'RNGZFFYB01':'ZF-FRAY-B',
+        'MVDANARM01':'A-ARENA'
+
     }
+    if cod_tlk not in diccionario_tlk_gestion:
+         return ("NULL")
     return diccionario_tlk_gestion[cod_tlk]
 
 def f_nombre_gestion (tlk,nro_nodo,tipo_nodo):
@@ -280,5 +286,5 @@ def f_nombre_gestion (tlk,nro_nodo,tipo_nodo):
 
 
 
-#print (f_nombre_gestion ("RNGYOUNG01",15,"C300"))
+#print (f_nombre_gestion ("RNGYOUNG01",15,""))
 

@@ -286,5 +286,5 @@ def f_nombre_gestion (tlk,nro_nodo,tipo_nodo):
 
 
 
-#print (f_nombre_gestion ("RNGYOUNG01",15,"C300"))
+#print (f_nombre_gestion ("RNGYOUNG01",15,""))
 

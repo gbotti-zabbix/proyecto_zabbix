@@ -14,7 +14,7 @@ def parsea_crudos():
     archivo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
     archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
 
-#abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
+    #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(archivo,"r") as archivo:
         #archivo parseado
         with open(archivo_pickle,"wb") as archivo2:

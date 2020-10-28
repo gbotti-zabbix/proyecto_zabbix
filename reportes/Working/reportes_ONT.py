@@ -16,12 +16,14 @@ def sacar_grupo(grupos):
         Tipo = "ISAM-FX"
     return Tipo
 
+
 def regex_puerto(nombre):
     Puerto = ""
     match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
     if match_puerto:
         Puerto = match_puerto.group()
     return Puerto
+
 
 def regex_etiqueta(nombre):
     pass
@@ -31,6 +33,7 @@ def regex_etiqueta(nombre):
         Etiqueta = match_etiqueta.group()[:-5]
     return Etiqueta
 
+
 def parseo_ont():
 
     #Variables de contadores y escritura del pickle
@@ -38,11 +41,8 @@ def parseo_ont():
     contador_error = 0
     lista_tuplas = []
         
-    #archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
-    #crudo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
-
-    archivo_pickle = "Merged-Trends-2020-10-28.pickle"
-    crudo = "Merged-Trends-2020-10-28.ndjson"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
+    crudo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
 
     with open(crudo,"r") as crudo:
         crudo = crudo.read().splitlines()
@@ -82,11 +82,12 @@ def parseo_ont():
     #printeo descartes, mas adelante voy a gestionarlos en log
     print("{} lineas ingresadas. {} lineas no ingresadas".format(contador_carga,contador_error))
 
+
 def pusheo_crudos_diarios_ONT():
 
     print(datetime.now())
 
-    archivo_pickle = "Merged-Trends-2020-10-28.pickle"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
     sql = "INSERT INTO `crudos_diarios_ont` (`tipo`,`nodo`, `puerto`, `direccion`, `etiqueta`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     
     #carga el pickle

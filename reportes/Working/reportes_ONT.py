@@ -49,7 +49,7 @@ def parseo_ont():
         for linea in crudo:
             #cada linea se pasa de json a dicc
             linea = json.loads(linea)
-            if "ONT" in linea["applications"] and linea["clock"] > 1603821600 and "Radio Base" in linea["name"]:
+            if "ONT" in linea["applications"] and "Radio Base" in linea["name"]:
                 Tipo = sacar_grupo(linea["groups"])
                 Nodo = linea["host"]
                 Nombre = linea["name"]

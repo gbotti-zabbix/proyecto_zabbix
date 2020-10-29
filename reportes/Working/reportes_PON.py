@@ -28,7 +28,7 @@ def parsea_crudos():
                 #
 
                 #con este if filtro los que no son C300 o MA5800
-                if "C300" in linea["groups"] or "MA5800" in linea["groups"]:
+                if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]):
 
                     #saco grupo
                     if "C300"  in linea["groups"]:

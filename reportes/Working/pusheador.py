@@ -106,7 +106,7 @@ inserter = int(input("Quiere insertarlo en picos diarios?\nIngrese una opcion nu
 if tipo_pusheo == 1:
     pusheo_crudos_diarios(fecha_pickle)
     if inserter == 1:
-        break
+        pass
     elif inserter == 2:
         conector_insert(insert_picos_diarios_semanal())
     elif inserter == 3:
@@ -115,10 +115,10 @@ if tipo_pusheo == 1:
 elif tipo_pusheo == 2:
     pusheo_crudos_diarios_ONT(fecha_pickle)
     if inserter == 1:
-        break
+        pass
     elif inserter == 2:
         conector_insert(insert_picos_diarios_semanal_ont())
     elif inserter == 3:
         conector_insert(insert_picos_diarios_mensual_ont())
 elif tipo_pusheo == 3:
-    break
+    pass

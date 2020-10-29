@@ -1,3 +1,8 @@
+#!/usr/bin/python
+import sys
+import mysql.connector
+import pickle
+
 def pusheo_crudos_diarios():
     fecha_pickle = input("Que fecha de PON desea pushear?\n Formato: YYYY-MM-DD")
 

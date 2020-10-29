@@ -96,9 +96,9 @@ def pusheo_crudos_diarios_ONT(fecha_pickle):
 
 #Menu
 
-tipo_pusheo = int(input("Desea Pushear:\n 1- PON\n2-ONT\n3-Cancelar\nIngrese opcion numerica: "))
+tipo_pusheo = int(input("Desea Pushear:\n1- PON\n2-ONT\n3-Cancelar\nIngrese opcion numerica: "))
 
-fecha_pickle = int(input("Que fecha desea pushear?\n Formato: YYYY-MM-DD: "))
+fecha_pickle = input("Que fecha desea pushear?\n Formato: YYYY-MM-DD: ")
 
 inserter = int(input("Quiere insertarlo en picos diarios?\nIngrese una opcion numerica\n1- No\n2- Semanales\n3- Mensual"))
 

@@ -14,6 +14,20 @@ def conector_insert(sql):
     mydb.close()
 
 
+def truncate(tabla):
+    #trncate crudos diarios PON
+    if tabla ==1:
+        sql = "TRUNCATE TABLE crudos_diarios;"
+        conector_insert(sql)
+    #trncate crudos diarios ONT
+    elif tabla ==2:
+        sql = "TRUNCATE TABLE crudos_diarios_ont;"
+        conector_insert(sql)
+    #truncate ambos
+    elif tabla ==3:
+        sql = "TRUNCATE TABLE crudos_diarios,crudos_diarios_ont;"
+        conector_insert(sql)
+
 def insert_picos_diarios_semanal():
     sql = "insert into picos_diarios_semanal (tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from crudos_diarios t2) t1 where t1.rn =1;"
     return sql
@@ -96,7 +110,7 @@ def pusheo_crudos_diarios_ONT(fecha_pickle):
 
 #Menu
 
-tipo_pusheo = int(input("Desea Pushear:\n1-PON\n2-ONT\n3-Cancelar\nIngrese opcion numerica: "))
+tipo_pusheo = int(input("Desea Pushear:\n1-PON\n2-ONT\n3-Ambos\n4-Cancelar\nIngrese opcion numerica: "))
 
 fecha_pickle = input("Que fecha desea pushear?\n Formato: YYYY-MM-DD: ")
 
@@ -104,6 +118,7 @@ inserter = int(input("Quiere insertarlo en picos diarios?\n1-No\n2-Semanales\n3-
 
 
 if tipo_pusheo == 1:
+    truncate(tipo_pusheo)
     pusheo_crudos_diarios(fecha_pickle)
     if inserter == 1:
         pass
@@ -115,6 +130,7 @@ if tipo_pusheo == 1:
         conector_insert(insert_picos_diarios_semanal())
         conector_insert(insert_picos_diarios_mensual())
 elif tipo_pusheo == 2:
+    truncate(tipo_pusheo)
     pusheo_crudos_diarios_ONT(fecha_pickle)
     if inserter == 1:
         pass
@@ -126,4 +142,21 @@ elif tipo_pusheo == 2:
         conector_insert(insert_picos_diarios_semanal_ont())
         conector_insert(insert_picos_diarios_mensual_ont())
 elif tipo_pusheo == 3:
+    truncate(tipo_pusheo)
+    pusheo_crudos_diarios(fecha_pickle)
+    pusheo_crudos_diarios_ONT(fecha_pickle)
+    if inserter == 1:
+        pass
+    elif inserter == 2:
+        conector_insert(insert_picos_diarios_semanal())
+        conector_insert(insert_picos_diarios_semanal_ont())
+    elif inserter == 3:
+        conector_insert(insert_picos_diarios_mensual())
+        conector_insert(insert_picos_diarios_mensual_ont())
+    elif inserter == 4:
+        conector_insert(insert_picos_diarios_semanal())
+        conector_insert(insert_picos_diarios_mensual())
+        conector_insert(insert_picos_diarios_semanal_ont())
+        conector_insert(insert_picos_diarios_mensual_ont())
+elif tipo_pusheo == 4:
     pass

@@ -96,7 +96,7 @@ def pusheo_crudos_diarios_ONT():
     #
     
     #coneccion con la BD
-    mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
     mycursor = mydb.cursor()
     #
 

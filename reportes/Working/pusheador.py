@@ -96,11 +96,11 @@ def pusheo_crudos_diarios_ONT(fecha_pickle):
 
 #Menu
 
-tipo_pusheo = int(input("Desea Pushear:\n1- PON\n2-ONT\n3-Cancelar\nIngrese opcion numerica: "))
+tipo_pusheo = int(input("Desea Pushear:\n1-PON\n2-ONT\n3-Cancelar\nIngrese opcion numerica: "))
 
 fecha_pickle = input("Que fecha desea pushear?\n Formato: YYYY-MM-DD: ")
 
-inserter = int(input("Quiere insertarlo en picos diarios?\nIngrese una opcion numerica\n1- No\n2- Semanales\n3- Mensual"))
+inserter = int(input("Quiere insertarlo en picos diarios?\n1-No\n2-Semanales\n3-Mensual\n4-Ambos\nIngrese una opcion numerica:"))
 
 
 if tipo_pusheo == 1:
@@ -111,7 +111,9 @@ if tipo_pusheo == 1:
         conector_insert(insert_picos_diarios_semanal())
     elif inserter == 3:
         conector_insert(insert_picos_diarios_mensual())
-
+    elif inserter == 4:
+        conector_insert(insert_picos_diarios_semanal())
+        conector_insert(insert_picos_diarios_mensual())
 elif tipo_pusheo == 2:
     pusheo_crudos_diarios_ONT(fecha_pickle)
     if inserter == 1:
@@ -119,6 +121,9 @@ elif tipo_pusheo == 2:
     elif inserter == 2:
         conector_insert(insert_picos_diarios_semanal_ont())
     elif inserter == 3:
+        conector_insert(insert_picos_diarios_mensual_ont())
+    elif inserter == 4:
+        conector_insert(insert_picos_diarios_semanal_ont())
         conector_insert(insert_picos_diarios_mensual_ont())
 elif tipo_pusheo == 3:
     pass

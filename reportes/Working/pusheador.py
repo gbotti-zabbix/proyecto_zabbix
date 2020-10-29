@@ -2,9 +2,10 @@
 import sys
 import mysql.connector
 import pickle
+from datetime import datetime, date
 
 def pusheo_crudos_diarios():
-    fecha_pickle = input("Que fecha de PON desea pushear?\n Formato: YYYY-MM-DD")
+    fecha_pickle = input("Que fecha de PON desea pushear?\n Formato: YYYY-MM-DD: ")
 
     #variables que uso mas adelante y consulta sql
     print(datetime.now())
@@ -42,7 +43,7 @@ def pusheo_crudos_diarios():
 
 def pusheo_crudos_diarios_ONT():
 
-    fecha_pickle = input("Que fecha de ONT desea pushear?\n Formato: YYYY-MM-DD")
+    fecha_pickle = input("Que fecha de ONT desea pushear?\n Formato: YYYY-MM-DD: ")
 
     print(datetime.now())
 

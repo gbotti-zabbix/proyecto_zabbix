@@ -72,10 +72,10 @@ def apend_data(subida_ont,bajada_ont,periodo):
             bajada_ont.append(lista_append)
     return workbook
 
-def llamadas(workbook,filename):
+def llamadas(workbook,filename,periodo):
     crear_hojas(workbook)
     crear_encabezados(workbook["Subida ONT"],workbook["Bajada ONT"])
-    apend_data(workbook["Subida ONT"],workbook["Bajada ONT"])
+    apend_data(workbook["Subida ONT"],workbook["Bajada ONT"],periodo)
     workbook.save(filename=filename)
 
 #MENU
@@ -84,11 +84,11 @@ if sys.argv[1] == "semanal":
     filename = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Semanal_" + str(date.today()) + "_ONT.xlsx"
     workbook = Workbook()
     #
-    llamadas(workbook,filename)
+    llamadas(workbook,filename,"semana")
 
 elif sys.argv[1] == "mensual":
     #Creo archivo y lo abro
     filename = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + "_ONT.xlsx"
     workbook = Workbook()
     #
-    llamadas(workbook,filename)
+    llamadas(workbook,filename,"mes")

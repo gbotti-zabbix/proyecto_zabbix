@@ -100,7 +100,7 @@ def insert_reporte_mensual_ont():
     return sql
 
 def insert_resaldo_mensual_ont():
-    sql = "insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_semanal_ont;"
+    sql = "insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual_ont;"
     return sql
 
 

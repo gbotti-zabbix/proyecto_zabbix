@@ -71,19 +71,20 @@ with open(nombre_archivo_origen,'r') as archivo:
                 else:
                     indicador_datos =  0
                 # Chequeo si hay RBS
-                if  "RBS" in linea_parseada[9:18]:
+                if  "MRBS" in linea_parseada[9:18]:
                     indicador_RBS = 1
                 else:
                     indicador_RBS = 0
-
-                linea_nueva= [cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
+                
+                indice_unico = nombre_gestion +  "_" + str(int(slot)) + "/" + str(int (puerto))
+                linea_nueva= [indice_unico,cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
                 #print (linea_nueva)
                 wr.writerow(linea_nueva)
             contador_salto = contador_salto + 1 #solo elimina la primera linea
 #----------------------------------------------------
 #descomentar para procesar 30 lineas
             #contador = contador+1
-            #if contador == 30:
+            #if contador == 5:
             #   break
 #------------------------------------------------------
 

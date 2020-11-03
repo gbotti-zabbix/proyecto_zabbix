@@ -28,7 +28,7 @@ def insert_picos_semanal():
     return sql
 
 def insert_reporte_semanal():
-    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlkr.rbs_x_puerto, tlke.empresariales_x_puerto FROM promedio_semanal_v2 promedio, picos_semanal_v2 pico, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion AND pico.gestion_nodo_slot_puerto = tlkr.indice_gestion_nodo_slot_puerto AND pico.gestion_nodo_slot_puerto = tlke.indice_gestion_nodo_slot_puerto GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
+    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlkr.rbs_x_puerto, tlke.empresariales_x_puerto FROM promedio_semanal_v2 promedio, picos_semanal_v2 pico, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion AND pico.gestion_nodo_slot_puerto = tlkr.indice_gestion_slot_puerto AND pico.gestion_nodo_slot_puerto = tlke.indice_gestion_slot_puerto GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_resaldo_semanal():

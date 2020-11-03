@@ -11,7 +11,7 @@ with open ("datos_central.csv","r") as archivo:
     	#Uso las listas dentro de lista para llamar a la api por cada nodo"
     for y in lista:
   	#para este codigo no use subprocess porque me anulaba los input cuando el valor solicitado era correcto
-        os.system("./zhitemfinder.py {} -u jvignolo -p brisingr -a http://127.0.0.1/zabbix/api_jsonrpc.php -e -s Radio".format(y[0]))
+        os.system("./zhitemfinder.py {} -u jvignolo -p brisingr -a http://10.0.0.101/zabbix/api_jsonrpc.php -e -s Radio".format(y[0]))
 	#Meto el sleep para no quebrar el SV
         #time.sleep(2)
 

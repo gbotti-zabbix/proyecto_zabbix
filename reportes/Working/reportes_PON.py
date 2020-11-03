@@ -14,7 +14,7 @@ def parsea_crudos():
     archivo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
     archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
 
-#abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
+    #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(archivo,"r") as archivo:
         #archivo parseado
         with open(archivo_pickle,"wb") as archivo2:
@@ -28,7 +28,7 @@ def parsea_crudos():
                 #
 
                 #con este if filtro los que no son C300 o MA5800
-                if "C300" in linea["groups"] or "MA5800" in linea["groups"]:
+                if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]):
 
                     #saco grupo
                     if "C300"  in linea["groups"]:

@@ -66,10 +66,13 @@ def parsea_crudos(fecha):
                     Pico = float(linea['max'])/1024/1024
                     #
                     #termine de extraer datos
-                    Indice= str(Nodo + "_" + Puerto)
+                    
+                    Indice_Zabbix= str(Nodo + "_" + Puerto + "_" + Direccion)
+                    Indice_TLK= str(Nodo + "_" + Puerto)
+
                     #creo lista de tuplas para picklear y ademas filtro
                     if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000):
-                        tupla = (Indice, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
+                        tupla = (Indice_Zabbix,Indice_TLK, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         lista_tuplas.append(tupla)
                         contador_carga = contador_carga + 1
                     else:
@@ -91,7 +94,7 @@ def pusheo_crudos_diarios(fecha):
     contador_insert = 0
     lista_final = []
     contador_final = []
-    sql = "INSERT INTO `crudos_diarios_v2` (`gestion_nodo_slot_puerto`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `crudos_diarios_v2` (`gestion_nodo_slot_puerto_direccion`,`gestion_nodo_slot_puerto`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     #
 
     with open (archivo_pickle, 'rb') as lista:

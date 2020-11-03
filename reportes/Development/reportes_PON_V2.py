@@ -94,7 +94,7 @@ def pusheo_crudos_diarios(fecha):
     contador_insert = 0
     lista_final = []
     contador_final = []
-    sql = "INSERT INTO `crudos_diarios_v2` (`gestion_nodo_slot_puerto_direccion`,`gestion_nodo_slot_puerto`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `crudos_diarios_v2` (`gestion_nodo_slot_puerto_direccion`,`gestion_nodo_slot_puerto`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     #
 
     with open (archivo_pickle, 'rb') as lista:

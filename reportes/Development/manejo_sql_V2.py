@@ -32,7 +32,7 @@ def insert_reporte_semanal():
     return sql
 
 def insert_reporte_semanal_final():
-    sql = "insert into reporte_semanal_final(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select reporte.tipo, reporte.nodo,reporte.puerto,reporte.direccion,reporte.hora,reporte.fecha,reporte.promediohora,reporte.pico, reporte.promediosemana,tlkr.rbs_x_puerto,tlke.empresariales_x_puerto FROM reporte_semanal_v2 reporte, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE reporte.gestion_nodo_slot_puerto_direccion = tlkr.indice_gestion_slot_puerto = tlke.indice_gestion_slot_puerto GROUP BY reporte.gestion_nodo_slot_puerto_direccion;"
+    sql = "insert into reporte_semanal_final(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select reporte.tipo, reporte.nodo,reporte.puerto,reporte.direccion,reporte.hora,reporte.fecha,reporte.promediohora,reporte.pico, reporte.promediosemana,tlkr.rbs_x_puerto,tlke.empresariales_x_puerto FROM reporte_semanal_v2 reporte, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE reporte.gestion_nodo_slot_puerto = tlkr.indice_gestion_slot_puerto = tlke.indice_gestion_slot_puerto GROUP BY reporte.gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_resaldo_semanal():

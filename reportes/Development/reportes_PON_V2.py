@@ -6,13 +6,13 @@ import json
 import re
 import sys
 
-def parsea_crudos():
+def parsea_crudos(fecha):
 
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
-    archivo = "/var/lib/reportes-zabbix/Merged-Trends-2020-11-03.ndjson"
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-V2-2020-11-03.pickle"
+    archivo = "/var/lib/reportes-zabbix/Merged-Trends-"+ fecha +".ndjson"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-V2-"+ fecha +".pickle"
 
     #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(archivo,"r") as archivo:
@@ -83,11 +83,11 @@ def parsea_crudos():
     #printeo descartes, mas adelante voy a gestionarlos en log
     print("{} lineas ingresadas. {} lineas no ingresadas".format(contador_carga,contador_error))
 
-def pusheo_crudos_diarios():
+def pusheo_crudos_diarios(fecha):
 
     #variables que uso mas adelante y consulta sql
     print(datetime.now())
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-V2-2020-11-03.pickle"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-V2-"+ fecha +".pickle"
     contador_insert = 0
     lista_final = []
     contador_final = []
@@ -118,10 +118,13 @@ def pusheo_crudos_diarios():
     print("Total Ingresado",sum(contador_final))
     print(datetime.now())
 
+def menu():
+    fecha = input("Ingresa la fecha con formato YYYY/MM/DD")
+    return fecha
 
 #Llamadas a la funcion
 
 if sys.argv[1] == "parseo":
-    parsea_crudos()
+    parsea_crudos(menu())
 elif sys.argv[1] == "pusheo":
-    pusheo_crudos_diarios()
+    pusheo_crudos_diarios(menu())

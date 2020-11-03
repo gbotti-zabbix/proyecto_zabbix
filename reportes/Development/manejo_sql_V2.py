@@ -28,7 +28,7 @@ def insert_picos_semanal():
     return sql
 
 def insert_reporte_semanal():
-    sql = "insert into reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana FROM promedio_semanal promedio, picos_semanal pico WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;"
+    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana FROM promedio_semanal_v2 promedio, picos_semanal_v2 pico WHERE pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_resaldo_semanal():

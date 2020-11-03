@@ -28,7 +28,11 @@ def insert_picos_semanal():
     return sql
 
 def insert_reporte_semanal():
-    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlkr.rbs_x_puerto, tlke.empresariales_x_puerto FROM promedio_semanal_v2 promedio, picos_semanal_v2 pico, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion AND pico.gestion_nodo_slot_puerto = tlkr.indice_gestion_slot_puerto AND pico.gestion_nodo_slot_puerto = tlke.indice_gestion_slot_puerto GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
+    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana, gestion_nodo_slot_puerto) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, pico.gestion_nodo_slot_puerto FROM promedio_semanal_v2 promedio, picos_semanal_v2 pico WHERE pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
+    return sql
+
+def insert_reporte_semanal_final():
+    sql = "insert into reporte_semanal_final(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select reporte.tipo, reporte.nodo,reporte.puerto,reporte.direccion,reporte.hora,reporte.fecha,reporte.promediohora,reporte.pico, reporte.promediosemana,tlkr.rbs_x_puerto,tlke.empresariales_x_puerto FROM reporte_semanal_v2 reporte, t_rbs_x_puerto tlkr, t_empresariales_x_puerto tlke WHERE reporte.gestion_nodo_slot_puerto_direccion = tlkr.indice_gestion_slot_puerto = tlke.indice_gestion_slot_puerto GROUP BY reporte.gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_resaldo_semanal():
@@ -115,6 +119,8 @@ elif sys.argv[1] == "insert_picos_semanal":
     conector_insert(insert_picos_semanal())
 elif sys.argv[1] == "insert_reporte_semanal":
     conector_insert(insert_reporte_semanal())
+elif sys.argv[1] == "insert_reporte_semanal_final":
+    conector_insert(insert_reporte_semanal_final())
 elif sys.argv[1] == "insert_resaldo_semanal":
     conector_insert(insert_resaldo_semanal())
 #MENSUAL

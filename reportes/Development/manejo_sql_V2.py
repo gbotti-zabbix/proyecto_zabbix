@@ -20,7 +20,7 @@ def insert_picos_diarios_semanal():
     return sql
 
 def insert_promedio_semanal():
-    sql = "insert into promedio_semanal(tipo,nodo,puerto,direccion,promedio_semana) select tipo,nodo, puerto, direccion, avg(pico) as promedio_semana from picos_diarios_semanal group by tipo, nodo, puerto, direccion;"
+    sql = "insert into promedio_semanal_v2(gestion_nodo_slot_puerto_direccion, promedio_semana) select gestion_nodo_slot_puerto_direccion, avg(pico) as promedio_semana from picos_diarios_semanal_v2 group by gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_picos_semanal():

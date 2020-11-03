@@ -54,7 +54,7 @@ def insert_reporte_mensual():
     return sql
 
 def insert_resaldo_mensual():
-    sql = "insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_semanal;"
+    sql = "insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual;"
     return sql
 
 

@@ -75,8 +75,8 @@ with open(nombre_archivo_origen,'r') as archivo:
                     indicador_RBS = 1
                 else:
                     indicador_RBS = 0
-
-                indice_unico = nombre_gestion + "_" + nro_nodo + "_" + slot + "_" + puerto
+                  
+                indice_unico = nombre_gestion +  "_" + str(int(slot)) + "/" + str(int (puerto))
                 linea_nueva= [indice_unico,cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
                 #print (linea_nueva)
                 wr.writerow(linea_nueva)

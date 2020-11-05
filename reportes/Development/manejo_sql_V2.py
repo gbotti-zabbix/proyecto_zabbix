@@ -28,7 +28,7 @@ def insert_picos_semanal():
     return sql
 
 def insert_reporte_semanal():
-    sql = "insert into reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlk.RBS, tlk.Empresariales FROM picos_semanal_v2 pico LEFT JOIN promedio_semanal_v2 promedio on pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion LEFT JOIN t_resumen_servicios_tlk tlk on pico.gestion_nodo_slot_puerto = tlk.indice_gestion_slot_puerto;"
+    sql = "INSERT INTO reporte_semanal_v2(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,rbs,emp) SELECT pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlk.RBS, tlk.Empresariales FROM picos_semanal_v2 pico LEFT JOIN promedio_semanal_v2 promedio ON pico.gestion_nodo_slot_puerto_direccion = promedio.gestion_nodo_slot_puerto_direccion LEFT JOIN t_resumen_servicios_tlk tlk ON pico.gestion_nodo_slot_puerto = tlk.indice_gestion_slot_puerto GROUP BY pico.gestion_nodo_slot_puerto_direccion;"
     return sql
 
 def insert_reporte_semanal_final():

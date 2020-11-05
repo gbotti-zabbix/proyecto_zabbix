@@ -64,12 +64,14 @@ def parsea_crudos():
                     #Paso los bits a mega para picos y avg
                     Promedio = float(linea["avg"])/1024/1024
                     Pico = float(linea['max'])/1024/1024
+                    id_zabbix = str(Nodo + "_" + Puerto + "_" + Direccion)
+                    id_tlk = str(Nodo + "_" + Puerto)
                     #
                     #termine de extraer datos
 
                     #creo lista de tuplas para picklear y ademas filtro
                     if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000):
-                        tupla = (Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
+                        tupla = (id_zabbix, id_tlk, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         lista_tuplas.append(tupla)
                         contador_carga = contador_carga + 1
                     else:
@@ -91,7 +93,7 @@ def pusheo_crudos_diarios():
     contador_insert = 0
     lista_final = []
     contador_final = []
-    sql = "INSERT INTO `crudos_diarios` (`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO `crudos_diarios` (`id_zabbix`,`id_tlk`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     #
 
     with open (archivo_pickle, 'rb') as lista:

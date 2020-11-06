@@ -34,15 +34,15 @@ def regex_etiqueta(nombre):
     return Etiqueta
 
 
-def parseo_ont():
+def parseo_ont(fecha):
 
     #Variables de contadores y escritura del pickle
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
         
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
-    crudo = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + "_ONT.pickle"
+    crudo = "/var/lib/reportes-zabbix/Merged-Trends-" + fecha + ".ndjson"
 
     with open(crudo,"r") as crudo:
         crudo = crudo.read().splitlines()
@@ -83,11 +83,11 @@ def parseo_ont():
     print("{} lineas ingresadas. {} lineas no ingresadas".format(contador_carga,contador_error))
 
 
-def pusheo_crudos_diarios_ONT():
+def pusheo_crudos_diarios_ONT(fecha):
 
     print(datetime.now())
 
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + "_ONT.pickle"
     sql = "INSERT INTO `crudos_diarios_ont` (`tipo`,`nodo`, `puerto`, `direccion`, `etiqueta`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     
     #carga el pickle
@@ -110,6 +110,13 @@ def pusheo_crudos_diarios_ONT():
 
 #Menu
 if sys.argv[1] == "parseo":
-    parseo_ont()
+    parseo_ont(str(date.today()))
 elif sys.argv[1] == "pusheo":
-    pusheo_crudos_diarios_ONT()
+    pusheo_crudos_diarios_ONT(str(date.today()))
+elif sys.argv[1] == "manual":
+    opcion = int(input("1-Parsear\n2-Pushear\nCtrl+c para abortar\n"))
+    fecha = input("Ingresa una fecha con formato YYYY-MM-DD:\n")
+    if opcion == 1:
+        parseo_ont(fecha)
+    elif opcion == 2:
+        pusheo_crudos_diarios_ONT(fecha)

@@ -32,7 +32,7 @@ def insert_reporte_semanal():
     return sql
 
 def insert_resaldo_semanal():
-    sql = "insert into respaldo_reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana FROM reporte_semanal;"
+    sql = "insert into respaldo_reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,wf,datos,emp,rbs FROM reporte_semanal;"
     return sql
 
 #MENSUAL
@@ -54,7 +54,7 @@ def insert_reporte_mensual():
     return sql
 
 def insert_resaldo_mensual():
-    sql = "insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual;"
+    sql = "insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes,wf,datos,emp,rbs FROM reporte_mensual;"
     return sql
 
 

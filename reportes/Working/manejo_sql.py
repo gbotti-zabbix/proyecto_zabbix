@@ -31,7 +31,7 @@ def insert_reporte_semanal():
     sql = "insert into reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,wf,datos,emp,rbs) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana, tlk.WF, tlk.Datos, tlk.Empresariales, tlk.RBS FROM picos_semanal pico LEFT JOIN promedio_semanal promedio ON pico.id_zabbix = promedio.id_zabbix LEFT JOIN t_resumen_servicios_tlk tlk ON pico.id_tlk = tlk.id_tlk GROUP BY pico.id_zabbix;"
     return sql
 
-def insert_resaldo_semanal():
+def insert_respaldo_semanal():
     sql = "insert into respaldo_reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediosemana,wf,datos,emp,rbs FROM reporte_semanal;"
     return sql
 
@@ -53,7 +53,7 @@ def insert_reporte_mensual():
     sql = "insert into reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes,wf,datos,emp,rbs) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_mes, tlk.WF, tlk.Datos, tlk.Empresariales, tlk.RBS FROM picos_mensual pico LEFT JOIN promedio_mensual promedio ON pico.id_zabbix = promedio.id_zabbix LEFT JOIN t_resumen_servicios_tlk tlk ON pico.id_tlk = tlk.id_tlk GROUP BY pico.id_zabbix;"
     return sql
 
-def insert_resaldo_mensual():
+def insert_respaldo_mensual():
     sql = "insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,pico,promediomes,wf,datos,emp,rbs FROM reporte_mensual;"
     return sql
 
@@ -77,7 +77,7 @@ def insert_reporte_semanal_ont():
     sql = "insert into reporte_semanal_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediosemana) select pico.tipo,pico.nodo,pico.puerto,pico.etiqueta,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_semana FROM promedio_semanal_ont promedio, picos_semanal_ont pico WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;"
     return sql
 
-def insert_resaldo_semanal_ont():
+def insert_respaldo_semanal_ont():
     sql = "insert into respaldo_reporte_semanal_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediosemana) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediosemana FROM reporte_semanal_ont;"
     return sql
 
@@ -99,7 +99,7 @@ def insert_reporte_mensual_ont():
     sql = "insert into reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select pico.tipo, pico.nodo,pico.puerto,pico.etiqueta,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_mes FROM promedio_mensual_ont promedio, picos_mensual_ont pico WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;"
     return sql
 
-def insert_resaldo_mensual_ont():
+def insert_respaldo_mensual_ont():
     sql = "insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual_ont;"
     return sql
 
@@ -115,8 +115,8 @@ elif sys.argv[1] == "insert_picos_semanal":
     conector_insert(insert_picos_semanal())
 elif sys.argv[1] == "insert_reporte_semanal":
     conector_insert(insert_reporte_semanal())
-elif sys.argv[1] == "insert_resaldo_semanal":
-    conector_insert(insert_resaldo_semanal())
+elif sys.argv[1] == "insert_respaldo_semanal":
+    conector_insert(insert_respaldo_semanal())
 #MENSUAL
 elif sys.argv[1] == "insert_picos_diarios_mensual":
     conector_insert(insert_picos_diarios_mensual())
@@ -126,8 +126,8 @@ elif sys.argv[1] == "insert_picos_mensual":
     conector_insert(insert_picos_mensual())
 elif sys.argv[1] == "insert_reporte_mensual":
     conector_insert(insert_reporte_mensual())
-elif sys.argv[1] == "insert_resaldo_mensual":
-    conector_insert(insert_resaldo_mensual())
+elif sys.argv[1] == "insert_respaldo_mensual":
+    conector_insert(insert_respaldo_mensual())
 ###ONT###
 #SEMANAL
 if sys.argv[1] == "insert_picos_diarios_semanal_ont":
@@ -138,8 +138,8 @@ elif sys.argv[1] == "insert_picos_semanal_ont":
     conector_insert(insert_picos_semanal_ont())
 elif sys.argv[1] == "insert_reporte_semanal_ont":
     conector_insert(insert_reporte_semanal_ont())
-elif sys.argv[1] == "insert_resaldo_semanal_ont":
-    conector_insert(insert_resaldo_semanal_ont())
+elif sys.argv[1] == "insert_respaldo_semanal_ont":
+    conector_insert(insert_respaldo_semanal_ont())
 #MENSUAL
 elif sys.argv[1] == "insert_picos_diarios_mensual_ont":
     conector_insert(insert_picos_diarios_mensual_ont())
@@ -149,5 +149,5 @@ elif sys.argv[1] == "insert_picos_mensual_ont":
     conector_insert(insert_picos_mensual_ont())
 elif sys.argv[1] == "insert_reporte_mensual_ont":
     conector_insert(insert_reporte_mensual_ont())
-elif sys.argv[1] == "insert_resaldo_mensual_ont":
-    conector_insert(insert_resaldo_mensual_ont())
+elif sys.argv[1] == "insert_respaldo_mensual_ont":
+    conector_insert(insert_respaldo_mensual_ont())

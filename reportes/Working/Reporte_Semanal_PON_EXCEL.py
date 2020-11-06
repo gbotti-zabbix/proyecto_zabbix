@@ -6,7 +6,7 @@ import mysql.connector
 from datetime import datetime, date, timedelta
 import sys
 
-encabezados = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios"]
+encabezados = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios","Total ONT","Servicios Datos","Servicios Empresariales","Empresariales de RBS"]
 
 def crear_hojas(workbook):
 
@@ -29,7 +29,10 @@ def crear_encabezados(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     subida_pon["G1"] = encabezados[6]
     subida_pon["H1"] = encabezados[7]
     subida_pon["I1"] = encabezados[8]
-
+    subida_pon["J1"] = encabezados[9]
+    subida_pon["K1"] = encabezados[10]
+    subida_pon["L1"] = encabezados[11]
+    subida_pon["M1"] = encabezados[12]
     # Bajada Pon
     bajada_pon["A1"] = encabezados[0]
     bajada_pon["B1"] = encabezados[1]
@@ -40,6 +43,10 @@ def crear_encabezados(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     bajada_pon["G1"] = encabezados[6]
     bajada_pon["H1"] = encabezados[7]
     bajada_pon["I1"] = encabezados[8]
+    bajada_pon["J1"] = encabezados[9]
+    bajada_pon["K1"] = encabezados[10]
+    bajada_pon["L1"] = encabezados[11]
+    bajada_pon["M1"] = encabezados[12]
 
     # Subida Uplink
     subida_uplink["A1"] = encabezados[0]
@@ -62,7 +69,7 @@ def crear_encabezados(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     bajada_uplink["G1"] = encabezados[6]
     bajada_uplink["H1"] = encabezados[7]
     bajada_uplink["I1"] = encabezados[8]
-
+    
     return workbook
 
 def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink,periodo):
@@ -85,6 +92,10 @@ def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink,periodo):
         pico = dato[9]
         prom_hora_pico = dato[7]
         prom_picos_diarios = dato[8]
+        wf = dato[10]
+        datos = dato[11]
+        emp = dato[12]
+        rbs = dato[13]
         if (direccion == "RX" and (puerto == "22/1" or puerto == "21/1")) or (direccion == "RX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
             bajada_uplink.append(lista_append)
@@ -92,10 +103,10 @@ def apend_data(subida_pon,bajada_pon,subida_uplink,bajada_uplink,periodo):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
             subida_uplink.append(lista_append)
         elif direccion == "TX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios,wf,datos,emp,rbs]
             bajada_pon.append(lista_append)
         elif direccion == "RX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,wf,datos,emp,rbs]
             subida_pon.append(lista_append)
     return workbook
 

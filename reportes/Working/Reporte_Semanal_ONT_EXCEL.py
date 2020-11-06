@@ -61,9 +61,9 @@ def apend_data(subida_ont,bajada_ont,periodo):
         direccion = dato[5]
         hora = dato[6]
         fecha = dato[7]
-        pico = dato[10]
         prom_hora_pico = dato[8]
         prom_picos_diarios = dato[9]
+        pico = dato[10]
         if direccion == "RX":
             lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
             subida_ont.append(lista_append)

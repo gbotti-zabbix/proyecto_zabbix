@@ -128,7 +128,7 @@ if sys.argv[1] == "parseo":
 elif sys.argv[1] == "pusheo":
     pusheo_crudos_diarios(str(date.today()))
 elif sys.argv[1] == "manual":
-    opcion = int(input("1-Parsear\n2-Pushear"))
+    opcion = int(input("1-Parsear\n2-Pushear\n"))
     fecha = input("Ingresa una fecha con formato YYYY-MM-DD:\n")
     if opcion == 1:
         parsea_crudos(fecha)

@@ -134,5 +134,3 @@ elif sys.argv[1] == "manual":
         parsea_crudos(fecha)
     elif opcion == 2:
         pusheo_crudos_diarios(fecha)
-    else:
-        break

@@ -6,7 +6,7 @@ import mysql.connector
 from datetime import datetime, date, timedelta
 import sys
 
-encabezados = ["Modelo Nodo","Nodo","Slot/Puerto","Etiqueta","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios"]
+encabezados = ["Modelo Nodo","Nodo","Slot/Puerto/ONT","Etiqueta","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios"]
 
 def crear_hojas(workbook):
 

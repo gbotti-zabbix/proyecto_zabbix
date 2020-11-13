@@ -288,3 +288,8 @@ def f_nombre_gestion (tlk,nro_nodo,tipo_nodo):
 
 #print (f_nombre_gestion ("RNGYOUNG01",15,""))
 
+#---------variables globales --------------
+
+_log= "/var/log/zabbix_reportes/proc_tlk.log"
+
+__all__ = [ _log,]

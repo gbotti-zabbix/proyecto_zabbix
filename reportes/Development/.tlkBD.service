@@ -1,0 +1,16 @@
+# ***UnDemonio.service***
+[Unit]
+Description=parseo y carga inventario ftth de tlk en BD
+After=multi-user.target
+ 
+[Service]
+Type=simple
+ExecStart=/etc/proyecto_zabbix/reportes/Working/script_tlk_BD.py
+User=root
+WorkingDirectory=/etc/proyecto_zabbix/reportes/Working
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+ 
+[Install]
+WantedBy=multi-user.target

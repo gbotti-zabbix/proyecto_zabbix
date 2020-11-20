@@ -3,7 +3,7 @@
 #========variables globales=========
 
 #---   LOGS  --------------
-file_log= "/var/log/reportes_zabbix/proc_tlk_BD.log"
+file_logs= "/var/log/reportes_zabbix/proc_tlk_BD.log"
 
 
 #=======  Archivos inventarios y procesados=========

@@ -5,47 +5,33 @@ import csv
 import logging
 from datetime import datetime
 from diccionario_tlk_gestion import f_nombre_gestion
+from diccionario_tlk_gestion import f_diccionario_equ_tlk
 
 # Se eliminan los handlers anteriores
 if logging.getLogger('').hasHandlers():
     logging.getLogger('').handlers.clear()
 
-def analizar_equ_tlk(equipo):
-    nro_modelo = equipo[0:2]
-    #print (nro_modelo)
-    #diccionario modelos
-    modelo = {"70":"C300","71":"MA5600T","72":"C320","73":"MA5800","74":"ISAM FX"}
-    if nro_modelo not in modelo:
-        #print (equipo)
-        return ("NULL")
-    return (modelo[nro_modelo])
 
 def FileCheck(fn):
     try:
-      open(fn, "r")
-      return 1
+        open(fn, "r")
+        return 1
     except IOError:
-      logging.error (f"Error 23: Archivo no Existe. {fn}")
-      return 0
+        logging.error (f"Error 23: Archivo no Existe. {fn}")
+        return 0
 
 
 
-def f_parsear_inventario (archivo_origen):
+def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 
     
     nombre_archivo_origen = archivo_origen
-    nombre_archivo_destino = archivo_origen.replace("PLN245_procesado.TXT","PLN245_parseado.csv")
-    nombre_archivo_old = archivo_origen.replace("PLN245_procesado.TXT","PLN245_procesado.old.TXT")
+    nombre_archivo_destino = archivo_destino
+    nombre_archivo_old = archivo_old
 
-    #--------chequeo existencia del archivo--------#
-    
-    try:
-        result = FileCheck(nombre_archivo_origen)
-        logging.info( f'Chequeo archivo origen encontrado: {nombre_archivo_origen}')
-    except Exception as e:
-        logging.error(f'Error: {str(e)}')
-        sys.exit(1)
  
+
+
 
     #----------fin chequeo origen------------------#
 
@@ -62,7 +48,7 @@ def f_parsear_inventario (archivo_origen):
                     #print (linea_parseada)
                     cod_telelink = linea_parseada[0][:10]                       # codigo TLK
                     nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
-                    tipo_equipo = analizar_equ_tlk(linea_parseada[1])           # cambio el 70 por c300    
+                    tipo_equipo = f_diccionario_equ_tlk(linea_parseada[1])           # cambio el 70 por c300    
                     nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
                     nombre_gestion= f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
                     slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 
@@ -112,7 +98,7 @@ def f_parsear_inventario (archivo_origen):
     logging.info(f'función f_parsear_inventario ejecutada {nombre_archivo_destino} con {contador} lineas')
     if FileCheck(nombre_archivo_old):
         os.remove(nombre_archivo_old)
-        raise Exception(logging.error(f'No se pudo borrar {nombre_archivo_old}'))
+
 
     os.rename(nombre_archivo_origen, nombre_archivo_old)
     logging.info( f'Se terminó el parseo del arhivo: {nombre_archivo_origen}')

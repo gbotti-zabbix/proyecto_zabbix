@@ -11,6 +11,17 @@ def f_diccionario_t_nodo_letra(nombre_nodo):
         return  ("NULL")
     return diccionario_t_nodo_letra[nombre_nodo]
 
+#para definir el equipo y el numero de TLK.
+def f_diccionario_equ_tlk(equipo):
+    nro_modelo = equipo[0:2]
+    #print (nro_modelo)
+    #diccionario modelos
+    modelo = {"70":"C300","71":"MA5600T","72":"C320","73":"MA5800","74":"ISAM FX"}
+    if nro_modelo not in modelo:
+        #print (equipo)
+        return ("NULL")
+    return (modelo[nro_modelo])
+
 #diccionario para cada código telelink devuelve el nombre de gestión
 def f_diccionario_tlk_gestion(cod_tlk):
     diccionario_tlk_gestion = {
@@ -286,10 +297,6 @@ def f_nombre_gestion (tlk,nro_nodo,tipo_nodo):
 
 
 
+
 #print (f_nombre_gestion ("RNGYOUNG01",15,""))
 
-#---------variables globales --------------
-
-_log= "/var/log/zabbix_reportes/proc_tlk.log"
-
-__all__ = [ _log,]

@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 
 #importar variable
-from cfg_reportes import *
+import cfg_reportes
 
 
 #CONECTOR BD 

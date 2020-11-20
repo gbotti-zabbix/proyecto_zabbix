@@ -4,7 +4,6 @@ import sys
 from datetime import datetime
 
 #importar variable
-from diccionario_tlk_gestion import path_log,path_files,name_file
 from cfg_reportes import *
 
 

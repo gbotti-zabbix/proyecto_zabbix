@@ -6,7 +6,7 @@ from datetime import datetime
  
 
 #importación variables
-from cfg_reportes import *
+from cfg_reportes import file_logs
 
 #importación funciones
 from parsear_inventario import f_parsear_inventario  #importarción de la funcion para paresar

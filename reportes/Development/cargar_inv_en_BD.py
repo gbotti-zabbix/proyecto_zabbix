@@ -3,15 +3,17 @@ import logging
 import sys
 from datetime import datetime
 
+#importar variable
+from diccionario_tlk_gestion import path_log,path_files,name_file
+from cfg_reportes import *
+
 
 #CONECTOR BD 
 
 def ejecutar_sql(sql,tipo_sql):
     try:
         #---CONEXION PARA TEST!!!!!!!!!!!!##########
-        mydb = mysql.connector.connect(host="192.168.211.4",user="reportes",password="antel2020",database="reportes_zabbix")
-        # --CONEXION PARA PRODUCCIÓN!!!!!!!!!!
-        #mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
+        mydb = mysql.connector.connect(host=cfg_reportes.host_DB,user=cfg_reportes.user_DB,password=cfg_reportes.password_DB,database=cfg_repotes.database_DB)
         logging.info( f' Connected to DB: {tipo_sql}')
         # Create cursor and execute Load SQL
         cursor = mydb.cursor()
@@ -29,9 +31,9 @@ def ejecutar_sql(sql,tipo_sql):
 
 
 
-def f_cargar_inv_en_BD (archivo_origen):
+def f_cargar_inv_en_BD (archivo_destino):
 
-    nombre_archivo_destino = archivo_origen.replace("PLN245_procesado.TXT","PLN245_parseado.csv")
+    nombre_archivo_destino = archivo_destino
 
     #=========================================#
     #     Cargar Datos desde archivo          #

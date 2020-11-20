@@ -67,7 +67,7 @@ if logging.getLogger('').hasHandlers():
 # Se añaden dos nuevos handlers al root logger, uno para los niveles de debug o
 # superiores y otro para que se muestre por pantalla los niveles de info o superiores.
 
-file_log = cfg_reportes.file_log
+file_log = cfg_reportes.file_logs
 file_debug_handler = logging.FileHandler(file_log)
 file_debug_handler.setLevel(logging.DEBUG)
 file_debug_format = logging.Formatter('%(asctime)-5s %(name)-15s %(levelname)-8s %(message)s')

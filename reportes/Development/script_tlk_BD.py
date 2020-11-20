@@ -1,11 +1,17 @@
+#importaciones librerias
 import os
 import time
 import logging
 from datetime import datetime
+ 
 
+#importación variables
+from cfg_reportes import *
 
+#importación funciones
 from parsear_inventario import f_parsear_inventario  #importarción de la funcion para paresar
 from cargar_inv_en_BD import f_cargar_inv_en_BD       #importación de la función para guardar en BD  
+
 
 
 
@@ -20,20 +26,20 @@ def checkFileExistance(filePath):
         return False
 
 
-def procesar_tlk (nombre_archivo):
+def procesar_tlk (archivo1,archivo2,archivo1_old):
     while True:
         # si existe el archivo lo proceso #
-        if checkFileExistance(nombre_archivo):
+        if checkFileExistance(archivo1):
             logging.info("==============================================================================================")
             logging.info(f"|                             SE INICIALIZO PROCESO                                          |")
             logging.info("==============================================================================================\n\n")
-            logging.info( f' Se Encontró un nuevo archivo : {nombre_archivo}')
+            logging.info( f' Se Encontró un nuevo archivo : {archivo1}')
             #paresear archivo archivo proc_reporte_gpon.py
-            f_parsear_inventario(nombre_archivo)
+            f_parsear_inventario(archivo1,archivo2,archivo1_old)
             #Cargar BD carga_y_proceso_datos_tlk.py
-            f_cargar_inv_en_BD("/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT")
+            f_cargar_inv_en_BD(archivo2)
             logging.info("==============================================================================================")
-            logging.info(f"|                             SE FINALZÓ PROCESO                                                 |")
+            logging.info(f"|                             SE FINALZÓ PROCESO                                              |")
             logging.info("==============================================================================================\n\n")
         time.sleep(30)
 
@@ -42,7 +48,8 @@ def procesar_tlk (nombre_archivo):
 
 #==============LOGS=======================#
 # Definición del logger root
-# -----------------------------------------------------------------------------
+# ----------------------------------------
+
 logging.basicConfig(
     format = '%(asctime)-5s %(name)-15s %(levelname)-8s %(message)s',
     level  = logging.INFO,
@@ -56,10 +63,12 @@ logging.basicConfig(
 if logging.getLogger('').hasHandlers():
     logging.getLogger('').handlers.clear()
 
+
 # Se añaden dos nuevos handlers al root logger, uno para los niveles de debug o
-# superiores y otro para que se muestre por pantalla los niveles de info o
-# superiores.
-file_debug_handler = logging.FileHandler('logs_debug.log')
+# superiores y otro para que se muestre por pantalla los niveles de info o superiores.
+
+file_log = cfg_reportes.file_log
+file_debug_handler = logging.FileHandler(file_log)
 file_debug_handler.setLevel(logging.DEBUG)
 file_debug_format = logging.Formatter('%(asctime)-5s %(name)-15s %(levelname)-8s %(message)s')
 file_debug_handler.setFormatter(file_debug_format)
@@ -75,13 +84,15 @@ logging.getLogger('').addHandler(consola_handler)
 logging.debug('Inicio main script')
 logging.info('Inicio main script')
 
-#=============CODIGO PROGRAMA======================
-#-------------------PRODUCCIÓN--------------#
-#archivo = "/var/lib/reportes-zabbix/reporte_tlk/PLN245_procesado.TXT"
-#--------------------Test--------------------#
-archivo = "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/PLN245_procesado.TXT"
+#---- armar direcciones de archivos de cfg_parsear.
+archivo_origen = cfg_reportes.path_files+cfg_reportes.file_tlk
+archivo_parseado = cfg_reportes.path_files+cfg_reportes.file_tlk_dst
+archivo_old = cfg_reportes.path_files+cfg_reportes.file_tlk_old
 
-procesar_tlk(archivo)
+
+
+#-------------llama al buqle con los 3 archivos
+procesar_tlk(archivo_origen,archivo_parseado,archivo_old)
 
 #===============FIN ======================
 

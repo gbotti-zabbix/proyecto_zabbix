@@ -4,6 +4,8 @@ import os
 import csv
 import logging
 from datetime import datetime
+
+# importación funciones
 from diccionario_tlk_gestion import f_nombre_gestion
 from diccionario_tlk_gestion import f_diccionario_equ_tlk
 

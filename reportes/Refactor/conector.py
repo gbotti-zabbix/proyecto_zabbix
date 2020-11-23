@@ -2,12 +2,12 @@ import mysql.connector
 import logging
 
 #----importación variables de configuración
-import cfg
+import direcciones
 
 
 # Se le pasa query, tipo de query, mensaje para log, y lista si es tipo many
 def conector(sql,tipo,mensaje,*args):
-    mydb = mysql.connector.connect(host=cfg.host_DB,user=cfg.user_DB,password=cfg.password_DB,database=cfg.database_DB)
+    mydb = mysql.connector.connect(host=direcciones.host_DB,user=direcciones.user_DB,password=direcciones.password_DB,database=direcciones.database_DB)
     logging.info( f'Ejecutando: {tipo_sql}')
     cursor = mydb.cursor()
     if tipo == "many":

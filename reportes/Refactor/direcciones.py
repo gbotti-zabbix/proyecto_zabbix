@@ -16,7 +16,8 @@ file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro arch
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos
-host_DB="localhost"
+#host_DB="localhost"
+host_DB="192.168.211.4"
 user_DB="reportes"
 password_DB="antel2020"
 database_DB="reportes_zabbix"

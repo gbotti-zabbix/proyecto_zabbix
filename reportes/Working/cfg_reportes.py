@@ -6,7 +6,7 @@
 file_logs= "/var/log/reportes_zabbix/proc_tlk_BD.log"
 
 
-#=======  Archivos inventarios y procesados=========
+#=======  Archivos inventarios y procesados Tlk=========
 
 # -directorio origen y destino de archivos
 path_files="/var/lib/reportes-zabbix/reporte_tlk/"  #directorio trabajo
@@ -14,6 +14,7 @@ path_files="/var/lib/reportes-zabbix/reporte_tlk/"  #directorio trabajo
 file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
 file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
+
 
 
 

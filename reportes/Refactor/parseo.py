@@ -1,7 +1,9 @@
 import os
 import csv
 import logging
+
 from datetime import datetime
+from conector import conector
 
 # Se eliminan los handlers anteriores
 if logging.getLogger('').hasHandlers():
@@ -32,10 +34,11 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 
     #-- Cargo diccionarios para trabajar con nombres ----
     # debo cargar diccionario de TLK-NOMBRE GESTION
+    
+    sql
+    conector()
 
     # debo cargar equivelente - (TIPO NODO)<-->
-
-
 
 
  

@@ -12,7 +12,7 @@ import cfg_reportes
 def ejecutar_sql(sql,tipo_sql):
     try:
         #---CONEXION PARA TEST!!!!!!!!!!!!##########
-        mydb = mysql.connector.connect(host=cfg_reportes.host_DB,user=cfg_reportes.user_DB,password=cfg_reportes.password_DB,database=cfg_repotes.database_DB)
+        mydb = mysql.connector.connect(host=cfg_reportes.host_DB,user=cfg_reportes.user_DB,password=cfg_reportes.password_DB,database=cfg_reportes.database_DB)
         logging.info( f' Connected to DB: {tipo_sql}')
         # Create cursor and execute Load SQL
         cursor = mydb.cursor()

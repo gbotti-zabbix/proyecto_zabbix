@@ -1,8 +1,8 @@
-import direcciones
+from direcciones import file_log
 from datetime import datetime, date, timedelta
 
 def error(mensaje):
-    with open(direcciones.file_log,"a") as log:
+    with open(file_log,"a") as log:
         tipo = "ERROR"
         hora = datetime.now()
         logeo = tipo + " " + str(hora) + " " + mensaje + "\n"
@@ -14,9 +14,3 @@ def info(mensaje):
         hora = datetime.now()
         logeo = tipo + " " + str(hora) + " " + mensaje + "\n"
         log.write(logeo)
-
-
-
-error("Tuvieja")
-info("Tutia")
-

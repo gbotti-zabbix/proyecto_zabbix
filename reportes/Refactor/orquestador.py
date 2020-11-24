@@ -2,8 +2,8 @@ from direcciones import path_files, file_tlk, crudozabbix
 import logger
 from datetime import datetime
 import time
-
-#from pusheo import f_cargar_inv_en_BD
+import pusheo
+from pusheo import f_cargar_inv_en_BD
 
 
 def checkFileExistance(filePath):
@@ -59,6 +59,6 @@ def orquestador ():
                 print("Se ejecutan funcione sql mensuales")
                 print("Se saca el reporte mensual")
 
-        time.sleep(5)
+        time.sleep(30)
 
 orquestador()

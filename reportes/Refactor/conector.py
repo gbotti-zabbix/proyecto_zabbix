@@ -5,16 +5,13 @@ import direcciones
 
 # Se le pasa query, tipo de query, mensaje para log, y lista si es tipo many
 def conector(sql,tipo,mensaje,*args):
-<<<<<<< HEAD
     mydb = mysql.connector.connect(host=direcciones.host_DB,user=direcciones.user_DB,password=direcciones.password_DB,database=direcciones.database_DB)
-=======
-    mydb = mysql.connector.connect(host=direcciones.host_db,user=direcciones.user_DB,password=direcciones.password_DB,database=direcciones.database_DB)
->>>>>>> 8fdc4c050faada466dcb02c21a7494b29fa8fca3
-    logger.info( f' Ejecutando: {tipo_sql}')
+    logger.info( f' Ejecutando: {tipo}')
     cursor = mydb.cursor()
     if tipo == "many":
         cursor.executemany(sql, args[0])
     elif tipo == "select":
+        cursor.execute(sql)
         resultado = cursor.fetchall()
         mydb.cursor().close()
         mydb.close()
@@ -23,9 +20,6 @@ def conector(sql,tipo,mensaje,*args):
         cursor.execute(sql)
     mydb.commit()
     logger.info (f' Succuessfully loaded: {cursor.rowcount} affected rows ')
-<<<<<<< HEAD
-=======
     print(cursor.rowcount)
->>>>>>> 8fdc4c050faada466dcb02c21a7494b29fa8fca3
     cursor.close()
     mydb.close()

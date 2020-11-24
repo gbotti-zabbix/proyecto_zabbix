@@ -49,7 +49,7 @@ file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
 #=======  Inventarios Zabbix=========#
-crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
+crudozabbix = "prueba.txt"
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

@@ -1,6 +1,9 @@
 from direcciones import path_files, file_tlk, crudozabbix
 import logger
-from pusheo import f_cargar_inv_en_BD
+from datetime import datetime
+import time
+
+#from pusheo import f_cargar_inv_en_BD
 
 
 def checkFileExistance(filePath):
@@ -12,15 +15,20 @@ def checkFileExistance(filePath):
     except IOError as e:
         return False
 
-def checkdate():
+
+def checklunes():
     if datetime.today().weekday() == 0:
-        return "Lunes"
-    elif datetime.now().strftime("%d") == 1:
-        return "Primero"
+        return 1
+    else:
+        return 0
+
+
+def checkdia():
+    if datetime.now().strftime("%d") == "1":
+        return 1
     else:
         return 0
     
-
 
 def orquestador ():
     while True:
@@ -29,13 +37,13 @@ def orquestador ():
             #-----llamo a parser inventario tlk----#
             logger.info(f'Arvhivo inventario TLK encontrado: {path_files+file_tlk}')
             logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
-            f_parsear_inventario (path_files+file_tlk,path_files+file_tlk_dst,path_files+file_tlk_old)
+            ##f_parsear_inventario (path_files+file_tlk,path_files+file_tlk_dst,path_files+file_tlk_old)
 
             #----Cargo inventario tlk parseado a la BD---#
-            f_cargar_inv_en_BD(path_files+file_tlk_dst)
+            #f_cargar_inv_en_BD(path_files+file_tlk_dst)
 
             #--- Proceso BD inventario tlk-----#
-            f_procesar_resumne_tlk_BD()
+            #f_procesar_resumne_tlk_BD()
             logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
         #if fin existe archivo TLK #
 
@@ -44,11 +52,13 @@ def orquestador ():
             print("Se parseo archivo de TLK")
             print("Se pushea archivo TLK")
             print("Se ejecutan funciones sql diarias")
-            if checkdate() == "Lunes":
+            if checklunes() == 1:
                 print("Se ejecutan funcione sql semanal")
                 print("Se saca el reporte")
-            elif checkdate() == "Primero":
+            if checkdia() == 1:
                 print("Se ejecutan funcione sql mensuales")
                 print("Se saca el reporte mensual")
 
         time.sleep(5)
+
+orquestador()

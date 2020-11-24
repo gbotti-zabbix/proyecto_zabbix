@@ -15,7 +15,7 @@ file_log= "/var/log/reportes_zabbix/reportes.log"
 path_files="/var/lib/reportes-zabbix/reporte_tlk/"  #directorio trabajo
 
 file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
-file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino
+file_tlk_dst="PLN245_parseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
 
@@ -45,7 +45,7 @@ file_log= "reportes.log"
 path_files= "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/"  #directorio trabajo
 
 file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
-file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino
+file_tlk_dst="PLN245_parseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
 

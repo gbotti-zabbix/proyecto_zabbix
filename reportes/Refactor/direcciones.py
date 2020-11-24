@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 from datetime import date
 
 #========variables globales=========#
->>>>>>> 8fdc4c050faada466dcb02c21a7494b29fa8fca3
 
 
 #========PRODUCCIÓN=========#

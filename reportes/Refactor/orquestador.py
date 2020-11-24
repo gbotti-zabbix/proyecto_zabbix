@@ -51,4 +51,4 @@ def orquestador ():
                 print("Se ejecutan funcione sql mensuales")
                 print("Se saca el reporte mensual")
 
-        time.sleep(30)
+        time.sleep(5)

@@ -27,7 +27,7 @@ def orquestador ():
         # existe archivo TLK #
         if checkFileExistance(path_files+file_tlk):
             #-----llamo a parser inventario tlk----#
-            logger.info(f'Arvhivo inventario TLK encontrado: {filePath}')
+            logger.info(f'Arvhivo inventario TLK encontrado: {path_files+file_tlk}')
             logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
             f_parsear_inventario (path_files+file_tlk,path_files+file_tlk_dst,path_files+file_tlk_old)
 
@@ -51,4 +51,4 @@ def orquestador ():
                 print("Se ejecutan funcione sql mensuales")
                 print("Se saca el reporte mensual")
 
-        time.sleep(30)
+        time.sleep(5)

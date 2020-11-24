@@ -85,15 +85,3 @@ def f_procesar_resumne_tlk_BD():
     logger.info('Se termino de cargar BD ')
 
     ######### Fin Carga Tablas  y servicios por puerto ##############
-
-
-
-
-
-
-
-
-
-#--- test de pusheo
-f_cargar_inv_en_BD("/var/lib/reportes-zabbix/reporte_tlk/PLN245_pareseado.csv")
-f_procesar_resumne_tlk_BD()

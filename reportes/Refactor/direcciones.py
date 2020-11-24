@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 from datetime import date
 
 #========variables globales=========#
->>>>>>> 8fdc4c050faada466dcb02c21a7494b29fa8fca3
 
 
 #========PRODUCCIÓN=========#
@@ -51,7 +48,8 @@ file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
 file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
-
+#=======  Inventarios Zabbix=========#
+crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-" + str(date.today()) + ".ndjson"
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

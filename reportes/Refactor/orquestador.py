@@ -1,5 +1,6 @@
 from direcciones import path_files, file_tlk, crudozabbix
-
+import time
+from datetime import datetime
 
 def checkFileExistance(filePath):
     try:
@@ -11,7 +12,7 @@ def checkFileExistance(filePath):
         return False
 
 def checkdate():
-    if datetime.today().weekday() == 0:
+    if datetime.today().weekday() == 1:
         return "Lunes"
     elif datetime.now().strftime("%d") == 1:
         return "Primero"
@@ -51,4 +52,6 @@ def orquestador ():
                 print("Se ejecutan funcione sql mensuales")
                 print("Se saca el reporte mensual")
 
-        time.sleep(30)
+        time.sleep(5)
+
+orquestador()

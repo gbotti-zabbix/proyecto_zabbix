@@ -28,13 +28,16 @@ def orquestador ():
         if checkFileExistance(path_files+file_tlk):
             #-----llamo a parser inventario tlk----#
             logger.info(f'Arvhivo inventario TLK encontrado: {filePath}')
+            logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
             f_parsear_inventario (path_files+file_tlk,path_files+file_tlk_dst,path_files+file_tlk_old)
 
             #----Cargo inventario tlk parseado a la BD---#
             f_cargar_inv_en_BD(path_files+file_tlk_dst)
 
             #--- Proceso BD inventario tlk-----#
-            
+            f_procesar_resumne_tlk_BD()
+            logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
+        #if fin existe archivo TLK #
 
         # existe archivo Zabbix #
         elif checkFileExistance(crudozabbix):

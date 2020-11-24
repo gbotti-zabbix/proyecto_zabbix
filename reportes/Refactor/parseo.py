@@ -10,13 +10,13 @@ from conector import conector
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
 def FileCheck(fn):
     """
-    Funcion que perminte chquear la existencia de un arhvio, devuelve 1 si existe, loqueo error si no existe.
+    Funcion que perminte chquear la existencia de un archivo, devuelve 1 si existe, loqueo error si no existe.
     """
     try:
         open(fn, "r")
         return 1
     except IOError:
-        logger.error (f"Error 23: Archivo no Existe. {fn}")
+        logger.error (f"Error 23: Archivo no Existe: {fn}")
         return 0
 #fin FileCheck(fn)
 
@@ -29,16 +29,26 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
         archivo_destino: es el nombre del arhivo con que se graban los datos paresados
         arhivo_old: luego de parsear el arhivo lo dejo con otro nombre.
     """
-
+    logger.info ("\n--Se comenzo parseo arhivo--")
     #-- Cargo diccionarios para trabajar con nombres ----
     # debo cargar diccionario de TLK-NOMBRE GESTION
-    
+    sql = "SELECT cod_tlk,nom_gestion FROM t_tlk_nombregestion;"
+    comentario="Traer nombre gestion"
+    dic_gestion={}
+    resultado= conector(sql,"select",comentario)
+    for x in resultado:
+        dic_gestion[x[0]]=[x[1]] 
 
 
     
 
     # debo cargar equivelente - (TIPO NODO)<-->
-
+    sql = "SELECT nro_tlk,modelo,letra_gestion from t_diccionario_nodos_tlk;"
+    comentario="Traer tipos nodos"
+    dic_nodo={}
+    resultado= conector(sql,"select",comentario)
+    for x in resultado:
+        dic_nodo[x[0]]=[x[1],x[2]] 
 
  
     contador=0 # contador de lines de archivo
@@ -53,9 +63,9 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                     #print (linea_parseada)
                     cod_telelink = linea_parseada[0][:10]                       # codigo TLK
                     nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
-                    tipo_equipo = f_diccionario_equ_tlk(linea_parseada[1])           # cambio el 70 por c300    
+                    tipo_equipo = dic_nodo[linea_parseada[1][0:2]][0]
                     nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
-                    nombre_gestion= f_nombre_gestion(cod_telelink,int(nro_nodo),tipo_equipo)
+                    nombre_gestion= dic_gestion[cod_telelink][0]+"-"+nro_nodo
                     slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 
                     puerto = linea_parseada[1][7:9]                             #estraigo del numero equipo el nuermo de puerto    
                     ont =   linea_parseada[1][9:12]                             #estraigo del numero equipo el nuermo de ont
@@ -97,7 +107,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
     #----------------------------------------------------
                 contador = contador+1
     #descomentar para procesar 30 lineas
-                #if contador == 5:
+                #if contador == 30:
                 #   break
     #------------------------------------------------------
     logger.info(f'función f_parsear_inventario ejecutada {archivo_destino} con {contador} lineas')
@@ -107,6 +117,6 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 
     os.rename(archivo_origen, archivo_old)
     logger.info( f'Se terminó el parseo del arhivo: {archivo_origen}')
-    logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old}')
+    logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old} \n')
 
 #---fin f_parsear_inventario---# 

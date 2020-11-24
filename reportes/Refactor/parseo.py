@@ -1,13 +1,11 @@
 import os
 import csv
-import logging
+import logger
 
 from datetime import datetime
 from conector import conector
 
-# Se eliminan los handlers anteriores
-if logging.getLogger('').hasHandlers():
-    logging.getLogger('').handlers.clear()
+
 
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
 def FileCheck(fn):
@@ -18,7 +16,7 @@ def FileCheck(fn):
         open(fn, "r")
         return 1
     except IOError:
-        logging.error (f"Error 23: Archivo no Existe. {fn}")
+        logger.error (f"Error 23: Archivo no Existe. {fn}")
         return 0
 #fin FileCheck(fn)
 
@@ -35,8 +33,9 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
     #-- Cargo diccionarios para trabajar con nombres ----
     # debo cargar diccionario de TLK-NOMBRE GESTION
     
-    sql
-    conector()
+
+
+    
 
     # debo cargar equivelente - (TIPO NODO)<-->
 
@@ -101,13 +100,13 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                 #if contador == 5:
                 #   break
     #------------------------------------------------------
-    logging.info(f'función f_parsear_inventario ejecutada {archivo_destino} con {contador} lineas')
+    logger.info(f'función f_parsear_inventario ejecutada {archivo_destino} con {contador} lineas')
     if FileCheck(archivo_old):
         os.remove(archivo_old)
 
 
     os.rename(archivo_origen, archivo_old)
-    logging.info( f'Se terminó el parseo del arhivo: {archivo_origen}')
-    logging.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old}')
+    logger.info( f'Se terminó el parseo del arhivo: {archivo_origen}')
+    logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old}')
 
 #---fin f_parsear_inventario---# 

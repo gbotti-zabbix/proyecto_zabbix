@@ -42,7 +42,7 @@ file_log= "reportes.log"
 #=======  Archivos inventarios y procesados=========#
 
 # -directorio origen y destino de archivos
-path_files="C:\\Users\\e066446\\Documents\\GitHub\\proyecto_zabbix\\"  #directorio trabajo
+path_files= "C:/Users/e066446/Documents/GitHub/proyecto_zabbix/"  #directorio trabajo
 
 file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
 file_tlk_dst="PLN245_pareseado.csv"              #nombre archivo destino

@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-import direcciones
-
-=======
 from direcciones import file_log
->>>>>>> 8fdc4c050faada466dcb02c21a7494b29fa8fca3
 from datetime import datetime, date, timedelta
 
 def error(mensaje):

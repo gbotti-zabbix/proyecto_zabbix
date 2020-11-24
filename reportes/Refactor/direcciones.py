@@ -37,7 +37,7 @@ database_DB="reportes_zabbix"
 #========DESARROLLO===========#
 
 #---   LOGS  --------------
-file_log= "C:\\Users\\e066446\\Documents\\GitHub\\proyecto_zabbix\\reportes.log"
+file_log= "reportes.log"
 
 #=======  Archivos inventarios y procesados=========#
 

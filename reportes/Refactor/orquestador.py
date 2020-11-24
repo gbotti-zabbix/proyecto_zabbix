@@ -1,4 +1,6 @@
 from direcciones import path_files, file_tlk, crudozabbix
+import logger
+from pusheo import f_cargar_inv_en_BD
 
 
 def checkFileExistance(filePath):
@@ -24,20 +26,15 @@ def orquestador ():
     while True:
         # existe archivo TLK #
         if checkFileExistance(path_files+file_tlk):
-            print("Se parseo archivo de TLK")
-            print("Se pushea archivo TLK")
-            print("Se ejecutan funciones sql")
-            # logging.info("==============================================================================================")
-            # logging.info(f"|                             SE INICIALIZO PROCESO                                          |")
-            # logging.info("==============================================================================================\n\n")
-            # logging.info( f' Se Encontró un nuevo archivo : {archivo1}')
-            # #paresear archivo archivo proc_reporte_gpon.py
-            # f_parsear_inventario(archivo1,archivo2,archivo1_old)
-            # #Cargar BD carga_y_proceso_datos_tlk.py
-            # f_cargar_inv_en_BD(archivo2)
-            # logging.info("==============================================================================================")
-            # logging.info(f"|                             SE FINALZÓ PROCESO                                              |")
-            # logging.info("==============================================================================================\n\n")
+            #-----llamo a parser inventario tlk----#
+            logger.info(f'Arvhivo inventario TLK encontrado: {filePath}')
+            f_parsear_inventario (path_files+file_tlk,path_files+file_tlk_dst,path_files+file_tlk_old)
+
+            #----Cargo inventario tlk parseado a la BD---#
+            f_cargar_inv_en_BD(path_files+file_tlk_dst)
+
+            #--- Proceso BD inventario tlk-----#
+            
 
         # existe archivo Zabbix #
         elif checkFileExistance(crudozabbix):

@@ -20,6 +20,6 @@ def conector(sql,tipo,mensaje,*args):
         cursor.execute(sql)
     mydb.commit()
     logger.info (f' Succuessfully loaded: {cursor.rowcount} affected rows ')
-    print(cursor.rowcount)
+    #print(cursor.rowcount)
     cursor.close()
     mydb.close()

@@ -120,3 +120,50 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
     logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old} \n')
 
 #---fin f_parsear_inventario---# 
+
+
+
+def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
+    """Función que recibe el archivo de Radbio Bases y luego lo parsea,
+       Recibe el nombre arhivo origen a paresar, el nombre archivo destino
+        parseado y como renombrar el archivo original
+    """
+
+    contador=0 # contador de lines de archivo
+    with open(archivo_origen,'r') as archivo:
+        with open(archivo_destino,"w", newline="") as archivo2:
+            wr = csv.writer(archivo2, quoting=csv.QUOTE_ALL)
+            archivo = archivo.read().splitlines()
+            contador_salto=1 #contador solo para saltar primera línea
+            for linea in archivo:
+                if contador_salto > 1:
+                    linea_parseada = linea.split (";")                          #divido linea a linea por punto y coma
+                    #print (linea_parseada)
+                    #----creación campos para la BD---------
+                    servicio = linea_parseada[0]
+                    nro_equipo= linea_parseada[4]
+                    slot = linea_parseada[4][5:7]                               #estraigo del numero equipo el nuermo de slot 
+                    puerto = linea_parseada[4][7:9]                             #estraigo del numero equipo el nuermo de puerto    
+                    ont =   linea_parseada[4][9:12]                             #estraigo del numero equipo el nuermo de ontslot =
+                    estado_ont= linea_parseada[5]
+                    fecha_inicio_estado = linea_parseada[6]
+                    dias_desde_ultimo_estado = linea_parseada[7]
+                    etiqueta = linea_parseada[9]
+                    nodo = linea_parseada[11]
+                    nodo_slot_puerto_ont = linea_parseada[11]+"-"+slot+"/"+puerto+"/"+ont
+                    linea_nueva=[nodo_slot_puerto_ont,servicio,nro_equipo,estado_ont, fecha_inicio_estado,dias_desde_ultimo_estado,etiqueta,nodo, slot, puerto, ont ]
+                    #print (linea_nueva)
+                    wr.writerow(linea_nueva)
+                contador_salto = contador_salto + 1 #solo elimina la primera linea
+    #----------------------------------------------------
+                contador = contador+1
+    #descomentar para procesar 30 lineas
+                #if contador == 2:
+                #   break
+    if FileCheck(archivo_old):
+        os.remove(archivo_old)
+    os.rename(archivo_origen, archivo_old)
+    logger.info( f'Se terminó el parseo del arhivo: {archivo_origen}')
+    logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old} \n')
+
+

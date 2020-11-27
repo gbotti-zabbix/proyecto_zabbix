@@ -47,6 +47,19 @@ def orquestador ():
             logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
         #if fin existe archivo TLK #
 
+        # existe archivo RBS DSC #
+        if checkFileExistance(path_files+file_rbs_DCS):
+            #-----llamo a parser inventario RBS----#
+            logger.info(f'Arvhivo inventario RBS encontrado: {path_files+file_rbs_DCS}')
+            logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
+            f_parseo_inventario_RBS (path_files+file_file_rbs_DCStlk,path_files+file_rbs_DCS_dst,path_files+file_rbs_DCS_old)
+
+            #----Cargo inventario RBS parseado a la BD---#
+            #f_cargar_inv_en_BD(path_files+file_rbs_DCSk_dst)
+
+            #--- Proceso BD inventario tlk-----#
+            logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
+        #if fin existe archivo TLK #        
         # existe archivo Zabbix #
         elif checkFileExistance(crudozabbix):
             print("Se parseo archivo de TLK")
@@ -60,5 +73,7 @@ def orquestador ():
                 print("Se saca el reporte mensual")
 
         time.sleep(30)
+
+#-----main----#
 
 orquestador()

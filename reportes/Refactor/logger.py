@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from direcciones import file_log
 from datetime import datetime, date, timedelta
 

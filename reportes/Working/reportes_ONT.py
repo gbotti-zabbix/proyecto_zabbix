@@ -26,7 +26,6 @@ def regex_puerto(nombre):
 
 
 def regex_etiqueta(nombre):
-    pass
     Etiqueta = ""
     match_etiqueta = re.search("(?<=([0-9]) : ).*",nombre)
     if match_etiqueta:

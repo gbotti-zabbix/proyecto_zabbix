@@ -58,6 +58,14 @@ archivo_pickle_PON = ""
 #=======  Reporte Zabbix=========#
 encabezados_PON = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios","Total ONT","Servicios Datos","Servicios Empresariales","Empresariales de RBS"]
 encabezados_ONT = ["Modelo Nodo","Nodo","Slot/Puerto/ONT","Etiqueta","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios"]
+hojas_PON = ["Subida PON","Bajada PON","Subida Uplink","Bajada Uplink"]
+hojas_ONT = ["Subida ONT","Bajada ONT"]
+
+excel_PON_semanal = "Reporte PON Semanal.xlsx"
+excel_PON_mensual = "Reporte PON Mensual.xlsx"
+excel_ONT_semanal = "Reporte ONT Semanal.xlsx"
+excel_ONT_mensual = "Reporte ONT Mensual.xlsx"
+
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

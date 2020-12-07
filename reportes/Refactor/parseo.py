@@ -319,5 +319,3 @@ def parseo_pon(crudozabbix,archivo_pickle):
 
     #Logeo Ingresos
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
-
-

@@ -50,6 +50,8 @@ file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro arch
 
 #=======  Inventarios Zabbix=========#
 crudozabbix = "test.txt"
+archivo_pickle_ONT = ""
+archivo_pickle_PON = ""
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

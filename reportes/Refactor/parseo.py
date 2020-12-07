@@ -221,9 +221,9 @@ def parseo_ont(crudozabbix,archivo_pickle):
     contador_error = 0
     lista_tuplas = []
 
-    with open(crudozabbix,"r") as crudozabbix:
-        crudozabbix = crudozabbix.read().splitlines()
-        for linea in crudozabbix:
+    with open(crudozabbix,"r") as crudo:
+        crudo = crudo.read().splitlines()
+        for linea in crudo:
             #cada linea se pasa de json a dicc
             linea = json.loads(linea)
             if "ONT" in linea["applications"] and "Radio Base" in linea["name"]:
@@ -319,3 +319,5 @@ def parseo_pon(crudozabbix,archivo_pickle):
 
     #Logeo Ingresos
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
+
+

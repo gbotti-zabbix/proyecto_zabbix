@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from conector import conector
 import logger
 import direcciones

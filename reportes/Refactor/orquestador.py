@@ -62,8 +62,9 @@ def orquestador ():
         #if fin existe archivo TLK #        
         # existe archivo Zabbix #
         elif checkFileExistance(crudozabbix):
-            print("Se parseo archivo de TLK")
-            print("Se pushea archivo TLK")
+            print("Se parseo archivo de Zabbix PON y ONT")
+            print("Se borran crudos archivo de Zabbix")
+            print("Se pushea pickles de ONT y PON")
             print("Se ejecutan funciones sql diarias")
             if checklunes() == 1:
                 print("Se ejecutan funcione sql semanal")

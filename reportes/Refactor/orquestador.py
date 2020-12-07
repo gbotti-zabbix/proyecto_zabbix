@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from direcciones import path_files, file_tlk, crudozabbix
 import logger
 from datetime import datetime

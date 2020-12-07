@@ -193,12 +193,23 @@ def regex_puerto(nombre):
 
 #Regex para armado de etiqueta en ONT
 def regex_etiqueta(nombre):
-    pass
     Etiqueta = ""
     match_etiqueta = re.search("(?<=([0-9]) : ).*",nombre)
     if match_etiqueta:
         Etiqueta = match_etiqueta.group()[:-5]
     return Etiqueta
+
+
+#Regex para formatear direccion
+def sacar_direccion(nombre):
+    Direccion =  ""
+    match_tx = re.search("Bits sent",nombre)
+    match_rx = re.search("Bits received",nombre)
+    if match_tx:
+        Direccion = "TX"
+    elif match_rx:
+        Direccion = "RX"
+    return Direccion
 
 
 #Parseo de ONT
@@ -248,3 +259,63 @@ def parseo_ont(crudozabbix,archivo_pickle):
     #Logeo Ingresos
     logger.info("Datos de ONTs Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
 
+
+#Parseo de Puertos PON
+def parseo_pon(crudozabbix,archivo_pickle):
+
+    logger.info("Comienza el Parseo de Puetos PON")
+    contador_carga = 0
+    contador_error = 0
+    lista_tuplas = []
+
+
+    #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
+    with open(crudozabbix,"r") as crudo:
+        #archivo parseado
+            crudo = crudo.read().splitlines()
+            #
+
+            for linea in crudo:
+
+                #cada linea se pasa de json a dicc
+                linea = json.loads(linea)
+                #
+
+                #con este if filtro los que no son C300 o MA5800
+                if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]):
+
+                    Tipo = sacar_grupo(linea["groups"])
+                    Nodo = linea["host"]
+                    Nombre = linea["name"]
+                    Puerto = regex_puerto(Nombre)
+                    Direccion = sacar_direccion(Nombre)
+
+                    #Fecha y hora salen a partir de procesar tiempo
+                    Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
+                    #
+                    
+                    #Paso los bits a mega para picos y avg
+                    Promedio = float(linea["avg"])/1024/1024
+                    Pico = float(linea['max'])/1024/1024
+                    id_zabbix = str(Nodo + "_" + Puerto + "_" + Direccion)
+                    id_tlk = str(Nodo + "_" + Puerto)
+                    #
+                    #termine de extraer datos
+
+                    #creo lista de tuplas para picklear y ademas filtro
+                    if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000):
+                        tupla = (id_zabbix, id_tlk, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
+                        lista_tuplas.append(tupla)
+                        contador_carga = contador_carga + 1
+                    else:
+                        contador_error = contador_error + 1
+                        pass
+                else:
+                    contador_error = contador_error + 1
+    
+    #Dump en Pickle
+    with open(archivo_pickle,"wb") as archivo_pickle:
+        pickle.dump(lista_tuplas,archivo_pickle)
+
+    #Logeo Ingresos
+    logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))

@@ -1,10 +1,13 @@
 import os
 import csv
 import logger
+import pickle
+import json
+import re
+import sys
 
-from datetime import datetime
+from datetime import datetime, date
 from conector import conector
-
 
 
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
@@ -19,7 +22,6 @@ def FileCheck(fn):
         logger.error (f"Error 23: Archivo no Existe: {fn}")
         return 0
 #fin FileCheck(fn)
-
 
 
 #>>>>>>funcion parsear inventario telelink<<<<<<<<<<<<<<<#
@@ -122,7 +124,6 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 #---fin f_parsear_inventario---# 
 
 
-
 def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
     """Función que recibe el archivo de Radbio Bases y luego lo parsea,
        Recibe el nombre arhivo origen a paresar, el nombre archivo destino
@@ -166,4 +167,84 @@ def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
     logger.info( f'Se terminó el parseo del arhivo: {archivo_origen}')
     logger.info(f'Se renombro el arhivo {archivo_origen} en el arhivo {archivo_old} \n')
 
+
+''' Parseo de Inventario Zabbix'''
+
+#Extraigo grupo de nodos
+def sacar_grupo(grupos):
+    tipo = ""
+    if "C300"  in grupos:
+        Tipo = "C300"
+    elif "MA5800" in grupos:
+        Tipo = "MA5800"
+    elif "ISAM-FX" in grupos:
+        Tipo = "ISAM-FX"
+    return Tipo
+
+
+#Regex para extraer nodo/slot/puerto a partir del nombre de la interfaz
+def regex_puerto(nombre):
+    Puerto = ""
+    match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    if match_puerto:
+        Puerto = match_puerto.group()
+    return Puerto
+
+
+#Regex para armado de etiqueta en ONT
+def regex_etiqueta(nombre):
+    pass
+    Etiqueta = ""
+    match_etiqueta = re.search("(?<=([0-9]) : ).*",nombre)
+    if match_etiqueta:
+        Etiqueta = match_etiqueta.group()[:-5]
+    return Etiqueta
+
+
+#Parseo de ONT
+def parseo_ont(crudozabbix,archivo_pickle):
+
+    logger.info("Comienza el Parseo de ONTS")
+    #Variables de contadores y escritura del pickle
+    contador_carga = 0
+    contador_error = 0
+    lista_tuplas = []
+
+    with open(crudozabbix,"r") as crudozabbix:
+        crudozabbix = crudozabbix.read().splitlines()
+        for linea in crudozabbix:
+            #cada linea se pasa de json a dicc
+            linea = json.loads(linea)
+            if "ONT" in linea["applications"] and "Radio Base" in linea["name"]:
+                Tipo = sacar_grupo(linea["groups"])
+                Nodo = linea["host"]
+                Nombre = linea["name"]
+                Puerto = regex_puerto(Nombre)
+                Direccion = Nombre[-2:]
+                Etiqueta = regex_etiqueta(Nombre)
+
+                #Fecha y hora salen a partir de procesar tiempo
+                Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
+                #
+
+                #Paso los bits a mega para picos y avg
+                Promedio = float(linea["avg"])/1024/1024
+                Pico = float(linea['max'])/1024/1024
+                #
+                if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250):
+                    tupla = (Tipo, Nodo,Puerto,Direccion, Etiqueta, Tiempo[1],Tiempo[0],Promedio,Pico)
+                    lista_tuplas.append(tupla)
+                    contador_carga = contador_carga + 1
+                else:
+                    contador_error = contador_error + 1
+                    pass
+            else:
+                contador_error = contador_error + 1
+
+    #dump en pickle
+    with open(archivo_pickle,"wb") as archivo_pickle:
+        pickle.dump(lista_tuplas,archivo_pickle)
+    
+    #Logeo Ingresos
+    logger.info("Datos de ONTs Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
 

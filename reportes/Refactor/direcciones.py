@@ -56,12 +56,6 @@ archivo_pickle_ONT = ""
 archivo_pickle_PON = ""
 
 #=======  Reporte Zabbix=========#
-encabezados_PON = ["Modelo Nodo","Nodo","Slot/Puerto","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios","Total ONT","Servicios Datos","Servicios Empresariales","Empresariales de RBS"]
-encabezados_ONT = ["Modelo Nodo","Nodo","Slot/Puerto/ONT","Etiqueta","Hora Pico","Fecha Pico","Pico","% Utilizacion","Prom. Hora Pico","Prom. Picos Diarios"]
-
-hojas_PON = ["Subida PON","Bajada PON","Subida Uplink","Bajada Uplink"]
-hojas_ONT = ["Subida ONT","Bajada ONT"]
-
 excel_PON_semanal = "Reporte PON Semanal.xlsx"
 excel_PON_mensual = "Reporte PON Mensual.xlsx"
 excel_ONT_semanal = "Reporte ONT Semanal.xlsx"
@@ -76,8 +70,8 @@ encabezados_PON_PON = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto","D1":"H
 encabezados_PON_uplink = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto","D1":"Hora Pico","E1":"Fecha Pico","F1":"Pico","G1":"% Utilizacion","H1":"Prom. Hora Pico","I1":"Prom. Picos Diarios"}
 encabezados_ONT = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto/ONT","D1":"Etiqueta","E1":"Hora Pico","F1":"Fecha Pico","G1":"Pico","H1":"% Utilizacion","I1":"Prom. Hora Pico","J1":"Prom. Picos Diarios"}
 
-hojas_pon = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink)]
-hojas_ont = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT)]
+hojas_PON = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink)]
+hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT)]
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

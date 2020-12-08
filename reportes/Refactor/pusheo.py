@@ -22,6 +22,7 @@ def f_cargar_inv_en_BD (archivo_csv):
     comentario_sql = "Cargar reporte telelink CSV paresado"
     conector(sql_cargar_PLN,"otro",comentario_sql)
 
+
 def f_procesar_resumne_tlk_BD():
     #-------- Borro todas las tablas-----#
     sql_borrar_t_id_nodo_slot_puerto = 'TRUNCATE t_id_nodo_slot_puerto;'
@@ -87,3 +88,66 @@ def f_procesar_resumne_tlk_BD():
     logger.info('Se termino de cargar BD ')
 
     ######### Fin Carga Tablas  y servicios por puerto ##############
+
+
+#Pusheo zabbix
+
+def pusheo_crudos_diarios_PON(fecha):
+
+    #variables que uso mas adelante y consulta sql
+    print(datetime.now())
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + ".pickle"
+    contador_insert = 0
+    lista_final = []
+    contador_final = []
+    sql = "INSERT INTO `crudos_diarios` (`id_zabbix`,`id_tlk`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    #
+
+    with open (archivo_pickle, 'rb') as lista:
+        #carga de lista
+        lista_tuplas = pickle.load(lista)
+        #
+
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
+    mycursor = mydb.cursor()
+
+    for dato in lista_tuplas:
+        lista_final.append(dato)
+        contador_insert = contador_insert + 1
+        if contador_insert == 100000:
+            mycursor.executemany(sql, lista_final)
+            mydb.commit()
+            contador_final.append(mycursor.rowcount)
+            contador_insert = 0
+            lista_final.clear()
+
+    mycursor.executemany(sql, lista_final)
+    mydb.commit()
+    contador_final.append(mycursor.rowcount)
+    print("Total Ingresado",sum(contador_final))
+    print(datetime.now())
+
+
+def pusheo_crudos_diarios_ONT(fecha):
+
+    print(datetime.now())
+
+    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + "_ONT.pickle"
+    sql = "INSERT INTO `crudos_diarios_ont` (`tipo`,`nodo`, `puerto`, `direccion`, `etiqueta`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    
+    #carga el pickle
+    with open (archivo_pickle, 'rb') as lista:
+        lista_tuplas = pickle.load(lista)
+    #
+    
+    #coneccion con la BD
+    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
+    mycursor = mydb.cursor()
+    #
+
+    #pusheo a BD
+    mycursor.executemany(sql, lista_tuplas)
+    mydb.commit()
+    contador_ingresos = mycursor.rowcount
+    print("Total Ingresado",contador_ingresos)
+    print(datetime.now())

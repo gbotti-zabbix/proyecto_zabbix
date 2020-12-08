@@ -108,6 +108,3 @@ def reportes_xlsx(tipo,periodo):
                 workbook.save(filename=excel_PON_semanal)
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
-
-reportes_xlsx("PON","mes")
-reportes_xlsx("PON","semana")

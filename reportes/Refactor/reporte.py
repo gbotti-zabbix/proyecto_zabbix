@@ -11,7 +11,6 @@ from direcciones import encabezados_PON, encabezados_ONT, hojas_PON, hojas_ONT, 
 from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon_mensual
 from conector import conector
 
-
 def crear_hojas_ONT(workbook):
 
     # Creo Hojas
@@ -30,7 +29,7 @@ def crear_hojas_PON(workbook):
     bajada_uplink = workbook.create_sheet(hojas_PON[3])
 
 
-def crear_encabezados_ONT(workbook,subida_ont,bajada_ont):
+def crear_encabezados_ONT(subida_ont,bajada_ont):
     #ENCABEZADOS
     # Subida Ont
     subida_ont["A1"] = encabezados_ONT[0]
@@ -56,10 +55,8 @@ def crear_encabezados_ONT(workbook,subida_ont,bajada_ont):
     bajada_ont["I1"] = encabezados_ONT[8]
     bajada_ont["J1"] = encabezados_ONT[9]
 
-    return workbook
 
-
-def crear_encabezados_PON(workbook,subida_pon,bajada_pon,subida_uplink,bajada_uplink):
+def crear_encabezados_PON(subida_pon,bajada_pon,subida_uplink,bajada_uplink):
     #ENCABEZADOS
     # Subida Pon
     subida_pon["A1"] = encabezados_PON[0]
@@ -111,11 +108,9 @@ def crear_encabezados_PON(workbook,subida_pon,bajada_pon,subida_uplink,bajada_up
     bajada_uplink["G1"] = encabezados_PON[6]
     bajada_uplink["H1"] = encabezados_PON[7]
     bajada_uplink["I1"] = encabezados_PON[8]
-    
-    return workbook
 
 
-def apend_data_ONT(workbook,subida_ont,bajada_ont,periodo):
+def apend_data_ONT(subida_ont,bajada_ont,periodo):
     if periodo == "semana":
         resultado = conector(sql_ont_semanal,"select","Select del reporte semanal de ONT")
     elif periodo == "mes":
@@ -137,10 +132,9 @@ def apend_data_ONT(workbook,subida_ont,bajada_ont,periodo):
         elif direccion == "TX":
             lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
             bajada_ont.append(lista_append)
-    return workbook
 
 
-def apend_data_PON(workbook,subida_pon,bajada_pon,subida_uplink,bajada_uplink,periodo):
+def apend_data_PON(subida_pon,bajada_pon,subida_uplink,bajada_uplink,periodo):
     if periodo == "semana":
         resultado = conector(sql_pon_semanal,"select","Select del reporte semanal de PON")
     elif periodo == "mes":
@@ -171,44 +165,39 @@ def apend_data_PON(workbook,subida_pon,bajada_pon,subida_uplink,bajada_uplink,pe
         elif direccion == "RX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,wf,datos,emp,rbs]
             subida_pon.append(lista_append)
-    return workbook
 
 
 def reportes_xlsx(tipo,periodo):
+    workbook = Workbook()
     if tipo == "ONT" and periodo == "semana":
         logger.info("Comenzo a crearse el reporte semanal de ONT")
-        workbook = Workbook()
         crear_hojas_ONT(workbook)
-        crear_encabezados_ONT(workbook,workbook[hojas_ONT[0]],workbook[hojas_ONT[1]])
-        apend_data_ONT(workbook,workbook[hojas_ONT[0]],workbook[hojas_ONT[1]],periodo)
+        crear_encabezados_ONT(workbook[hojas_ONT[0]],workbook[hojas_ONT[1]])
+        apend_data_ONT(workbook[hojas_ONT[0]],workbook[hojas_ONT[1]],periodo)
         workbook.save(filename=excel_ONT_semanal)
         logger.info("Se culmino la creacion del reporte semanal de ONT")
 
     elif tipo == "ONT" and periodo == "mes":
         logger.info("Comenzo a crearse el reporte mensual de ONT")
-        workbook = Workbook()
         crear_hojas_ONT(workbook)
-        crear_encabezados_ONT(workbook,workbook[hojas_ONT[0]],workbook[hojas_ONT[1]])
-        apend_data_ONT(workbook,workbook[hojas_ONT[0]],workbook[hojas_ONT[1]],periodo)
+        crear_encabezados_ONT(workbook[hojas_ONT[0]],workbook[hojas_ONT[1]])
+        apend_data_ONT(workbook[hojas_ONT[0]],workbook[hojas_ONT[1]],periodo)
         workbook.save(filename=excel_ONT_mensual)
         logger.info("Se culmino la creacion del reporte mensual de ONT")
 
     elif  tipo == "PON" and periodo == "semana":
         logger.info("Comenzo a crearse el reporte semanal de PON")
-        workbook = Workbook()
         crear_hojas_PON(workbook)
-        crear_encabezados_PON(workbook,workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]])
-        apend_data_PON(workbook,workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]],periodo)
+        crear_encabezados_PON(workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]])
+        apend_data_PON(workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]],periodo)
         workbook.save(filename=excel_PON_semanal)
         logger.info("Se culmino la creacion del reporte semanal de PON")
 
     elif tipo == "PON" and periodo == "mes":
         logger.info("Comenzo a crearse el reporte mensual de PON")
-        workbook = Workbook()
         crear_hojas_PON(workbook)
-        crear_encabezados_PON(workbook,workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]])
-        apend_data_PON(workbook,workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]],periodo)
+        crear_encabezados_PON(workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]])
+        apend_data_PON(workbook[hojas_PON[0]],workbook[hojas_PON[1]],workbook[hojas_PON[2]],workbook[hojas_PON[3]],periodo)
         workbook.save(filename=excel_PON_mensual)
         logger.info("Se culmino la creacion del reporte mensual de PON")
-
 

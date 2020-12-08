@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 import sys
 import logger
 
-from direcciones import encabezados_PON, encabezados_ONT, hojas_PON, hojas_ONT, excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual
+from direcciones import encabezados_PON, encabezados_ONT, hojas_PON, hojas_ONT, excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual, hojas_pon, hojas_ont
 from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon_mensual
 from conector import conector
 
@@ -201,3 +201,34 @@ def reportes_xlsx(tipo,periodo):
         workbook.save(filename=excel_PON_mensual)
         logger.info("Se culmino la creacion del reporte mensual de PON")
 
+
+#Codigo 0KM cheti cheti
+
+def crear_hojas(workbook,titulos):
+    contador = 0
+    for titulo in titulos:
+        if contador == 0:
+            workbook["Sheet"].title = titulo.nombreHoja
+            contador = contador + 1 
+        else:
+            workbook.create_sheet(titulo.nombreHoja)
+    return workbook
+
+
+def crear_encabezados(workbook,hojas):
+    for hoja in hojas:
+        for key in hoja.encabezados:
+            workbook[hoja.nombreHoja][key] = hoja.encabezados[key]
+
+
+
+
+
+def test():
+    workbook = Workbook()
+    crear_hojas(workbook,hojas_pon)
+    crear_encabezados(workbook,hojas_pon)
+    workbook.save(filename=excel_PON_semanal)
+
+
+test()

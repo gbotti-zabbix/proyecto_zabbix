@@ -67,6 +67,18 @@ excel_PON_mensual = "Reporte PON Mensual.xlsx"
 excel_ONT_semanal = "Reporte ONT Semanal.xlsx"
 excel_ONT_mensual = "Reporte ONT Mensual.xlsx"
 
+class DefiniciónEncabezados:
+    def __init__(self, nombreHoja, encabezados):
+        self.nombreHoja = nombreHoja
+        self.encabezados = encabezados
+
+encabezados_PON_PON = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto","D1":"Hora Pico","E1":"Fecha Pico","F1":"Pico","G1":"% Utilizacion","H1":"Prom. Hora Pico","I1":"Prom. Picos Diarios","J1":"Total ONT","K1":"Servicios Datos","L1":"Servicios Empresariales","M1":"Empresariales de RBS"}
+encabezados_PON_uplink = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto","D1":"Hora Pico","E1":"Fecha Pico","F1":"Pico","G1":"% Utilizacion","H1":"Prom. Hora Pico","I1":"Prom. Picos Diarios"}
+encabezados_ONT = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto/ONT","D1":"Etiqueta","E1":"Hora Pico","F1":"Fecha Pico","G1":"Pico","H1":"% Utilizacion","I1":"Prom. Hora Pico","J1":"Prom. Picos Diarios"}
+
+hojas_pon = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink)]
+hojas_ont = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT)]
+
 #=========dato base datos========================#
 #-variables para conexión a la base de datos
 host_DB="192.168.211.4"

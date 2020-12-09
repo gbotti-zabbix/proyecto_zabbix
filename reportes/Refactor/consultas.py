@@ -8,9 +8,7 @@ sql_push_diarios_PON = "INSERT INTO `crudos_diarios` (`id_zabbix`,`id_tlk`,`tipo
 
 
 #####flujo DB#####
-
-#truncates
-
+###Consultas###
 ##consultas diarias##
 #PON
 sql_insert_picos_diarios_semanal_pon = "insert into picos_diarios_semanal (id_zabbix, id_tlk, tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.id_zabbix, t1.id_tlk, t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.pico desc) as rn from crudos_diarios t2) t1 where t1.rn =1;"
@@ -43,6 +41,38 @@ sql_insert_picos_mensual_ont = "insert into picos_mensual_ont (tipo, nodo, puert
 sql_insert_reporte_mensual_ont = "insert into reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select pico.tipo, pico.nodo,pico.puerto,pico.etiqueta,pico.direccion,pico.hora,pico.fecha,pico.promedio,pico.pico, promedio.promedio_mes FROM promedio_mensual_ont promedio, picos_mensual_ont pico WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;"
 sql_insert_respaldo_mensual_ont = "insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual_ont;"
 
+###Truncates###
+##Truncates diarios##
+#PON
+sql_truncate_picos_diarios_semanal_pon = 'TRUNCATE picos_diarios_semanal;'
+sql_truncate_picos_diarios_mensual_pon = 'TRUNCATE picos_diarios_mensual;'
+#ONT
+sql_truncate_picos_diarios_semanal_ont = 'TRUNCATE picos_diarios_semanal_ont;'
+sql_truncate_picos_diarios_mensual_ont = 'TRUNCATE picos_diarios_mensual_ont;'
+
+##Truncates semanales##
+#PON
+sql_truncate_promedio_semanal_pon = 'TRUNCATE promedio_semanal;'
+sql_truncate_picos_semanal_pon = 'TRUNCATE picos_semanal;'
+sql_truncate_reporte_semanal_pon = 'TRUNCATE reporte_semanal;'
+sql_truncate_respaldo_semanal_pon = 'TRUNCATE respaldo_reporte_semanal;'
+#ONT
+sql_truncate_promedio_semanal_ont = 'TRUNCATE promedio_semanal_ont;'
+sql_truncate_picos_semanal_ont = 'TRUNCATE picos_semanal_ont;'
+sql_truncate_reporte_semanal_ont = 'TRUNCATE reporte_semanal_ont;'
+sql_truncate_respaldo_semanal_ont = 'TRUNCATE respaldo_reporte_semanal_ont;'
+
+##Truncates mensuales##
+#PON
+sql_truncate_promedio_mensual_pon = 'TRUNCATE promedio_mensual;'
+sql_truncate_picos_mensual_pon = 'TRUNCATE picos_mensual;'
+sql_truncate_reporte_mensual_pon = 'TRUNCATE reporte_mensual;'
+sql_truncate_respaldo_mensual_pon = 'TRUNCATE respaldo_reporte_mensual;'
+#ONT
+sql_truncate_promedio_mensual_ont = 'TRUNCATE promedio_mensual_ont;'
+sql_truncate_picos_mensual_ont = 'TRUNCATE picos_mensual_ont;'
+sql_truncate_reporte_mensual_ont = 'TRUNCATE reporte_mensual_ont;'
+sql_truncate_respaldo_mensual_ont = 'TRUNCATE respaldo_reporte_mensual_ont;'
 
 #####Reporte Zabbix#####
 sql_ont_semanal = "SELECT * FROM reporte_semanal_ont order by pico DESC"

@@ -8,7 +8,7 @@ import direcciones
 # Se le pasa query, tipo de query, mensaje para log, y lista si es tipo many
 def conector(sql,tipo,mensaje,*args):
     mydb = mysql.connector.connect(host=direcciones.host_DB,user=direcciones.user_DB,password=direcciones.password_DB,database=direcciones.database_DB)
-    logger.info( f' Ejecutando: {tipo}')
+    logger.info( f' Ejecutando: {tipo}. Mensaje: {mensaje}')
     cursor = mydb.cursor()
     if tipo == "many":
         cursor.executemany(sql, args[0])

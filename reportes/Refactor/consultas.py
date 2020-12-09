@@ -42,21 +42,15 @@ sql_insert_reporte_mensual_ont = "insert into reporte_mensual_ont(tipo,nodo,puer
 sql_insert_respaldo_mensual_ont = "insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,pico,promediomes FROM reporte_mensual_ont;"
 
 ###Truncates###
-##Truncates diarios##
-#PON
-sql_truncate_picos_diarios_semanal_pon = 'TRUNCATE picos_diarios_semanal;'
-sql_truncate_picos_diarios_mensual_pon = 'TRUNCATE picos_diarios_mensual;'
-#ONT
-sql_truncate_picos_diarios_semanal_ont = 'TRUNCATE picos_diarios_semanal_ont;'
-sql_truncate_picos_diarios_mensual_ont = 'TRUNCATE picos_diarios_mensual_ont;'
-
 ##Truncates semanales##
 #PON
+sql_truncate_picos_diarios_semanal_pon = 'TRUNCATE picos_diarios_semanal;'
 sql_truncate_promedio_semanal_pon = 'TRUNCATE promedio_semanal;'
 sql_truncate_picos_semanal_pon = 'TRUNCATE picos_semanal;'
 sql_truncate_reporte_semanal_pon = 'TRUNCATE reporte_semanal;'
 sql_truncate_respaldo_semanal_pon = 'TRUNCATE respaldo_reporte_semanal;'
 #ONT
+sql_truncate_picos_diarios_semanal_ont = 'TRUNCATE picos_diarios_semanal_ont;'
 sql_truncate_promedio_semanal_ont = 'TRUNCATE promedio_semanal_ont;'
 sql_truncate_picos_semanal_ont = 'TRUNCATE picos_semanal_ont;'
 sql_truncate_reporte_semanal_ont = 'TRUNCATE reporte_semanal_ont;'
@@ -64,11 +58,13 @@ sql_truncate_respaldo_semanal_ont = 'TRUNCATE respaldo_reporte_semanal_ont;'
 
 ##Truncates mensuales##
 #PON
+sql_truncate_picos_diarios_mensual_pon = 'TRUNCATE picos_diarios_mensual;'
 sql_truncate_promedio_mensual_pon = 'TRUNCATE promedio_mensual;'
 sql_truncate_picos_mensual_pon = 'TRUNCATE picos_mensual;'
 sql_truncate_reporte_mensual_pon = 'TRUNCATE reporte_mensual;'
 sql_truncate_respaldo_mensual_pon = 'TRUNCATE respaldo_reporte_mensual;'
 #ONT
+sql_truncate_picos_diarios_mensual_ont = 'TRUNCATE picos_diarios_mensual_ont;'
 sql_truncate_promedio_mensual_ont = 'TRUNCATE promedio_mensual_ont;'
 sql_truncate_picos_mensual_ont = 'TRUNCATE picos_mensual_ont;'
 sql_truncate_reporte_mensual_ont = 'TRUNCATE reporte_mensual_ont;'

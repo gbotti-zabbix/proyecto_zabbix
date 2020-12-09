@@ -3,6 +3,8 @@
 from conector import conector
 import logger
 import direcciones
+import pickle
+from consultas import sql_push_diarios_ONT, sql_push_diarios_PON, sql_truncate_cdiarios_PON, sql_truncate_cdiarios_ONT
 
 
 def f_cargar_inv_en_BD (archivo_csv):
@@ -92,62 +94,49 @@ def f_procesar_resumne_tlk_BD():
 
 #Pusheo zabbix
 
-def pusheo_crudos_diarios_PON(fecha):
+def pusheo_crudos_diarios_PON():
 
+    logger.info("Comienza pusheo de crudos diarios PON")
+    conector(sql_truncate_cdiarios_PON,"Truncate","Truncando crudos diarios PON")
     #variables que uso mas adelante y consulta sql
-    print(datetime.now())
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + ".pickle"
     contador_insert = 0
     lista_final = []
     contador_final = []
-    sql = "INSERT INTO `crudos_diarios` (`id_zabbix`,`id_tlk`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     #
 
-    with open (archivo_pickle, 'rb') as lista:
+    with open (direcciones.archivo_pickle_PON, 'rb') as lista:
         #carga de lista
         lista_tuplas = pickle.load(lista)
         #
-
-    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
-    mycursor = mydb.cursor()
 
     for dato in lista_tuplas:
         lista_final.append(dato)
         contador_insert = contador_insert + 1
         if contador_insert == 100000:
-            mycursor.executemany(sql, lista_final)
-            mydb.commit()
-            contador_final.append(mycursor.rowcount)
+            conector(sql_push_diarios_PON, "many", "Insert de crudos diarios PON.", lista_final)
+            contador_final.append(contador_insert)
             contador_insert = 0
             lista_final.clear()
 
-    mycursor.executemany(sql, lista_final)
-    mydb.commit()
-    contador_final.append(mycursor.rowcount)
-    print("Total Ingresado",sum(contador_final))
-    print(datetime.now())
+    conector(sql_push_diarios_PON, "many", "Insert de crudos diarios PON.", lista_final)
+    contador_final.append(contador_insert)
+
+    logger.info("Finalizo pusheo de crudos diarios PON. Se ingresaron {} columnas".format(sum(contador_final)))
 
 
-def pusheo_crudos_diarios_ONT(fecha):
+def pusheo_crudos_diarios_ONT():
 
-    print(datetime.now())
-
-    archivo_pickle = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + fecha + "_ONT.pickle"
-    sql = "INSERT INTO `crudos_diarios_ont` (`tipo`,`nodo`, `puerto`, `direccion`, `etiqueta`, `hora`, `fecha`, `promedio`, `pico`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    
+    logger.info("Comienza pusheo de crudos diarios ONT")
+    conector(sql_truncate_cdiarios_ONT,"Truncate","Truncando crudos diarios ONT")
     #carga el pickle
-    with open (archivo_pickle, 'rb') as lista:
+    with open (direcciones.archivo_pickle_ONT, 'rb') as lista:
         lista_tuplas = pickle.load(lista)
-    #
-    
-    #coneccion con la BD
-    mydb = mysql.connector.connect(host="localhost",user="reportes",password="antel2020",database="reportes_zabbix")
-    mycursor = mydb.cursor()
-    #
 
     #pusheo a BD
-    mycursor.executemany(sql, lista_tuplas)
-    mydb.commit()
-    contador_ingresos = mycursor.rowcount
-    print("Total Ingresado",contador_ingresos)
-    print(datetime.now())
+    conector(sql_push_diarios_ONT, "many", "Insert de crudos diarios ONT", lista_tuplas)
+    logger.info("Finalizo pusheo de crudos diarios ONT")
+
+
+pusheo_crudos_diarios_PON()
+
+

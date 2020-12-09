@@ -52,8 +52,8 @@ file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro arch
 
 #=======  Inventarios Zabbix=========#
 crudozabbix = "test.txt"
-archivo_pickle_ONT = ""
-archivo_pickle_PON = ""
+archivo_pickle_ONT = "Pickle_ONT"
+archivo_pickle_PON = "Pickle_PON"
 
 #=======  Reporte Zabbix=========#
 excel_PON_semanal = "Reporte PON Semanal.xlsx"

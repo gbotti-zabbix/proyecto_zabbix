@@ -78,7 +78,7 @@ hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónE
 host_DB="192.168.211.4"
 user_DB="reportes"
 password_DB="antel2020"
-database_DB="reportes_zabbix"
+database_DB="reportes_zabbix_test"
 
 
 #========DESARROLLO===========#

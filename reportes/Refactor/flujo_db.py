@@ -1,5 +1,5 @@
 import logger
-import consultas
+from consultas import flujo_diario, flujo_mensual, flujo_semanal
 
 from conector import conector
 
@@ -82,3 +82,12 @@ def flujo_mensual():
 
 
 
+
+
+consultas_diarias = [["Truncada ONT","Truncate","Truncando a tu vieja"],["Consutla ONT","Flujo","Insertando a tu vieja"]]
+
+def flujos(lista_consultas):
+    for valor in lista_consultas:
+        print(valor[0],valor[1],valor[2])
+
+flujos(consultas_diarias)

@@ -139,3 +139,5 @@ def pusheo_crudos_diarios_ONT():
 
 
 
+pusheo_crudos_diarios_ONT()
+pusheo_crudos_diarios_PON()

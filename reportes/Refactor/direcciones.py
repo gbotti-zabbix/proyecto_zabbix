@@ -51,7 +51,7 @@ file_tlk_dst="PLN245_parseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
 #=======  Inventarios Zabbix=========#
-crudozabbix = "Merged-Trends-2020-12-07.ndjson"
+crudozabbix = "Merged-Trends-2020-12-10.ndjson"
 archivo_pickle_ONT = "Pickle_ONT"
 archivo_pickle_PON = "Pickle_PON"
 

@@ -259,6 +259,7 @@ def parseo_ont():
         pickle.dump(lista_tuplas,archivo_pickle)
     
     #Logeo Ingresos
+    logger.info("Finalizo el Parseo de ONTS")
     logger.info("Datos de ONTs Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
 
 
@@ -320,8 +321,5 @@ def parseo_pon():
         pickle.dump(lista_tuplas,archivo_pickle)
 
     #Logeo Ingresos
+    logger.info("Finalizo el Parseo de PON")
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
-
-
-parseo_pon()
-parseo_ont()

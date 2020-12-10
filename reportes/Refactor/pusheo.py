@@ -137,5 +137,3 @@ def pusheo_crudos_diarios_ONT():
     logger.info("Finalizo pusheo de crudos diarios ONT")
 
 
-pusheo_crudos_diarios_ONT()
-pusheo_crudos_diarios_PON()

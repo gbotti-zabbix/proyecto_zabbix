@@ -323,3 +323,5 @@ def parseo_pon():
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
 
 
+parseo_pon()
+parseo_ont()

@@ -136,8 +136,3 @@ def pusheo_crudos_diarios_ONT():
     conector(sql_push_diarios_ONT, "many", "Insert de crudos diarios ONT", lista_tuplas)
     logger.info("Finalizo pusheo de crudos diarios ONT")
 
-
-
-
-pusheo_crudos_diarios_ONT()
-pusheo_crudos_diarios_PON()

@@ -80,3 +80,5 @@ def flujo_mensual():
     conector(consultas.sql_truncate_picos_diarios_mensual_ont,"Truncate","Truncando datos en picos_diarios_mensual_ont")
     logger.info("Finalizo el flujo mensual de la BD")
 
+
+

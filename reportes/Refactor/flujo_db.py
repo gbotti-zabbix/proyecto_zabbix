@@ -105,4 +105,6 @@ def flujos(periodo):
         logger.info("Finalizo el flujo mensual de la BD")
 
 
-flujos()
+flujos("dia")
+#flujos("semana")
+#lujos("mes")

@@ -1,7 +1,19 @@
 class consultas():
-    def __init__(self,query,tipo,mensaje):
+    def __init__(self,query):
         self.query = query
-        self.tipo = tipo
-        self.mensaje = mensaje
+    
+    def sacar_tipo(self):
+        if self.query == "Hola":
+            tipo = "Tipo Hola"
+            return tipo
+    def sacar_mensaje(self):
+        if self.query == "Hola":
+            mensaje = "Mensaje Hoja"
+            return mensaje
+
+
+test = consultas("Hola")
+
+print (test.query,test.sacar_tipo(),test.sacar_mensaje())
 
 

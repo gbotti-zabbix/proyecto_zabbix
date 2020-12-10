@@ -10,7 +10,7 @@ import sys
 
 from datetime import datetime, date
 from conector import conector
-
+from direcciones import crudozabbix,archivo_pickle_ONT,archivo_pickle_PON
 
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
 def FileCheck(fn):
@@ -215,7 +215,7 @@ def sacar_direccion(nombre):
 
 
 #Parseo de ONT
-def parseo_ont(crudozabbix,archivo_pickle):
+def parseo_ont():
 
     logger.info("Comienza el Parseo de ONTS")
     #Variables de contadores y escritura del pickle
@@ -263,7 +263,7 @@ def parseo_ont(crudozabbix,archivo_pickle):
 
 
 #Parseo de Puertos PON
-def parseo_pon(crudozabbix,archivo_pickle):
+def parseo_pon():
 
     logger.info("Comienza el Parseo de Puetos PON")
     contador_carga = 0

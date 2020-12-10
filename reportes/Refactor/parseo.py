@@ -255,7 +255,7 @@ def parseo_ont():
                 contador_error = contador_error + 1
 
     #dump en pickle
-    with open(archivo_pickle,"wb") as archivo_pickle:
+    with open(archivo_pickle_ONT,"wb") as archivo_pickle:
         pickle.dump(lista_tuplas,archivo_pickle)
     
     #Logeo Ingresos
@@ -316,8 +316,10 @@ def parseo_pon():
                     contador_error = contador_error + 1
     
     #Dump en Pickle
-    with open(archivo_pickle,"wb") as archivo_pickle:
+    with open(archivo_pickle_PON,"wb") as archivo_pickle:
         pickle.dump(lista_tuplas,archivo_pickle)
 
     #Logeo Ingresos
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
+
+

@@ -1,3 +1,6 @@
+from test2 import variable, otro, archivo
+import time
+
 class consultas():
     def __init__(self,query):
         self.query = query
@@ -12,11 +15,12 @@ class consultas():
             return mensaje
 
 
-test = consultas("Hola")
+#test = consultas("Hola")
 
-print (test.query,test.sacar_tipo(),test.sacar_mensaje())
+#print (test.query,test.sacar_tipo(),test.sacar_mensaje())
 
-
-etiqueta = "1/22/4"
-
-print(etiqueta[2:])
+while True:
+    print(variable())
+    print(otro)
+    print(archivo)
+    time.sleep(5)

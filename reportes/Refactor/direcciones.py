@@ -50,8 +50,20 @@ file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
 file_tlk_dst="PLN245_parseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
+archivo_tlk = path_files+file_tlk
+archivo_tlk_dst = path_files+file_tlk_dst
+archivo_tlk_viejo = file_tlk+file_tlk_old
+
+file_rbs_DCS= "Boti te olvidaste de declarar esta variable"
+file_rbs_DCS_dst= "Esta tambien te olvidaste"
+file_rbs_DCS_old= "Me vas a tener que soltar la mano algun dia"
+
+archivo_rbs_DCS= path_files+file_rbs_DCS
+archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
+archivo_rbs_DCS_old = path_files+file_rbs_DCS_old
+
 #=======  Inventarios Zabbix=========#
-crudozabbix = "Merged-Trends-2020-12-10.ndjson"
+crudozabbix = "Merged-Trends-2020-12-07.ndjson"
 archivo_pickle_ONT = "Pickle_ONT"
 archivo_pickle_PON = "Pickle_PON"
 

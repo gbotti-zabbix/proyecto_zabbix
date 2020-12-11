@@ -1,5 +1,5 @@
 import logger
-from consultas import flujo_diario, flujo_mensual, flujo_semanal
+from consultas import flujo_diario, flujo_mensual, flujo_semanal, flujo_trunca_respaldos_semanales, flujo_trunca_respaldos_mensuales
 
 from conector import conector
 

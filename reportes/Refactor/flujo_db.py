@@ -24,3 +24,16 @@ def flujos(periodo):
                 conector(consulta.query,consulta.tipo,consulta.mensaje)
         logger.info("Finalizo el flujo mensual de la BD")
 
+    elif periodo == "purga-semana":
+        logger.info("Comienzan truncate de respaldos semanales")
+        for lista in flujo_trunca_respaldos_semanales:
+            for consulta in lista:
+                conector(consulta.query,consulta.tipo,consulta.mensaje)
+        logger.info("Finalizo el flujo trunca respaldos semanales de la BD")
+
+    elif periodo == "purga-mes":
+        logger.info("Comienzan truncate de respaldos mensuales")
+        for lista in flujo_trunca_respaldos_mensuales:
+            for consulta in lista:
+                conector(consulta.query,consulta.tipo,consulta.mensaje)
+        logger.info("Finalizo el flujo trunca respaldos mensuales de la BD")

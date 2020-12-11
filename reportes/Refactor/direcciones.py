@@ -63,15 +63,37 @@ archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
 archivo_rbs_DCS_old = path_files+file_rbs_DCS_old
 
 #=======  Inventarios Zabbix=========#
-crudozabbix = "Merged-Trends-2020-12-10.ndjson"
-archivo_pickle_ONT = "Pickle_ONT"
-archivo_pickle_PON = "Pickle_PON"
+def crudozabbix():
+    crudozabbix = "Merged-Trends-2020-12-07.ndjson"
+    return crudozabbix
+
+
+def archivo_pickle_ONT():
+    archivo_pickle_ONT = "Pickle_ONT"
+    return archivo_pickle_ONT
+
+
+def archivo_pickle_PON():
+    archivo_pickle_PON = "Pickle_PON"
+    return archivo_pickle_PON
 
 #=======  Reporte Zabbix=========#
-excel_PON_semanal = "Reporte PON Semanal.xlsx"
-excel_PON_mensual = "Reporte PON Mensual.xlsx"
-excel_ONT_semanal = "Reporte ONT Semanal.xlsx"
-excel_ONT_mensual = "Reporte ONT Mensual.xlsx"
+
+def excel_PON_semanal():
+    excel_PON_semanal = "Reporte PON Semanal.xlsx"
+    return excel_PON_semanal
+
+def excel_PON_mensual():
+    excel_PON_mensual = "Reporte PON Mensual.xlsx"
+    return excel_PON_mensual
+
+def excel_ONT_semanal():
+    excel_ONT_semanal = "Reporte ONT Semanal.xlsx"
+    return excel_ONT_semanal
+
+def excel_ONT_mensual():
+    excel_ONT_mensual = "Reporte ONT Mensual.xlsx"
+    return excel_ONT_mensual
 
 class DefiniciónEncabezados:
     def __init__(self, nombreHoja, encabezados):

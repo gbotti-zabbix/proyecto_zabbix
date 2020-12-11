@@ -68,12 +68,12 @@ def orquestador ():
             logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
         #if fin existe archivo TLK #        
         # existe archivo Zabbix #
-        elif checkFileExistance(crudozabbix):
+        elif checkFileExistance(crudozabbix()):
             #Parseo archivo de Zabbix PON y ONT
             parseo_ont()
             parseo_pon()
             #Borro crudozabbix
-            os.remove(crudozabbix)
+            os.remove(crudozabbix())
             logger.info("Se borro archivo crudozabbix")
             #usheo pickles de ONT y PON
             pusheo_crudos_diarios_PON()
@@ -96,5 +96,3 @@ def orquestador ():
             time.sleep(30)
 
 #-----main----#
-
-orquestador()

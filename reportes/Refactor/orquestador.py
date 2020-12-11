@@ -74,6 +74,7 @@ def orquestador ():
             parseo_pon()
             #Borro crudozabbix
             os.remove(crudozabbix)
+            logger.info("Se borro archivo crudozabbix")
             #usheo pickles de ONT y PON
             pusheo_crudos_diarios_PON()
             pusheo_crudos_diarios_ONT()

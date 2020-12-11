@@ -63,7 +63,7 @@ archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
 archivo_rbs_DCS_old = path_files+file_rbs_DCS_old
 
 #=======  Inventarios Zabbix=========#
-crudozabbix = "Merged-Trends-2020-12-07.ndjson"
+crudozabbix = "Merged-Trends-2020-12-10.ndjson"
 archivo_pickle_ONT = "Pickle_ONT"
 archivo_pickle_PON = "Pickle_PON"
 

@@ -290,7 +290,7 @@ def parseo_pon():
                     Tipo = sacar_grupo(linea["groups"])
                     Nodo = linea["host"]
                     Nombre = linea["name"]
-                    Puerto = regex_puerto(Nombre)
+                    Puerto = regex_puerto(Nombre)[2:]
                     Direccion = sacar_direccion(Nombre)
 
                     #Fecha y hora salen a partir de procesar tiempo

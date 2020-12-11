@@ -223,7 +223,7 @@ def parseo_ont():
     contador_error = 0
     lista_tuplas = []
 
-    with open(crudozabbix,"r") as crudo:
+    with open(crudozabbix(),"r") as crudo:
         crudo = crudo.read().splitlines()
         for linea in crudo:
             #cada linea se pasa de json a dicc
@@ -255,7 +255,7 @@ def parseo_ont():
                 contador_error = contador_error + 1
 
     #dump en pickle
-    with open(archivo_pickle_ONT,"wb") as archivo_pickle:
+    with open(archivo_pickle_ONT(),"wb") as archivo_pickle:
         pickle.dump(lista_tuplas,archivo_pickle)
     
     #Logeo Ingresos
@@ -273,7 +273,7 @@ def parseo_pon():
 
 
     #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
-    with open(crudozabbix,"r") as crudo:
+    with open(crudozabbix(),"r") as crudo:
         #archivo parseado
             crudo = crudo.read().splitlines()
             #
@@ -317,7 +317,7 @@ def parseo_pon():
                     contador_error = contador_error + 1
     
     #Dump en Pickle
-    with open(archivo_pickle_PON,"wb") as archivo_pickle:
+    with open(archivo_pickle_PON(),"wb") as archivo_pickle:
         pickle.dump(lista_tuplas,archivo_pickle)
 
     #Logeo Ingresos

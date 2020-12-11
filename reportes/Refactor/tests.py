@@ -17,3 +17,6 @@ test = consultas("Hola")
 print (test.query,test.sacar_tipo(),test.sacar_mensaje())
 
 
+etiqueta = "1/22/4"
+
+print(etiqueta[2:])

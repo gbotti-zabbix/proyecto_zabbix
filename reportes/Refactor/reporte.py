@@ -92,9 +92,9 @@ def reportes_xlsx(tipo,periodo):
             crear_encabezados(workbook,hojas_ONT)
             apend_data_ONT(workbook,hojas_ONT,periodo)
             if periodo == "mes":
-                workbook.save(filename=excel_ONT_mensual)
+                workbook.save(filename=excel_ONT_mensual())
             elif periodo == "semana":
-                workbook.save(filename=excel_ONT_semanal)
+                workbook.save(filename=excel_ONT_semanal())
             logger.info("Se culmino la creacion del reporte {} de ONT".format(periodo))
 
     elif tipo == "PON":
@@ -103,8 +103,8 @@ def reportes_xlsx(tipo,periodo):
             crear_encabezados(workbook,hojas_PON)
             apend_data_PON(workbook,hojas_PON,periodo)
             if periodo == "mes":
-                workbook.save(filename=excel_PON_mensual)
+                workbook.save(filename=excel_PON_mensual())
             elif periodo == "semana":
-                workbook.save(filename=excel_PON_semanal)
+                workbook.save(filename=excel_PON_semanal())
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 

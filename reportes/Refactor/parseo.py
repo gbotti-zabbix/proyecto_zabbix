@@ -266,7 +266,7 @@ def parseo_ont():
 #Parseo de Puertos PON
 def parseo_pon():
 
-    logger.info("Comienza el Parseo de Puetos PON")
+    logger.info("Comienza el Parseo de Puertos PON")
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []

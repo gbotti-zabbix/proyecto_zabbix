@@ -99,5 +99,3 @@ def orquestador ():
             time.sleep(30)
 
 #-----main----#
-
-'''Tengo que borrar los pickles muy viejos de respaldo '''

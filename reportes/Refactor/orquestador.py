@@ -97,5 +97,4 @@ def orquestador ():
 
 #-----main----#
 
-''' Tengo que programar los flujos de purga de respaldos
-Tengo que borrar los pickles muy viejos de respaldo '''
+'''Tengo que borrar los pickles muy viejos de respaldo '''

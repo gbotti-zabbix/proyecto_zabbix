@@ -10,7 +10,7 @@ from datetime import date
 
 #---   LOGS  --------------
 file_log= "/var/log/reportes_zabbix/reportes.log"
-
+pid = "/tmp/orquestador_reportes_zabbix.pid"
 #=======  Archivos inventarios y procesados=========#
 
 # -directorio origen y destino de archivos

@@ -5,7 +5,8 @@ import time
 import pusheo
 import os
 
-from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont
+from daemonize import Daemonize
+from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid
 from datetime import datetime
 from pusheo import f_cargar_inv_en_BD, pusheo_crudos_diarios_PON, pusheo_crudos_diarios_ONT
 from parseo import parseo_ont, parseo_pon
@@ -37,7 +38,7 @@ def checkdia():
         return 0
     
 
-def orquestador ():
+def orquestador():
     while True:
         # existe archivo TLK #
         if checkFileExistance(archivo_tlk):
@@ -99,3 +100,8 @@ def orquestador ():
             time.sleep(30)
 
 #-----main----#
+
+#demonio
+
+daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)
+daemon.start()

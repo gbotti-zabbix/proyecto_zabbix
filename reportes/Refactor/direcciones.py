@@ -49,8 +49,8 @@ def archivo_pickle_PON():
     archivo_pickle_PON = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
     return archivo_pickle_PON
 
-limpiar_pickle_pon = "find /var/lib/reportes-zabbix/crudos/ -name "Merged-Trends-*.pickle" -type f -mtime +30 -exec rm -f {} \;"
-limpiar_pickle_ont = "find /var/lib/reportes-zabbix/crudos/ -name "Merged-Trends-*_ONT.pickle" -type f -mtime +30 -exec rm -f {} \;"
+limpiar_pickle_pon = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*.pickle\" -type f -mtime +30 -exec rm -f {} \;"
+limpiar_pickle_ont = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*_ONT.pickle\" -type f -mtime +30 -exec rm -f {} \;"
 
 #=======  Reporte Zabbix=========#
 

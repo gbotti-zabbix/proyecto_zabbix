@@ -55,13 +55,11 @@ truncate_picos_diarios_semanal_pon = consultas('TRUNCATE picos_diarios_semanal;'
 truncate_promedio_semanal_pon = consultas('TRUNCATE promedio_semanal;',"Truncate","Truncando datos en promedio_semanal")
 truncate_picos_semanal_pon = consultas('TRUNCATE picos_semanal;',"Truncate","Truncando datos en picos_semanal")
 truncate_reporte_semanal_pon = consultas('TRUNCATE reporte_semanal;',"Truncate","Truncando datos en reporte_semanal")
-truncate_respaldo_semanal_pon = consultas('TRUNCATE respaldo_reporte_semanal;',"Truncate","Truncando datos en respaldo_reporte_semanal")
 #ONT
 truncate_picos_diarios_semanal_ont = consultas('TRUNCATE picos_diarios_semanal_ont;',"Truncate","Truncando datos en picos_diarios_semanal_ont")
 truncate_promedio_semanal_ont = consultas('TRUNCATE promedio_semanal_ont;',"Truncate","Truncando datos en promedio_semanal_ont")
 truncate_picos_semanal_ont = consultas('TRUNCATE picos_semanal_ont;',"Truncate","Truncando datos en picos_semanal_ont")
 truncate_reporte_semanal_ont = consultas('TRUNCATE reporte_semanal_ont;',"Truncate","Truncando datos en reporte_semanal_ont")
-truncate_respaldo_semanal_ont = consultas('TRUNCATE respaldo_reporte_semanal_ont;',"Truncate","Truncando datos en respaldo_reporte_semanal_ont")
 
 ##Truncates mensuales##
 #PON
@@ -69,13 +67,19 @@ truncate_picos_diarios_mensual_pon = consultas('TRUNCATE picos_diarios_mensual;'
 truncate_promedio_mensual_pon = consultas('TRUNCATE promedio_mensual;',"Truncate","Truncando datos en promedio_mensual")
 truncate_picos_mensual_pon = consultas('TRUNCATE picos_mensual;',"Truncate","Truncando datos en picos_mensual")
 truncate_reporte_mensual_pon = consultas('TRUNCATE reporte_mensual;',"Truncate","Truncando datos en reporte_mensual")
-truncate_respaldo_mensual_pon = consultas('TRUNCATE respaldo_reporte_mensual;',"Truncate","Truncando datos en respaldo_reporte_mensual")
 #ONT
 truncate_picos_diarios_mensual_ont = consultas('TRUNCATE picos_diarios_mensual_ont;',"Truncate","Truncando datos en picos_diarios_mensual_ont")
 truncate_promedio_mensual_ont = consultas('TRUNCATE promedio_mensual_ont;',"Truncate","Truncando datos en promedio_mensual_ont")
 truncate_picos_mensual_ont = consultas('TRUNCATE picos_mensual_ont;',"Truncate","Truncando datos en picos_mensual_ont")
 truncate_reporte_mensual_ont = consultas('TRUNCATE reporte_mensual_ont;',"Truncate","Truncando datos en reporte_mensual_ont")
-truncate_respaldo_mensual_ont = consultas('TRUNCATE respaldo_reporte_mensual_ont;',"Truncate","Truncando datos en respaldo_reporte_mensual_ont")
+
+###Deletes-Respaldos###
+#Deletes semanales
+delete_respaldo_reporte_semanal_pon = consultas('delete from respaldo_reporte_semanal where fecha < now() - interval 60 DAY;',"Delete","Delete sobre respaldo_reporte_semanal con mas de 60 dias")
+delete_respaldo_reporte_semanal_ont = consultas('delete from respaldo_reporte_semanal_ont where fecha < now() - interval 60 DAY;',"Delete","Delete sobre respaldo_reporte_semanal_ont con mas de 60 dias")
+#Deletes Mensuales
+delete_respaldo_reporte_mensual_pon = consultas('delete from respaldo_reporte_mensual where fecha < now() - interval 180 DAY;',"Delete","Delete sobre respaldo_reporte_mensual con mas de 180 dias")
+delete_respaldo_reporte_mensual_ont = consultas('delete from respaldo_reporte_mensual_ont where fecha < now() - interval 180 DAY;',"Delete","Delete sobre respaldo_reporte_mensual_ont con mas de 180 dias")
 
 ##Flujos##
 #Diario
@@ -88,9 +92,9 @@ flujo_semanal = [flujo_semanal_pon,flujo_semanal_ont]
 flujo_mensual_pon = [truncate_promedio_mensual_pon,truncate_picos_mensual_pon,truncate_reporte_mensual_pon,insert_promedio_mensual_pon,insert_picos_mensual_pon,insert_reporte_mensual_pon,insert_respaldo_mensual_pon,truncate_picos_diarios_mensual_pon]
 flujo_mensual_ont = [truncate_promedio_mensual_ont,truncate_picos_mensual_ont,truncate_reporte_mensual_ont,insert_promedio_mensual_ont,insert_picos_mensual_ont,insert_reporte_mensual_ont,insert_respaldo_mensual_ont,truncate_picos_diarios_mensual_ont]
 flujo_mensual = [flujo_mensual_pon,flujo_mensual_ont]
-#truncar respaldos
-flujo_trunca_respaldos_semanales = [truncate_respaldo_semanal_pon,truncate_respaldo_semanal_ont]
-flujo_trunca_respaldos_mensuales = [truncate_respaldo_mensual_pon,truncate_respaldo_mensual_ont]
+#delete respaldos
+flujo_delete_respaldos_semanales = [delete_respaldo_reporte_semanal_pon,delete_respaldo_reporte_semanal_ont]
+flujo_delete_respaldos_mensuales = [delete_respaldo_reporte_mensual_pon,delete_respaldo_reporte_mensual_ont]
 
 #####Reporte Zabbix#####
 sql_ont_semanal = "SELECT * FROM reporte_semanal_ont order by pico DESC"

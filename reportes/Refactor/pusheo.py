@@ -104,7 +104,7 @@ def pusheo_crudos_diarios_PON():
     contador_final = []
     #
 
-    with open (direcciones.archivo_pickle_PON, 'rb') as lista:
+    with open (direcciones.archivo_pickle_PON(), 'rb') as lista:
         #carga de lista
         lista_tuplas = pickle.load(lista)
         #
@@ -129,7 +129,7 @@ def pusheo_crudos_diarios_ONT():
     logger.info("Comienza pusheo de crudos diarios ONT")
     conector(sql_truncate_cdiarios_ONT,"Truncate","Truncando crudos diarios ONT")
     #carga el pickle
-    with open (direcciones.archivo_pickle_ONT, 'rb') as lista:
+    with open (direcciones.archivo_pickle_ONT(), 'rb') as lista:
         lista_tuplas = pickle.load(lista)
 
     #pusheo a BD

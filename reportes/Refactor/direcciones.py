@@ -41,12 +41,12 @@ def crudozabbix():
 
 
 def archivo_pickle_ONT():
-    archivo_pickle_ONT = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
+    archivo_pickle_ONT = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT-TEST.pickle"
     return archivo_pickle_ONT
 
 
 def archivo_pickle_PON():
-    archivo_pickle_PON = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle"
+    archivo_pickle_PON = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "-TEST.pickle"
     return archivo_pickle_PON
 
 limpiar_pickle_pon = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*.pickle\" -type f -mtime +30 -exec rm -f {} \;"
@@ -55,19 +55,19 @@ limpiar_pickle_ont = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trend
 #=======  Reporte Zabbix=========#
 
 def excel_PON_semanal():
-    excel_PON_semanal = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Semanal_" + str(date.today()) + ".xlsx"
+    excel_PON_semanal = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Semanal_" + str(date.today()) + "-TEST.xlsx"
     return excel_PON_semanal
 
 def excel_PON_mensual():
-    excel_PON_mensual = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + ".xlsx"
+    excel_PON_mensual = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + "-TEST.xlsx"
     return excel_PON_mensual
 
 def excel_ONT_semanal():
-    excel_ONT_semanal = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Semanal_" + str(date.today()) + "_ONT.xlsx"
+    excel_ONT_semanal = "/var/lib/reportes-zabbix/reportes_semanales/Reporte_Semanal_" + str(date.today()) + "_ONT-TEST.xlsx"
     return excel_ONT_semanal
 
 def excel_ONT_mensual():
-    excel_ONT_mensual = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + "_ONT.xlsx"
+    excel_ONT_mensual = "/var/lib/reportes-zabbix/reportes_mensuales/Reporte_Mensual_" + str(date.today()) + "_ONT-TEST.xlsx"
     return excel_ONT_mensual
 
 class DefiniciónEncabezados:

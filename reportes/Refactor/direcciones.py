@@ -7,7 +7,7 @@ from datetime import date
 
 #========PRODUCCIÓN=========#
 
-"""
+
 #---   LOGS  --------------
 file_log= "/var/log/reportes_zabbix/reportes.log"
 
@@ -88,15 +88,16 @@ hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónE
 host_DB="localhost"
 user_DB="reportes"
 password_DB="antel2020"
-database_DB="reportes_zabbix"
+database_DB="reportes_zabbix_test"
 
-"""
+
 #========FIN PRODUCCIÓN=========#
-
+'''
 #========DESARROLLO===========#
 
 #---   LOGS  --------------
 file_log= "reportes.log"
+pid = "/tmp/orquestador_reportes_zabbix.pid"
 
 #=======  Archivos inventarios y procesados=========#
 
@@ -176,3 +177,4 @@ database_DB="reportes_zabbix_test"
 
 
 #========DESARROLLO===========#
+'''

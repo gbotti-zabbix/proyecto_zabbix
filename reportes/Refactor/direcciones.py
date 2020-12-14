@@ -24,9 +24,9 @@ archivo_tlk = path_files+file_tlk
 archivo_tlk_dst = path_files+file_tlk_dst
 archivo_tlk_viejo = file_tlk+file_tlk_old
 
-file_rbs_DCS= "Boti te olvidaste de declarar esta variable"
-file_rbs_DCS_dst= "Esta tambien te olvidaste"
-file_rbs_DCS_old= "Me vas a tener que soltar la mano algun dia"
+file_rbs_DCS= "vacio"
+file_rbs_DCS_dst= "vacio"
+file_rbs_DCS_old= "vacio"
 
 archivo_rbs_DCS= path_files+file_rbs_DCS
 archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
@@ -111,9 +111,9 @@ archivo_tlk = path_files+file_tlk
 archivo_tlk_dst = path_files+file_tlk_dst
 archivo_tlk_viejo = file_tlk+file_tlk_old
 
-file_rbs_DCS= "Boti te olvidaste de declarar esta variable"
-file_rbs_DCS_dst= "Esta tambien te olvidaste"
-file_rbs_DCS_old= "Me vas a tener que soltar la mano algun dia"
+file_rbs_DCS= "vacio"
+file_rbs_DCS_dst= "vacio"
+file_rbs_DCS_old= "vacio"
 
 archivo_rbs_DCS= path_files+file_rbs_DCS
 archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst

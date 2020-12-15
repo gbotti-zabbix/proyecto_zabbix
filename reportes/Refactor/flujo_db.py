@@ -17,9 +17,8 @@ def flujos(periodo):
             for consulta in lista:
                 conector(consulta.query,consulta.tipo,consulta.mensaje)
         #limpeiza de respaldos
-        for lista in flujo_delete_respaldos_semanales:
-            for consulta in lista:
-                conector(consulta.query,consulta.tipo,consulta.mensaje)
+        for consulta in flujo_delete_respaldos_semanales:
+            conector(consulta.query,consulta.tipo,consulta.mensaje)
         logger.info("Finalizo el flujo semanal de la BD")
 
     elif periodo == "mes":
@@ -29,7 +28,6 @@ def flujos(periodo):
             for consulta in lista:
                 conector(consulta.query,consulta.tipo,consulta.mensaje)
         #limpieza de respaldos
-        for lista in flujo_delete_respaldos_mensuales:
-            for consulta in lista:
-                conector(consulta.query,consulta.tipo,consulta.mensaje)
+        for consulta in flujo_delete_respaldos_mensuales:
+            conector(consulta.query,consulta.tipo,consulta.mensaje)
         logger.info("Finalizo el flujo mensual de la BD")

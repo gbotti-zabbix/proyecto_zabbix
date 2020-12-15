@@ -97,7 +97,7 @@ def orquestador():
                 reportes_xlsx("PON","mes")
                 reportes_xlsx("ONT","mes")
         else:
-            time.sleep(30)
+            time.sleep(60)
 
 #-----main----#
 

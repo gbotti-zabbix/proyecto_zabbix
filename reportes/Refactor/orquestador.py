@@ -25,14 +25,14 @@ def checkFileExistance(filePath):
 
 
 def checklunes():
-    if datetime.today().weekday() == 1:
+    if datetime.today().weekday() == 0:
         return 1
     else:
         return 0
 
 
 def checkdia():
-    if datetime.now().strftime("%d") == "15":
+    if datetime.now().strftime("%d") == "1":
         return 1
     else:
         return 0
@@ -101,9 +101,8 @@ def orquestador():
 
 #-----main----#
 
-orquestador()
 
 #demonio
 
-#daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)
-#daemon.start()
+daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)
+daemon.start()

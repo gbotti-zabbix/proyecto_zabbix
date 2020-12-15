@@ -101,7 +101,7 @@ def orquestador():
 
 #-----main----#
 
-
+orquestador()
 #demonio
 
 #daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)

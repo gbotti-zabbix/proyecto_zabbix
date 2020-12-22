@@ -73,7 +73,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                         tipo_equipo = "Null"
                     nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
                     if cod_telelink in dic_gestion:
-                        nombre_gestion= dic_gestion[cod_telelink][0]+"-"+nro_nodo
+                        nombre_gestion= dic_gestion[cod_telelink][0]+"-"+nro_nodo+dic_nodo[linea_parseada[1][0:2]][1]
                     else:
                         nombre_gestion = "Null"
                     slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 

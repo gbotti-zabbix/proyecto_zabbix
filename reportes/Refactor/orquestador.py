@@ -25,14 +25,14 @@ def checkFileExistance(filePath):
 
 
 def checklunes():
-    if datetime.today().weekday() == 2:
+    if datetime.today().weekday() == 0:
         return 1
     else:
         return 0
 
 
 def checkdia():
-    if datetime.now().strftime("%d") == "23":
+    if datetime.now().strftime("%d") == "1":
         return 1
     else:
         return 0

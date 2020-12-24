@@ -42,21 +42,22 @@ def apend_data_PON(workbook,hojas,periodo):
         prom_hora_pico = dato[7]
         prom_picos_diarios = dato[8]
         pico = dato[9]
-        wf = dato[10]
-        datos = dato[11]
-        emp = dato[12]
-        rbs = dato[13]
+        promedio_hora = dato[10]
+        wf = dato[11]
+        datos = dato[12]
+        emp = dato[13]
+        rbs = dato[14]
         if (direccion == "RX" and (puerto == "22/1" or puerto == "21/1")) or (direccion == "RX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Bajada Uplink"].append(lista_append)
         elif direccion == "TX" and (puerto == "22/1" or puerto == "21/1"):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida Uplink"].append(lista_append)
         elif direccion == "TX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios,wf,datos,emp,rbs]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Bajada PON"].append(lista_append)
         elif direccion == "RX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
-            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,wf,datos,emp,rbs]
+            lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Subida PON"].append(lista_append)
 
 
@@ -76,11 +77,12 @@ def apend_data_ONT(workbook,hojas,periodo):
         prom_hora_pico = dato[8]
         prom_picos_diarios = dato[9]
         pico = dato[10]
+        promedio_hora = dato[11]
         if direccion == "RX":
-            lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida ONT"].append(lista_append)
         elif direccion == "TX":
-            lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios]
+            lista_append = [tipo,nodo,puerto,etiqueta,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Bajada ONT"].append(lista_append)
 
 

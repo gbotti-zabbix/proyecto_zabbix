@@ -6,7 +6,7 @@ from datetime import date
 
 
 #========PRODUCCIÓN=========#
-"""
+
 
 #---   LOGS  --------------
 file_log= "/var/log/reportes_zabbix/reportes.log"
@@ -92,6 +92,7 @@ database_DB="reportes_zabbix_test"
 
 
 #========FIN PRODUCCIÓN=========#
+
 """
 #========DESARROLLO===========#
 
@@ -177,3 +178,5 @@ database_DB="reportes_zabbix_test"
 
 
 #========DESARROLLO===========#
+
+"""

@@ -69,11 +69,14 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                     nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
                     if linea_parseada[1][0:2] in dic_nodo: 
                         tipo_equipo = dic_nodo[linea_parseada[1][0:2]][0]
+                        letra_nodo = dic_nodo[linea_parseada[1][0:2]][1]
                     else: 
                         tipo_equipo = "Null"
+                        letra_nodo = "Null"
+                    
                     nro_nodo = linea_parseada[1][2:4]                           #estraigo del numero equipo el nuermo de nodo
                     if cod_telelink in dic_gestion:
-                        nombre_gestion= dic_gestion[cod_telelink][0]+"-"+nro_nodo+dic_nodo[linea_parseada[1][0:2]][1]
+                        nombre_gestion= dic_gestion[cod_telelink][0]+"-"+nro_nodo+ letra_nodo
                     else:
                         nombre_gestion = "Null"
                     slot = linea_parseada[1][5:7]                               #estraigo del numero equipo el nuermo de slot 
@@ -329,5 +332,4 @@ def parseo_pon():
     #Logeo Ingresos
     logger.info("Finalizo el Parseo de PON")
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
-
 

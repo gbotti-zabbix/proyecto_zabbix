@@ -97,12 +97,12 @@ def orquestador():
                 reportes_xlsx("PON","mes")
                 reportes_xlsx("ONT","mes")
         else:
-            time.sleep(300)
+            time.sleep(1200)
 
 #-----main----#
 
-orquestador()
+#orquestador()
 #demonio
 
-#daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)
-#daemon.start()
+daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador)
+daemon.start()

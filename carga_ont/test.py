@@ -45,6 +45,6 @@ r = requests.post(url,headers=encabezado,json=payload)
 
 print(r.status_code)
 print(r.text)
-print(r.json)
+print(r.json())
 print(type(r.text))
-print(type(r.json))
+print(type(r.json()))

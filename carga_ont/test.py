@@ -25,7 +25,7 @@ r = requests.get('https://httpbin.org/get', params=payload2)
 print(r.url)
 '''
 
-url = "http://10.0.0.101/zabbix/api_jsonrpc.php"
+url = "http://192.168.211.4/zabbix/api_jsonrpc.php"
 payload= {
     "jsonrpc": "2.0",
     "method": "item.get",
@@ -44,3 +44,4 @@ encabezado = {"Content-Type": "application/json-rpc"}
 r = requests.post(url,headers=encabezado,json=payload)
 
 print(r.status_code)
+print(r.text)

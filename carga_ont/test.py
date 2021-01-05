@@ -25,7 +25,7 @@ r = requests.get('https://httpbin.org/get', params=payload2)
 print(r.url)
 '''
 
-url = "http://localhost/zabbix/api_jsonrpc.php"
+url = "http://10.0.0.101/zabbix/api_jsonrpc.php"
 payload= {
     "jsonrpc": "2.0",
     "method": "item.get",

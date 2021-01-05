@@ -45,3 +45,4 @@ r = requests.post(url,headers=encabezado,json=payload)
 
 print(r.status_code)
 print(r.text)
+print(type(r.text))

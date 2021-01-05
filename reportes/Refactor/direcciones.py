@@ -41,7 +41,7 @@ def crudozabbix():
 
 
 def archivo_pickle_ONT():
-    archivo_pickle_ONT = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "-ONT.pickle"
+    archivo_pickle_ONT = "/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + "_ONT.pickle"
     return archivo_pickle_ONT
 
 

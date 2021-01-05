@@ -54,3 +54,7 @@ print(type(r.text))
 print(type(r.json()))
 print(type(r.json()["result"][0]))
 print(type(r.json()["result"][0]["name"]))
+
+testeo = "ONT - GP0801-22024459-PINAZO-MORAN - RX"
+if testeo == print(type(r.json()["result"][0]["name"])):
+    print("Tal Cual")

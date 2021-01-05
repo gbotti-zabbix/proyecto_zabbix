@@ -47,6 +47,7 @@ print(r.status_code)
 print(r.text)
 print(r.json()["result"][0])
 print(r.json()["result"][0]["name"])
+nombre = r.json()["result"][0]["name"]
 
 
 
@@ -56,5 +57,6 @@ print(type(r.json()["result"][0]))
 print(type(r.json()["result"][0]["name"]))
 
 testeo = "ONT - GP0801-22024459-PINAZO-MORAN - RX"
-if testeo == print(type(r.json()["result"][0]["name"])):
+
+if testeo == nombre:
     print("Tal Cual")

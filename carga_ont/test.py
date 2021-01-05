@@ -51,3 +51,4 @@ print(r.json()["result"])
 
 print(type(r.text))
 print(type(r.json()))
+print(type(r.json()["result"]))

@@ -46,5 +46,5 @@ if sys.argv[1] == "logeo":
     sesion_manual("autorizar")
 if sys.argv[1] == "deslogeo":
     sesion_manual("logout")
-else:
+if range(sys.argv) > 1:
     print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n \"deslogeo\" para borrar un sesion ID")

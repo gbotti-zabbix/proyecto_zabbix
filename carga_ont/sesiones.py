@@ -35,11 +35,16 @@ def logout(llave):
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))    
 
-#manejo manual de sesion
-if sys.argv[1] == "logeo":
-    autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
-if sys.argv[1] == "logout":
-    logout(input("Ingrese Key a deslogear:\n"))
-else:
-    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n \"logout\" para borrar un sesion ID")
+def sesion_manual(opcion):
+    if opcion == "autorizar":
+        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
+    elif opcion == "logout":
+        logout(input("Ingrese Key a deslogear:\n"))
 
+#manejo manual de sesion desde CLI
+if sys.argv[1] == "logeo":
+    sesion_manual("autorizar")
+if sys.argv[1] == "deslogeo":
+    sesion_manual("logout")
+else:
+    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n \"deslogeo\" para borrar un sesion ID")

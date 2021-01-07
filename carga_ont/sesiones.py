@@ -1,3 +1,6 @@
+from requester import requester
+from getpass import getpass
+
 def autorizar(usuario,contraseña):
     autorizar = {
     "jsonrpc": "2.0",

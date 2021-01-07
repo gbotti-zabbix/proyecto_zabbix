@@ -23,10 +23,22 @@ def autorizar(usuario,contraseña):
     llave = requester(autorizar)
     print(llave.text)
 
-autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
+def logout(llave):
+    logout = {
+    "jsonrpc": "2.0",
+    "method": "user.logout",
+    "params": [],
+    "id": 1,
+    "auth": llave
+    }
+    deslogeo = requester(logout)
+    print(deslogeo.text)
 
-#SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
+autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
+logout(input("Ingrese Key a deslogear:\n"))
+
 def host_get(nodo,auth):
+    #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
     host_get = {
         "jsonrpc": "2.0",
         "method": "host.get",

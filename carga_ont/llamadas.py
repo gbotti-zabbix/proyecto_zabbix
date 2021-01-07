@@ -10,7 +10,7 @@ def requester(payload):
     return r
 
 
-def autorizar(usuario,contraseña):
+def autorizar():
     autorizar = {
     "jsonrpc": "2.0",
     "method": "user.login",

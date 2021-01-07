@@ -1,41 +1,8 @@
 import requests
 import json
 
-from direcciones import url
+from requester import requester
 from getpass import getpass
-
-encabezado = {"Content-Type": "application/json-rpc"}
-
-def requester(payload):
-    r = requests.post(url,headers=encabezado,json=payload)
-    return r
-
-def autorizar(usuario,contraseña):
-    autorizar = {
-    "jsonrpc": "2.0",
-    "method": "user.login",
-    "params": {
-        "user": usuario,
-        "password": contraseña
-    },
-    "id": 1
-    }
-    llave = requester(autorizar)
-    print(llave.text)
-
-def logout(llave):
-    logout = {
-    "jsonrpc": "2.0",
-    "method": "user.logout",
-    "params": [],
-    "id": 1,
-    "auth": llave
-    }
-    deslogeo = requester(logout)
-    print(deslogeo.text)
-
-autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
-logout(input("Ingrese Key a deslogear:\n"))
 
 def host_get(nodo,auth):
     #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 

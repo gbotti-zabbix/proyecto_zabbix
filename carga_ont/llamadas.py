@@ -23,7 +23,7 @@ def autorizar(usuario,contraseña):
     llave = requester(autorizar)
     print(llave.text)
 
-autorizar()
+autorizar(input("Ingrese User:\n"),input("Ingrese Password:\n"))
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):

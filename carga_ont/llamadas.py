@@ -8,22 +8,22 @@ encabezado = {"Content-Type": "application/json-rpc"}
 def requester(payload):
     r = requests.post(url,headers=encabezado,json=payload)
     return r
-null="null"
+
+
 def autorizar(usuario,contraseña):
     autorizar = {
     "jsonrpc": "2.0",
     "method": "user.login",
     "params": {
-        "user": usuario,
-        "password": contraseña
+        "user": "jvignolo",
+        "password": "brisingr"
     },
-    "id": 1,
-    "auth": null
+    "id": 1
     }
     llave = requester(autorizar)
     print(llave.text)
 
-autorizar("jvignolo","brisingr")
+autorizar()
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):

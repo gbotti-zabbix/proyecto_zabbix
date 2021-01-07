@@ -23,7 +23,7 @@ def logout(llave):
     "auth": llave
     }
     deslogeo = requester(logout)
-    if deslogeo.json()["result"] == "true":
+    if deslogeo.json()["result"] == True:
         print("Deslogeo correcto")
     else:
         print("Hubo un error al deslogar id {}".format(llave))

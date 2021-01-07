@@ -1,1 +1,1 @@
-url = "http://192.168.211.4/zabbix/api_jsonrpc.php"
+url = "http://10.0.0.101/zabbix/api_jsonrpc.php"

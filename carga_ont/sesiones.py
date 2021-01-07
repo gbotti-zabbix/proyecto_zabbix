@@ -13,11 +13,8 @@ def autorizar(usuario,contraseña,opcion):
     }
     llave = requester(autorizar)
     llave = llave.json()["result"]
-    #opcion 1 printea una llave, la opcion 2 solo la retorna
-    if opcion == 1:
-        print(llave)
-    if opcion == 2:
-        return llave
+    print(llave)
+    return llave
 
 def logout(llave):
     logout = {
@@ -34,11 +31,11 @@ def logout(llave):
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))    
 
-def sesiones(opcion):
+def sesion_manual(opcion):
     if opcion == "autorizar":
-        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),1)
+        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
     elif opcion == "logout":
         logout(input("Ingrese Key a deslogear:\n"))
 
-sesiones("autorizar")
-sesiones("logout")
+sesion_manual("autorizar")
+sesion_manual("logout")

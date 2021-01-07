@@ -1,3 +1,5 @@
+import sys
+
 from requester import requester
 from getpass import getpass
 
@@ -33,11 +35,9 @@ def logout(llave):
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))    
 
-def sesion_manual(opcion):
-    if opcion == "autorizar":
-        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
-    elif opcion == "logout":
-        logout(input("Ingrese Key a deslogear:\n"))
+#manejo manual de sesion
+if sys.argv[1] == "logeo":
+    autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
+if sys.argv[1] == "logout":
+    logout(input("Ingrese Key a deslogear:\n"))
 
-sesion_manual("autorizar")
-sesion_manual("logout")

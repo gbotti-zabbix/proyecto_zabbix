@@ -23,7 +23,10 @@ def logout(llave):
     "auth": llave
     }
     deslogeo = requester(logout)
-    print(deslogeo.text)
+    if deslogeo.json()["result"] == "true":
+        print("Deslogeo correcto")
+    else:
+        print("Hubo un error al deslogar id {}".format(llave))
 
 def sesiones(opcion):
     if opcion == "autorizar":

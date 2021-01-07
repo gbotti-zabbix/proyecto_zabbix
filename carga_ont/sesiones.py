@@ -1,7 +1,7 @@
 from requester import requester
 from getpass import getpass
 
-def autorizar(usuario,contraseña):
+def autorizar(usuario,contraseña,opcion):
     autorizar = {
     "jsonrpc": "2.0",
     "method": "user.login",
@@ -13,8 +13,11 @@ def autorizar(usuario,contraseña):
     }
     llave = requester(autorizar)
     llave = llave.json()["result"]
-    print(llave)
-    return llave
+    #opcion 1 printea una llave, la opcion 2 solo la retorna
+    if opcion == 1:
+        print(llave)
+    if opcion == 2:
+        return llave
 
 def logout(llave):
     logout = {
@@ -33,7 +36,7 @@ def logout(llave):
 
 def sesiones(opcion):
     if opcion == "autorizar":
-        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
+        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),1)
     elif opcion == "logout":
         logout(input("Ingrese Key a deslogear:\n"))
 

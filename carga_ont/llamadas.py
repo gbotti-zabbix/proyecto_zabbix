@@ -2,7 +2,6 @@ import requests
 import json
 
 from requester import requester
-from getpass import getpass
 
 def host_get(nodo,auth):
     #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 

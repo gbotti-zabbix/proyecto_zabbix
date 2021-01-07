@@ -35,6 +35,7 @@ def logout(llave):
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))    
 
+#con sesion manual podes llamar a los input del logeo asi como cerrar a mano un ID
 def sesion_manual(opcion):
     if opcion == "autorizar":
         autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")

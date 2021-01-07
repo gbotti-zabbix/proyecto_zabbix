@@ -8,7 +8,7 @@ encabezado = {"Content-Type": "application/json-rpc"}
 def requester(payload):
     r = requests.post(url,headers=encabezado,json=payload)
     return r
-
+null="null"
 def autorizar(usuario,contraseña):
     autorizar = {
     "jsonrpc": "2.0",

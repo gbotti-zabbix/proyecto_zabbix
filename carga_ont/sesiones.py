@@ -40,4 +40,6 @@ if sys.argv[1] == "logeo":
     autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
 if sys.argv[1] == "logout":
     logout(input("Ingrese Key a deslogear:\n"))
+else:
+    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n \"logout\" para borrar un sesion ID")
 

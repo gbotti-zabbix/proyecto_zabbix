@@ -48,4 +48,4 @@ try:
     elif sys.argv[1] == "deslogeo":
         sesion_manual("logout")
 except Exception as e:
-    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n \"deslogeo\" para borrar un sesion ID")
+    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n * \"deslogeo\" para borrar un sesion ID")

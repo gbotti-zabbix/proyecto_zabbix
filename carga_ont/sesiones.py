@@ -12,7 +12,9 @@ def autorizar(usuario,contraseña):
     "id": 1
     }
     llave = requester(autorizar)
-    print(llave.json()["result"])
+    llave = llave.json()["result"]
+    print(llave)
+    return llave
 
 def logout(llave):
     logout = {

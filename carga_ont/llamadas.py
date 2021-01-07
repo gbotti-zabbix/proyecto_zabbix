@@ -18,7 +18,7 @@ def autorizar(usuario,contraseña):
         "password": contraseña
     },
     "id": 1,
-    "auth": "null"
+    "auth": null
     }
     llave = requester(autorizar)
     print(llave.text)

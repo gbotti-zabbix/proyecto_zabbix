@@ -2,6 +2,7 @@ import requests
 import json
 
 from direcciones import url
+from getpass import getpass
 
 encabezado = {"Content-Type": "application/json-rpc"}
 
@@ -22,7 +23,7 @@ def autorizar(usuario,contraseña):
     llave = requester(autorizar)
     print(llave.text)
 
-autorizar(input("Ingrese User:\n"),input("Ingrese Password:\n"))
+autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):

@@ -12,7 +12,7 @@ def autorizar(usuario,contraseña):
     "id": 1
     }
     llave = requester(autorizar)
-    print(llave.text)
+    print(type(llave.text))
 
 def logout(llave):
     logout = {
@@ -25,5 +25,11 @@ def logout(llave):
     deslogeo = requester(logout)
     print(deslogeo.text)
 
-autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
-logout(input("Ingrese Key a deslogear:\n"))
+def sesiones(opcion):
+    if opcion == "autorizar":
+        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"))
+    elif opcion == "logout":
+        logout(input("Ingrese Key a deslogear:\n"))
+
+sesiones("autorizar")
+sesiones("logout")

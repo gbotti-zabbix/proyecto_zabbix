@@ -3,8 +3,8 @@ import json
 
 from requester import requester
 
+#SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):
-    #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
     host_get = {
         "jsonrpc": "2.0",
         "method": "host.get",
@@ -21,43 +21,8 @@ def host_get(nodo,auth):
     }
     print(host_get)
 
-
-def unused():
-    #SACAR UN INTERFACE ID A PARTIR DE HOST ID
-    '''
-    {
-        "jsonrpc": "2.0",
-        "method": "hostinterface.get",
-        "params": {
-        "output": ["interfaceid","hostid","type"],
-            "hostids": "11132",
-            "filter": {
-                "type": "2"
-            }     
-        },
-        "auth": "codigoauthdelogin.json",
-        "id": 1
-    }
-    '''
-
-    #SACAR UN APP ID DE ONT A PARTIR DE HOST ID
-    '''
-    {
-        "jsonrpc": "2.0",
-        "method": "application.get",
-        "params": {
-            "output": ["applicationid","hostid","name"],
-            "hostids": "11132",
-        "filter": {
-            "name": ["ONT"]
-        }
-        },
-        "auth": "codigoauthdelogin.json",
-        "id": 1
-    }
-
-    '''
-
+#CHEQUEO SI UNA ONT EXISTE
+def ont_check():
     #CONSULTAR ITEM POR NOMBRE Y KEY
     #POR KEY
     #KEY TAMBIEN ME DEJA HACER BUSQUEDAS MAS JUSTADAS COMO DIRECCIONES O TIPOS DE ITEM
@@ -92,3 +57,42 @@ def unused():
         "id": 1
     }
     '''
+    pass
+
+#SACAR UN INTERFACE ID A PARTIR DE HOST ID
+def get_inter_id():
+    '''
+    {
+        "jsonrpc": "2.0",
+        "method": "hostinterface.get",
+        "params": {
+        "output": ["interfaceid","hostid","type"],
+            "hostids": "11132",
+            "filter": {
+                "type": "2"
+            }     
+        },
+        "auth": "codigoauthdelogin.json",
+        "id": 1
+    }
+    '''
+    pass
+
+#SACAR UN APP ID DE ONT A PARTIR DE HOST ID
+def get_app_id():
+    '''
+    {
+        "jsonrpc": "2.0",
+        "method": "application.get",
+        "params": {
+            "output": ["applicationid","hostid","name"],
+            "hostids": "11132",
+        "filter": {
+            "name": ["ONT"]
+        }
+        },
+        "auth": "codigoauthdelogin.json",
+        "id": 1
+    }
+    '''
+    pass

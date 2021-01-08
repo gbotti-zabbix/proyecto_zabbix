@@ -69,7 +69,8 @@ def get_inter_id(hostid,auth):
     if len(interfaceid.json()["result"]) < 1:
         print("No se encontro el nodo: {}".format(hostid))
     else:
-        print(interfaceid.json()["result"][0]["hostid"])
+        print(interfaceid.json()["result"])
+        print(interfaceid.json()["result"][0]["interfaceid"])
         return interfaceid.json()["result"][0]["interfaceid"]
 
 #SACAR UN APP ID DE ONT A PARTIR DE HOST ID

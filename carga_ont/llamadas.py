@@ -20,7 +20,8 @@ def ont_check(opcion,parametro,auth):
     "id": 1
     }
     chequeo = requester(ont_check)
-    print(chequeo.json()["result"][opcion])
+    for dato in chequeo.json()["result"]:
+        print(dato[opcion])
 
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 

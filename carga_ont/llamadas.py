@@ -44,7 +44,7 @@ def host_get(nodo,auth):
         "id": 1
     }
     hostid = requester(host_get)
-    print(hostid)
+    print(hostid.json()["result"])
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
 def get_inter_id():

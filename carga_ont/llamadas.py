@@ -44,8 +44,8 @@ def host_get(nodo,auth):
         "id": 1
     }
     hostid = requester(host_get)
-    if hostid.json()["result"] < 1:
-        print("No se encontro el nodo")
+    if len(hostid.json()["result"]) < 1:
+        print("No se encontro el nodo: {}".format(nodo))
     else:
         print(hostid.json()["result"])
 
@@ -87,4 +87,6 @@ def get_app_id():
     '''
     pass
 
+
+host_get("AGUADA-73Z","40274b3dc84ece38005a667fd7737fb4")
 host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")

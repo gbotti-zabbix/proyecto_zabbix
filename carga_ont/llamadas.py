@@ -21,7 +21,7 @@ def ont_check(opcion,parametro,auth):
     }
     chequeo = requester(ont_check)
     if len(chequeo.json()["result"]) < 1:
-        print("No se encontro ONT")
+        print("No se encontro la ONT {}".format(parametro))
     else:
         print(chequeo.json()["result"])
     #for dato in chequeo.json()["result"]:
@@ -86,4 +86,6 @@ def get_app_id():
 
 
 ont_check("name","Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
+ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN","40274b3dc84ece38005a667fd7737fb4")
+ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN - RX","40274b3dc84ece38005a667fd7737fb4")
 ont_check("key_","PONRX[zxAnPonOnuIfRxOctets.ONT17/1/4]","40274b3dc84ece38005a667fd7737fb4")

@@ -3,6 +3,26 @@ import json
 
 from requester import requester
 
+#CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
+#OPCION MARCA COMO BUSCAR (key_,name), PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
+def ont_check(opcion,parametro,auth):
+    ont_check = {
+    "jsonrpc": "2.0",
+    "method": "item.get",
+    "params": {
+        "output": ["name","key_"],
+        "search": {
+            "{}".format(opcion): "{}".format(parametro)
+        },
+        "sortfield": "name"
+    },
+    "auth": "{}".format(auth),
+    "id": 1
+    }
+    chequeo = requester(ont_check)
+    print(chequeo.json()["result"])
+
+
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):
     host_get = {
@@ -20,44 +40,6 @@ def host_get(nodo,auth):
         "id": 1
     }
     print(host_get)
-
-#CHEQUEO SI UNA ONT EXISTE
-def ont_check():
-    #CONSULTAR ITEM POR NOMBRE Y KEY
-    #POR KEY
-    #KEY TAMBIEN ME DEJA HACER BUSQUEDAS MAS JUSTADAS COMO DIRECCIONES O TIPOS DE ITEM
-    '''
-    {
-        "jsonrpc": "2.0",
-        "method": "item.get",
-        "params": {
-            "output": ["name","key_"],
-            "search": {
-                "key_": "PONRX[zxAnPonOnuIfRxOctets.ONT17/1/4]"
-            },
-            "sortfield": "name"
-        },
-        "auth": "codigoauthdelogin.json",
-        "id": 1
-    }
-    '''
-    #POR NOMBRE
-    '''
-    {
-        "jsonrpc": "2.0",
-        "method": "item.get",
-        "params": {
-            "output": ["name","key_"],
-            "search": {
-                "name": "ONT - GP0801-22024459-PINAZO-MORAN - RX"
-            },
-            "sortfield": "name"
-        },
-        "auth": "23f8f52facd8cfc607d92862d38d669a",
-        "id": 1
-    }
-    '''
-    pass
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
 def get_inter_id():
@@ -96,3 +78,7 @@ def get_app_id():
     }
     '''
     pass
+
+
+ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN","40274b3dc84ece38005a667fd7737fb4")
+ont_check("key_","PONRX[zxAnPonOnuIfRxOctets.ONT17/1/4]","40274b3dc84ece38005a667fd7737fb4")

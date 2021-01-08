@@ -67,7 +67,7 @@ def get_inter_id(hostid,auth):
     }
     interfaceid = requester(interfaceid)
     if len(interfaceid.json()["result"]) < 1:
-        print("No se encontro el nodo: {}".format(nodo))
+        print("No se encontro el nodo: {}".format(hostid))
     else:
         print(interfaceid.json()["result"][0]["hostid"])
         return interfaceid.json()["result"][0]["hostid"]

@@ -43,7 +43,8 @@ def host_get(nodo,auth):
         "auth": auth,
         "id": 1
     }
-    print(host_get)
+    hostid = requester(host_get)
+    print(hostid)
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
 def get_inter_id():
@@ -83,8 +84,4 @@ def get_app_id():
     '''
     pass
 
-
-ont_check("name","Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
-ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN","40274b3dc84ece38005a667fd7737fb4")
-ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN - RX","40274b3dc84ece38005a667fd7737fb4")
-ont_check("key_","PONRX[zxAnPonOnuIfRxOctets.ONT17/1/4]","40274b3dc84ece38005a667fd7737fb4")
+host_get("AGUADA 13Z","40274b3dc84ece38005a667fd7737fb4")

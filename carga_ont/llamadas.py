@@ -92,8 +92,8 @@ def get_app_id(hostid,auth):
         print("No se encontro el hostid: {}".format(hostid))
     else:
         print(app_id.json()["result"])
-        print(app_id.json()["result"][0]["app_id"])
-        return app_id.json()["result"][0]["app_id"]
+        #print(app_id.json()["result"][0]["app_id"])
+        #return app_id.json()["result"][0]["app_id"]
 
 get_app_id("Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
 get_app_id("11132","40274b3dc84ece38005a667fd7737fb4")

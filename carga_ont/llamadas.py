@@ -95,7 +95,11 @@ def get_app_id(hostid,auth):
         print(app_id.json()["result"][0]["applicationid"])
         return app_id.json()["result"][0]["applicationid"]
 
-get_app_id("Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
-get_app_id("11132","40274b3dc84ece38005a667fd7737fb4")
+#SACAR OID SEGUN SLOT, PUERTO, ONT
+def get_oid(puerto):
+    pass
 
+
+#get_app_id("Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
+#get_app_id("11132","40274b3dc84ece38005a667fd7737fb4")
 #host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")

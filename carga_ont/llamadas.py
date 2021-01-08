@@ -22,11 +22,10 @@ def ont_check(opcion,parametro,auth):
     chequeo = requester(ont_check)
     if len(chequeo.json()["result"]) < 1:
         print("No se encontro la ONT: {}".format(parametro))
+        return 0
     else:
         print(chequeo.json()["result"])
-    #for dato in chequeo.json()["result"]:
-        #print(dato[opcion])
-
+        return 1
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):

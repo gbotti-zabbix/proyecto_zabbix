@@ -38,13 +38,16 @@ def host_get(nodo,auth):
                     "{}".format(nodo)
                 ]
             },
-            "output": ["hostid","name"]    
+            "output": "hostid"    
         },
         "auth": auth,
         "id": 1
     }
     hostid = requester(host_get)
-    print(hostid.json()["result"])
+    if hostid.json()["result"] < 1:
+        print("No se encontro el nodo")
+    else:
+        print(hostid.json()["result"])
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
 def get_inter_id():
@@ -84,4 +87,4 @@ def get_app_id():
     '''
     pass
 
-host_get("AGUADA 13Z","40274b3dc84ece38005a667fd7737fb4")
+host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")

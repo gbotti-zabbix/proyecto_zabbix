@@ -67,33 +67,34 @@ def get_inter_id(hostid,auth):
     }
     interfaceid = requester(interfaceid)
     if len(interfaceid.json()["result"]) < 1:
-        print("No se encontro el nodo: {}".format(hostid))
+        print("No se encontro el hostid: {}".format(hostid))
     else:
-        print(interfaceid.json()["result"])
         print(interfaceid.json()["result"][0]["interfaceid"])
         return interfaceid.json()["result"][0]["interfaceid"]
 
 #SACAR UN APP ID DE ONT A PARTIR DE HOST ID
-def get_app_id():
-    '''
-    {
+def get_app_id(hostid,auth):
+    app_id = {
         "jsonrpc": "2.0",
         "method": "application.get",
         "params": {
             "output": ["applicationid","hostid","name"],
-            "hostids": "11132",
+            "hostids": "{}".format(hostid),
         "filter": {
             "name": ["ONT"]
         }
         },
-        "auth": "codigoauthdelogin.json",
+        "auth": "{}".format(auth),
         "id": 1
     }
-    '''
-    pass
+    app_id = requester(app_id)
+    if len(app_id.json()["result"]) < 1:
+        print("No se encontro el hostid: {}".format(hostid))
+    else:
+        print(interfaceid.json()["result"][0]["app_id"])
+        return interfaceid.json()["result"][0]["app_id"]
 
-
-get_inter_id("Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
-get_inter_id("11132","40274b3dc84ece38005a667fd7737fb4")
+get_app_id("Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
+get_app_id("11132","40274b3dc84ece38005a667fd7737fb4")
 
 #host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")

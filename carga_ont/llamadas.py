@@ -20,7 +20,10 @@ def ont_check(opcion,parametro,auth):
     "id": 1
     }
     chequeo = requester(ont_check)
-    print(chequeo.json()["result"])
+    if len(chequeo.json()["result"]) < 1:
+        print("No se encontro ONT")
+    else:
+        print(chequeo.json()["result"])
     #for dato in chequeo.json()["result"]:
         #print(dato[opcion])
 

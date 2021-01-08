@@ -1,8 +1,16 @@
 from llamadas import ont_check, host_get, get_inter_id, get_app_id, get_oid
 from sesiones import autorizar, logout
 
+#METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
 
-def orquestador_carga_ont():
+def orquestador_carga_ont(metodo):
+        
+    if metodo == "manual":
+        #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
+    elif metodo == "auto":
+        #mando la gran mayoria de datos ya procesados
+    
+    
     create_ont = {
         "jsonrpc": "2.0",
         "method": "item.create",

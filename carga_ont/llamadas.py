@@ -51,23 +51,26 @@ def host_get(nodo,auth):
         return hostid.json()["result"][0]["hostid"]
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
-def get_inter_id():
-    '''
-    {
+def get_inter_id(hostid,auth):
+    interfaceid = {
         "jsonrpc": "2.0",
         "method": "hostinterface.get",
         "params": {
         "output": ["interfaceid","hostid","type"],
-            "hostids": "11132",
+            "hostids": "{}".format(hostid),
             "filter": {
                 "type": "2"
             }     
         },
-        "auth": "codigoauthdelogin.json",
+        "auth": "{}".format(auth),
         "id": 1
     }
-    '''
-    pass
+    interfaceid = requester(interfaceid)
+    if len(interfaceid.json()["result"]) < 1:
+        print("No se encontro el nodo: {}".format(nodo))
+    else:
+        print(interfaceid.json()["result"][0]["hostid"])
+        return interfaceid.json()["result"][0]["hostid"]
 
 #SACAR UN APP ID DE ONT A PARTIR DE HOST ID
 def get_app_id():
@@ -89,5 +92,7 @@ def get_app_id():
     pass
 
 
-host_get("AGUADA-73Z","40274b3dc84ece38005a667fd7737fb4")
-host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")
+
+get_inter_id("11132","40274b3dc84ece38005a667fd7737fb4")
+
+#host_get("AGUADA-13Z","40274b3dc84ece38005a667fd7737fb4")

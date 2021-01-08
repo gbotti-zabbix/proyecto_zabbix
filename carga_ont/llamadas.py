@@ -10,7 +10,7 @@ def ont_check(opcion,parametro,auth):
     "jsonrpc": "2.0",
     "method": "item.get",
     "params": {
-        "output": ["name","key_"],
+        "output": "{}".opcion,
         "search": {
             "{}".format(opcion): "{}".format(parametro)
         },

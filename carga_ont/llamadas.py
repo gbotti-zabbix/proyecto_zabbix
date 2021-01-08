@@ -47,7 +47,8 @@ def host_get(nodo,auth):
     if len(hostid.json()["result"]) < 1:
         print("No se encontro el nodo: {}".format(nodo))
     else:
-        print(hostid.json()["result"])
+        print(hostid.json()["result"][0]["hostid"])
+        return hostid.json()["result"][0]["hostid"]
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID
 def get_inter_id():

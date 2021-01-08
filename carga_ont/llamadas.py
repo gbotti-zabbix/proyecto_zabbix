@@ -20,8 +20,9 @@ def ont_check(opcion,parametro,auth):
     "id": 1
     }
     chequeo = requester(ont_check)
-    for dato in chequeo.json()["result"]:
-        print(dato[opcion])
+    print(chequeo.json()["result"])
+    #for dato in chequeo.json()["result"]:
+        #print(dato[opcion])
 
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
@@ -81,5 +82,5 @@ def get_app_id():
     pass
 
 
-ont_check("name","ONT - GP0801-22024459-PINAZO-MORAN","40274b3dc84ece38005a667fd7737fb4")
+ont_check("name","Jaja nos vimos","40274b3dc84ece38005a667fd7737fb4")
 ont_check("key_","PONRX[zxAnPonOnuIfRxOctets.ONT17/1/4]","40274b3dc84ece38005a667fd7737fb4")

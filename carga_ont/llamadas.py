@@ -302,11 +302,11 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         "id": 1
     }
     create_ont = requester(create_ont)
-    if len(chequeo.json()["result"]) < 1:
+    if len(create_ont.json()["result"]) < 1:
         print("No se creo la ONT: {}".format(nombre))
         return 0
     else:
-        print(chequeo.json()["result"])
+        print(create_ont.json()["result"])
         return 1
 
 create_ont("TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

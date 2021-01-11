@@ -4,7 +4,7 @@ from requester import requester
 from getpass import getpass
 from api import usuario, contraseña
 
-def autorizar(*args):
+def autorizar():
     autorizar = {
     "jsonrpc": "2.0",
     "method": "user.login",
@@ -17,8 +17,6 @@ def autorizar(*args):
     llave = requester(autorizar)
     llave = llave.json()["result"]
     #si lo piden en la llamada muestra la key
-    if args[0] == "print":
-        print(llave)
     return llave
 
 def logout(llave):

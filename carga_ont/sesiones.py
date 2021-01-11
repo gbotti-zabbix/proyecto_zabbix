@@ -43,12 +43,12 @@ def sesion_manual(opcion):
         logout(input("Ingrese Key a deslogear:\n"))
 
 #manejo manual de sesion desde CLI
-try:
-    if sys.argv[1] == "logeo":
-        sesion_manual("autorizar")
-    elif sys.argv[1] == "deslogeo":
-        sesion_manual("logout")
-    else:
-        pass
-except Exception as e:
-    print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n * \"deslogeo\" para borrar un sesion ID")
+# try:
+if sys.argv[1] == "logeo":
+    sesion_manual("autorizar")
+elif sys.argv[1] == "deslogeo":
+    sesion_manual("logout")
+else:
+    pass
+# except Exception as e:
+#     print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n * \"deslogeo\" para borrar un sesion ID")

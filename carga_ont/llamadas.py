@@ -307,6 +307,9 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             print("La ONT con key \"{}\" ya existe".format(llave))
             return 0
     except KeyError as e:
-        print(create_ont.json()["result"])
+        if len(create_ont.json()["result"]) > 0:
+            print(create_ont.json()["result"])
+        else:
+            print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

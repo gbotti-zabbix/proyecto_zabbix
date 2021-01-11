@@ -302,12 +302,11 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         "id": 1
     }
     create_ont = requester(create_ont)
-    print(create_ont.json())
-    print(create_ont.json()["error"]["code"])
-        #print("No se creo la ONT: {}".format(nombre))
-        #return 0
-    #else:
-        #print(create_ont.json()["result"])
-        #return 1
+    if create_ont.json()["error"]["code"] == "-32602":
+        print("La ONT con key \"{}\" ya existe".format(llave))
+        return 0
+    else:
+        print(create_ont.json()["result"])
+        return 1
 
 create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

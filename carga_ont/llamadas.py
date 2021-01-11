@@ -268,7 +268,7 @@ def dic_oid_zte(clave):
     "198":"83080"}
     return dic[clave]
 
-
+#CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = {
         "jsonrpc": "2.0",
@@ -312,4 +312,3 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
-create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

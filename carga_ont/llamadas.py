@@ -3,6 +3,21 @@ import json
 
 from requester import requester
 
+#IMPORTO EL CONECTOR DE REFACTOR
+import sys
+sys.path.append("./reportes/Refactor")
+from conector import conector
+
+#sql para ont
+#SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;
+
+#SACO LISTADO DE ONT A CHEKEAR
+def get_rbs():
+    sql = "SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;"
+    rbs = conector(sql,"select","Consultando ONTS")
+    print(rbs)
+    print(type(rbs))
+
 #CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
 #OPCION MARCA COMO BUSCAR (key_,name), PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
 def ont_check(opcion,parametro,auth):
@@ -254,3 +269,4 @@ def dic_oid_zte(clave):
     "198":"83080"}
     return dic[clave]
 
+get_rbs()

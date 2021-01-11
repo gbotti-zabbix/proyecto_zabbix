@@ -302,12 +302,11 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         "id": 1
     }
     create_ont = requester(create_ont)
-    if create_ont.json()["error"]:
+    try:
         if create_ont.json()["error"]["code"] == -32602:
             print("La ONT con key \"{}\" ya existe".format(llave))
             return 0
-    else:
+    except KeyError as e:
         print(create_ont.json()["result"])
-        return 1
 
 create_ont("AAB_TEST_ONT","TEST_LLAVE_2","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

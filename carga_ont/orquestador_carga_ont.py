@@ -12,3 +12,6 @@ def orquestador_carga_ont(metodo):
         pass
 
 orquestador_carga_ont("auto")
+
+#create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")
+#create_ont("AAB_TEST_ONT","TEST_LLAVE_2","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

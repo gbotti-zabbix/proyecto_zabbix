@@ -309,4 +309,4 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         print(create_ont.json()["result"])
         return 1
 
-create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")
+create_ont("AAB_TEST_ONT","TEST_LLAVE_2","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

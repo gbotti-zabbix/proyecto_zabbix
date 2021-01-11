@@ -11,7 +11,6 @@ def orquestador_carga_ont(metodo):
         contador = 0
         encontrado = 0
         llave = autorizar()
-        print(llave)
         lista_rbs = get_rbs()
         for rbs in lista_rbs:
             nodo = rbs[0]

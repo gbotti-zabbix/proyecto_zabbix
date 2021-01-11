@@ -9,6 +9,7 @@ def orquestador_carga_ont(metodo):
         pass
     elif metodo == "auto":
         contador = 0
+        encontrado = 0
         llave = autorizar()
         print(llave)
         lista_rbs = get_rbs()
@@ -16,8 +17,13 @@ def orquestador_carga_ont(metodo):
             nodo = rbs[0]
             puerto = str(rbs[1]) + "/" + str(rbs[2]) + "/" + str(rbs[3])
             contador = contador + 1
-            print("Nodo {} tiene la rbs {}".format(nodo,puerto))
-        print(contador)
+            key = "PONTX[zxAnPonOnuIfTxOctets.ONT{}".format(puerto)
+            chequeo = ont_check("key_",key,llave)
+            if chequeo == 0:
+                contador = contador + 1
+            elif chequeo == 1:
+                encontrado = encontrado + 1
+        print("{} ONTs encontradas y {} sin encontrar".format(encontrado,contador))
         logout(llave)
 
 orquestador_carga_ont("auto")

@@ -2,8 +2,9 @@ import sys
 
 from requester import requester
 from getpass import getpass
+from api import usuario, contraseña
 
-def autorizar(usuario,contraseña,*args):
+def autorizar(*args):
     autorizar = {
     "jsonrpc": "2.0",
     "method": "user.login",
@@ -33,22 +34,4 @@ def logout(llave):
         if deslogeo.json()["result"] == True:
             print("Deslogeo correcto")
     except Exception as e:
-        print("Ocurrio un error al intentar deslogar el id: {}".format(llave))    
-
-#con sesion manual podes llamar a los input del logeo asi como cerrar a mano un ID
-def sesion_manual(opcion):
-    if opcion == "autorizar":
-        autorizar(input("Ingrese User:\n"),getpass("Ingrese Password:\n"),"print")
-    elif opcion == "logout":
-        logout(input("Ingrese Key a deslogear:\n"))
-
-#manejo manual de sesion desde CLI
-# try:
-if sys.argv[1] == "logeo":
-    sesion_manual("autorizar")
-elif sys.argv[1] == "deslogeo":
-    sesion_manual("logout")
-else:
-    pass
-# except Exception as e:
-#     print("No usaste ningun argumento. Las opciones son:\n * \"logeo\" para obtener una ID \n * \"deslogeo\" para borrar un sesion ID")
+        print("Ocurrio un error al intentar deslogar el id: {}".format(llave))

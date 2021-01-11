@@ -18,7 +18,7 @@ def autorizar():
     print(llave)
 
 def logout():
-    llave =  = input("Ingrese Key a deslogear:\n")
+    llave = input("Ingrese Key a deslogear:\n")
     logout = {
     "jsonrpc": "2.0",
     "method": "user.logout",

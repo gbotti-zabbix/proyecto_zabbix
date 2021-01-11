@@ -303,7 +303,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     }
     create_ont = requester(create_ont)
     print(create_ont.json())
-    print(create_ont.json()["error"]["code"]
+    print(create_ont.json()["error"]["code"])
         #print("No se creo la ONT: {}".format(nombre))
         #return 0
     #else:

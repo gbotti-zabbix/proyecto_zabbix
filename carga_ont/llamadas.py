@@ -267,3 +267,46 @@ def dic_oid_zte(clave):
     "197":"83079",
     "198":"83080"}
     return dic[clave]
+
+
+def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
+    create_ont = {
+        "jsonrpc": "2.0",
+        "method": "item.create",
+        "params": {
+            "name": nombre,
+            "key_": llave,
+            "hostid": hostid,
+            "interfaceid": interfaceid,
+        "type": 4,
+            "value_type": "3",
+            "snmp_community": "{$SNMP_COMMUNITY}",
+        "snmp_oid": oid,
+        "units": "bps",
+            "delay": "5m",
+            "applications": [
+                appid
+            ],
+        "preprocessing": [
+                {
+                    "type": "10",
+            "params":""
+                },
+            {
+            "type": "1",
+            "params": 8
+            }
+        ]
+        },
+        "auth": auth,
+        "id": 1
+    }
+    create_ont = requester(create_ont)
+    if len(chequeo.json()["result"]) < 1:
+        print("No se creo la ONT: {}".format(nombre))
+        return 0
+    else:
+        print(chequeo.json()["result"])
+        return 1
+
+create_ont("TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

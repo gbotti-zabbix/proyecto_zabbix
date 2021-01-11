@@ -1,6 +1,5 @@
-from llamadas import ont_check, host_get, get_inter_id, get_app_id, get_oid
+from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont
 from sesiones import autorizar, logout
-from api import usuario, contraseña
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
 

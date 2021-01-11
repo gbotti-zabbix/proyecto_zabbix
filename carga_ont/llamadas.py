@@ -15,8 +15,7 @@ from conector import conector
 def get_rbs():
     sql = "SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;"
     rbs = conector(sql,"select","Consultando ONTS")
-    print(rbs)
-    print(type(rbs))
+    return rbs
 
 #CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
 #OPCION MARCA COMO BUSCAR (key_,name), PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
@@ -268,5 +267,3 @@ def dic_oid_zte(clave):
     "197":"83079",
     "198":"83080"}
     return dic[clave]
-
-get_rbs()

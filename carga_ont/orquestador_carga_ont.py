@@ -8,7 +8,15 @@ def orquestador_carga_ont(metodo):
         #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
         pass
     elif metodo == "auto":
-        pass
+        contador = 0
+        llave = autorizar()
+        print(llave)
+        lista_rbs = get_rbs()
+        for rbs in lista_rbs:
+            print(rbs)
+            contador = contador + 1
+        print(contador)
+        logout(llave)
 
 orquestador_carga_ont("auto")
 

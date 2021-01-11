@@ -14,7 +14,7 @@ def orquestador_carga_ont(metodo):
         lista_rbs = get_rbs()
         for rbs in lista_rbs:
             nodo = rbs[0]
-            puerto = str(rbs[1]) + "/" + str(rbs[2]) + "/" str(rbs[3])
+            puerto = str(rbs[1]) + "/" + str(rbs[2]) + "/" + str(rbs[3])
             contador = contador + 1
             print("Nodo {} tiene la rbs {}".format(nodo,puerto))
         print(contador)

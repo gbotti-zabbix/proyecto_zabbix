@@ -8,21 +8,25 @@ def orquestador_carga_ont(metodo):
         #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
         pass
     elif metodo == "auto":
-        contador = 0
+        faltante = 0
         encontrado = 0
+        descarte = 0
         llave = autorizar()
         lista_rbs = get_rbs()
         for rbs in lista_rbs:
-            nodo = rbs[0]
-            puerto = str(rbs[1]) + "/" + str(rbs[2]) + "/" + str(rbs[3])
-            contador = contador + 1
+            modelo = rbs[0]
+            nodo = rbs[1]
+            puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
             key = "PONTX[zxAnPonOnuIfRxOctets.ONT{}".format(puerto)
             chequeo = ont_check("key_",key,llave)
-            if chequeo == 0:
-                contador = contador + 1
-            elif chequeo == 1:
-                encontrado = encontrado + 1
-        print("{} ONTs encontradas y {} sin encontrar".format(encontrado,contador))
+            if modelo != "C300":
+                descarte = descarte +1
+            else:
+                if chequeo == 0:
+                    faltante = faltante + 1
+                elif chequeo == 1:
+                    encontrado = encontrado + 1
+        print("{} ONTs encontradas, {} sin encontrar y {} descartadas".format(encontrado,faltante,descarte))
         logout(llave)
 
 orquestador_carga_ont("auto")

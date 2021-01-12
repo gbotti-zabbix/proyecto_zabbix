@@ -275,7 +275,7 @@ def get_name(ip,oid):
     #LA IP LA SACO DESDE get inter_id
     etiqueta = os.popen("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid)).read()
     etiqueta = etiqueta.split("\"")
-    print(etiqueta)
+    print(etiqueta[1])
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):

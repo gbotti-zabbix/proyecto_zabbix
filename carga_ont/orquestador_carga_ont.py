@@ -16,7 +16,7 @@ def orquestador_carga_ont(metodo):
             nodo = rbs[0]
             puerto = str(rbs[1]) + "/" + str(rbs[2]) + "/" + str(rbs[3])
             contador = contador + 1
-            key = "PONTX[zxAnPonOnuIfTxOctets.ONT{}".format(puerto)
+            key = "PONTX[zxAnPonOnuIfRxOctets.ONT{}".format(puerto)
             chequeo = ont_check("key_",key,llave)
             if chequeo == 0:
                 contador = contador + 1

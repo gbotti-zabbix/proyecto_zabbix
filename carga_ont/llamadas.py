@@ -2,6 +2,7 @@ import requests
 import json
 import os 
 
+from api import usuario_sv, contraseña_sv
 from requester import requester
 
 #IMPORTO EL CONECTOR DE REFACTOR

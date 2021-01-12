@@ -273,7 +273,7 @@ def dic_oid_zte(clave):
 #Saco etiqueta para el name y lo devuelvo formateado
 def get_name(ip,oid):
     #LA IP LA SACO DESDE get inter_id
-    etiqueta = os.system("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid))
+    etiqueta = os.popen("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid)).read()
     print(etiqueta)
     print(type(etiqueta))
 

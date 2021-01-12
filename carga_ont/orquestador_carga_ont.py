@@ -23,12 +23,16 @@ def orquestador_carga_ont(metodo):
             else:
                 hostid = host_get(nodo,llave)
                 inter_id = get_inter_id(hostid,llave)
-                ip = inter_id["ip"]
+                try:
+                    ip = inter_id["ip"]
+                except TypeError as e:
+                    print("Probablemente falta hostid para {}".format(nodo))
+                    pass
                 oid = get_oid("zte",puerto)
                 #preciso obtener ip de get interface id
                 try:
                     nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
-                except IndexError as e:
+                except IndexError as ee:
                     print("No se pudo generar nombre para {}".format(rbs))
                     pass
                 chequeo = ont_check("name",nombre["RX"],llave)

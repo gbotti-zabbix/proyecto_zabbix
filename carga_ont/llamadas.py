@@ -129,7 +129,7 @@ def get_oid(tipo,puerto):
                 oid_rx = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
                 oid_tx = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
                 oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                    return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
+                return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
             except KeyError as e:
                 print("Uno de los valores del puerto es incorrecto")
     else:

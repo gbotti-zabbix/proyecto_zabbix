@@ -26,7 +26,11 @@ def orquestador_carga_ont(metodo):
                 ip = inter_id["ip"]
                 oid = get_oid("zte",puerto)
                 #preciso obtener ip de get interface id
-                nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
+                try:
+                    nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
+                except IndexError as e:
+                    print("No se pudo generar nombre para {}".format(rbs))
+                    pass
                 chequeo = ont_check("name",nombre["RX"],llave)
                 if chequeo == 0:
                     print(nodo)

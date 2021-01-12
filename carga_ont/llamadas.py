@@ -270,13 +270,14 @@ def dic_oid_zte(clave):
     "198":"83080"}
     return dic[clave]
 
-#Saco etiqueta para el name y lo devuelvo formateado. TIPO ES Radio Base, ONT
+#Saco etiqueta para el name y lo devuelvo formateado. TIPO ES Radio Base, ONT. Retorna un DICC con los nombres.
 def get_name(ip,oid,puerto,tipo):
     #LA IP LA SACO DESDE get inter_id
     etiqueta = os.popen("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid)).read()
     etiqueta = etiqueta.split("\"")
-    print("{} : {} : {} : RX".format(tipo,puerto,etiqueta[1]))
-    print("{} : {} : {} : TX".format(tipo,puerto,etiqueta[1]))
+    RX = "{} : {} : {} : RX".format(tipo,puerto,etiqueta[1])
+    TX = "{} : {} : {} : TX".format(tipo,puerto,etiqueta[1])
+    return {"RX":RX,"TX":TX}
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
@@ -322,4 +323,6 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
-get_name("192.168.104.88", ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.285282561.4","17/4/18","Radio Base")
+test = get_name("192.168.104.88", ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.285282561.4","17/4/18","Radio Base")
+print(test["RX"])
+print(test["TX"])

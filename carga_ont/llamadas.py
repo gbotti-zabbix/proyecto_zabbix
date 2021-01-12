@@ -34,14 +34,12 @@ def ont_check(opcion,parametro,auth):
     "auth": "{}".format(auth),
     "id": 1
     }
-    print(ont_check)
     chequeo = requester(ont_check)
-    print(chequeo.json())
     if len(chequeo.json()["result"]) < 1:
         print("No se encontro la ONT: {}".format(parametro))
         return 0
     else:
-        print(chequeo.json()["result"])
+        #print(chequeo.json()["result"])
         return 1
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
@@ -322,4 +320,3 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
-ont_check("key_","PONTX[zxAnPonOnuIfRxOctets.ONT19/4/1]","1e2da08dc6f635f3cb48cf0aa8001ebf")

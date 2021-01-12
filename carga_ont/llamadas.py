@@ -273,8 +273,8 @@ def dic_oid_zte(clave):
 #Saco etiqueta para el name y lo devuelvo formateado
 def get_name(ip,oid):
     #LA IP LA SACO DESDE get inter_id
-    os.system("sshpass -p antel2020 ssh oymacceso@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(ip,oid))
-
+    etiqueta = os.system("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid))
+    print(etiqueta[-10:])
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = {

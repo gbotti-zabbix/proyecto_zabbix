@@ -1,4 +1,4 @@
-from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont
+from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name
 from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
@@ -17,12 +17,17 @@ def orquestador_carga_ont(metodo):
             modelo = rbs[0]
             nodo = rbs[1]
             puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
-            key = "PONTX[zxAnPonOnuIfTxOctets.ONT{}]".format(puerto)
-            chequeo = ont_check("key_",key,llave)
             if modelo != "C300":
                 print("Se descarto la ONT {} {}".format(nodo,puerto))
                 descarte = descarte +1
             else:
+                hostid = host_get(nodo,llave)
+                inter_id = get_inter_id(hostid,llave)
+                ip = inter_id["ip"]
+                oid = get_oid("zte",puerto)
+                #preciso obtener ip de get interface id
+                nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
+                ont_check("name",nombre,llave)
                 if chequeo == 0:
                     print(nodo)
                     faltante = faltante + 1

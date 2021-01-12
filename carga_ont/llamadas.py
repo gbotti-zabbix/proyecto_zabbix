@@ -66,7 +66,7 @@ def host_get(nodo,auth):
         print(hostid.json()["result"][0]["hostid"])
         return hostid.json()["result"][0]["hostid"]
 
-#SACAR UN INTERFACE ID A PARTIR DE HOST ID
+#SACAR UN INTERFACE ID A PARTIR DE HOST ID. TAMBIEN DEVUELVE IP DE LA INTERFACE.
 def get_inter_id(hostid,auth):
     interfaceid = {
         "jsonrpc": "2.0",
@@ -85,8 +85,9 @@ def get_inter_id(hostid,auth):
     if len(interfaceid.json()["result"]) < 1:
         print("No se encontro el hostid: {}".format(hostid))
     else:
-        print(interfaceid.json()["result"][0]["interfaceid"])
-        return interfaceid.json()["result"][0]["interfaceid"]
+        inter_id = interfaceid.json()["result"][0]["interfaceid"]
+        ip = interfaceid.json()["result"][0]["ip"]
+        return {"inter_id":inter_id,"ip":ip}
 
 #SACAR UN APP ID DE ONT A PARTIR DE HOST ID
 def get_app_id(hostid,auth):
@@ -323,6 +324,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
-test = get_name("192.168.104.88", ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.285282561.4","17/4/18","Radio Base")
-print(test["RX"])
-print(test["TX"])
+
+test = get_inter_id("11289")
+print(test["ip"])
+print(test["inter_id"])

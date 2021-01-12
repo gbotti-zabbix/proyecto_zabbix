@@ -29,8 +29,7 @@ def ont_check(opcion,parametro,auth):
         "output": ["{}".format(opcion)],
         "search": {
             "{}".format(opcion): "{}".format(parametro)
-        },
-        "sortfield": "name"
+        }
     },
     "auth": "{}".format(auth),
     "id": 1

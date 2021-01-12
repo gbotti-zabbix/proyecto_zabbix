@@ -15,7 +15,7 @@ from conector import conector
 
 #SACO LISTADO DE ONT A CHEKEAR
 def get_rbs():
-    sql = "SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;"
+    sql = "SELECT `modelo_nodo`,`nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;"
     rbs = conector(sql,"select","Consultando ONTS")
     return rbs
 

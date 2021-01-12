@@ -26,16 +26,15 @@ def orquestador_carga_ont(metodo):
                 try:
                     ip = inter_id["ip"]
                 except TypeError as e:
-                    print("Probablemente falta hostid para {}".format(nodo))
                     pass
                 oid = get_oid("zte",puerto)
-                #preciso obtener ip de get interface id
                 try:
                     nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
                 except IndexError as ee:
                     print("No se pudo generar nombre para {}".format(rbs))
                     pass
                 chequeo = ont_check("name",nombre["RX"],llave)
+                #aca crearia la lista para las ont a crear
                 if chequeo == 0:
                     print(nodo)
                     faltante = faltante + 1
@@ -43,6 +42,25 @@ def orquestador_carga_ont(metodo):
                     encontrado = encontrado + 1
         print("{} ONTs encontradas, {} sin encontrar y {} descartadas".format(encontrado,faltante,descarte))
         logout(llave)
+#DATOS DE LAS ONT QUE YA RECABE
+'''
+*LLave de logeo a la api
+*Modelo de nodo al que pertenece la ONT
+*Nodo especifico al que pertenece la ONT
+*Puerto de la ONT
+*Host ID
+*Interface ID
+*IP
+*OIDs (Tengo que llamarlas en especifico por RX,TX Etiqueta)
+*Nombres (Tengo que llamarlos en especifico por RX TX)
+*Chequea su existencia
+'''
+
+#DATOS DE LAS ONT QUE NO RECABE
+'''
+APP ID
+
+
 
 orquestador_carga_ont("auto")
 

@@ -34,7 +34,7 @@ def orquestador_carga_ont(metodo):
                     print("No se pudo generar nombre para {}".format(rbs))
                     pass
                 chequeo = ont_check("name",nombre["RX"],llave)
-                #aca crearia la lista para las ont a crear
+                #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                 if chequeo == 0:
                     print(nodo)
                     faltante = faltante + 1

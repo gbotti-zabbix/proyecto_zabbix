@@ -126,13 +126,10 @@ def get_oid(tipo,puerto):
             print("El valor de ONT es incorrecto")
             pass
         else:
-            try:
-                oid_rx = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                oid_tx = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
-            except KeyError as e:
-                print("Uno de los valores del puerto es incorrecto")
+            oid_rx = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+            oid_tx = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+            oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+            return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
     else:
         print("No se han integrado funcionalidades para las ont de {}".format(tipo))
 

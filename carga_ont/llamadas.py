@@ -1,5 +1,6 @@
 import requests
 import json
+import os 
 
 from requester import requester
 
@@ -269,9 +270,9 @@ def dic_oid_zte(clave):
     return dic[clave]
 
 #Saco etiqueta para el name y lo devuelvo formateado
-def get_name():
+def get_name(ip,oid):
     #LA IP LA SACO DESDE get inter_id
-    pass
+    os.system("snmpwalk -v 2c -c private {} {}".format(ip,oid))
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
@@ -317,3 +318,4 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
+get_name("192.168.104.88", ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.285282561.4")

@@ -323,6 +323,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
 
 
 test = get_oid("zte","1/3/15")
-print(test["oid_rx"])
-print(test["oid_tx"])
-print(test["oid_etiqueta"])
+print(test)
+# print(test["oid_rx"])
+# print(test["oid_tx"])
+# print(test["oid_etiqueta"])

@@ -33,3 +33,6 @@ def logout(llave):
             print("Deslogeo correcto")
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))
+
+
+print(usuario,contraseña)

@@ -322,3 +322,4 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
+ont_check("key_";"PONTX[zxAnPonOnuIfRxOctets.ONT19/4/1]","1e2da08dc6f635f3cb48cf0aa8001ebf")

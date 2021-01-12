@@ -322,8 +322,8 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 
-test = get_oid("zte","1/3/15")
+test = get_oid("zte","2/3/15")
 print(test)
-# print(test["oid_rx"])
-# print(test["oid_tx"])
-# print(test["oid_etiqueta"])
+print(test["oid_rx"])
+print(test["oid_tx"])
+print(test["oid_etiqueta"])

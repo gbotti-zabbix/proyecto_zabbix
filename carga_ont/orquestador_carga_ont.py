@@ -18,9 +18,8 @@ def orquestador_carga_ont(metodo):
             nodo = rbs[1]
             puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
             key = "PONTX[zxAnPonOnuIfRxOctets.ONT{}]".format(puerto)
-            print(puerto)
-            print(key)
             chequeo = ont_check("key_",key,llave)
+            print(chequeo)
             if modelo != "C300":
                 descarte = descarte +1
             else:

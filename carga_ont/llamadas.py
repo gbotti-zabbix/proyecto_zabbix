@@ -70,7 +70,7 @@ def get_inter_id(hostid,auth):
         "jsonrpc": "2.0",
         "method": "hostinterface.get",
         "params": {
-        "output": ["interfaceid","hostid","type"],
+        "output": ["interfaceid","hostid","ip","type"],
             "hostids": "{}".format(hostid),
             "filter": {
                 "type": "2"
@@ -267,6 +267,11 @@ def dic_oid_zte(clave):
     "197":"83079",
     "198":"83080"}
     return dic[clave]
+
+#Saco etiqueta para el name y lo devuelvo formateado
+def get_name():
+    #LA IP LA SACO DESDE get inter_id
+    pass
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):

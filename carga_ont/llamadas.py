@@ -112,11 +112,12 @@ def get_app_id(hostid,auth):
         print(app_id.json()["result"][0]["applicationid"])
         return app_id.json()["result"][0]["applicationid"]
 
-#SACAR OID SEGUN VENDOR DE NODO, SLOT, PUERTO, ONT Y DIRECCION
-def get_oid(tipo,puerto,direccion):
+#SACAR OID SEGUN VENDOR DE NODO, SLOT, PUERTO Y ONT
+def get_oid(tipo,puerto):
     if tipo == "zte":
         base_RX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.1.28527"
         base_TX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.44.2852"
+        base_etiqueta = ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.2852"
         puerto = puerto.split("/")
         slot = int(puerto[0])
         puertopon = int(puerto[1])
@@ -125,15 +126,10 @@ def get_oid(tipo,puerto,direccion):
             print("El valor de ONT es incorrecto")
             pass
         else:
-            try:
-                if direccion == "RX":
-                    oid = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                    print(oid)
-                    return oid
-                elif direccion == "TX":
-                    oid = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
-                    print(oid)
-                    return oid
+                oid_rx = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+                oid_tx = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+                oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
+                    return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
             except KeyError as e:
                 print("Uno de los valores del puerto es incorrecto")
     else:
@@ -325,3 +321,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 
+test = get_oid("zte","17/15/15")
+print(test["oid_rx"])
+print(test["oid_tx"])
+print(test["oid_etiqueta"])

@@ -27,7 +27,7 @@ def orquestador_carga_ont(metodo):
                 oid = get_oid("zte",puerto)
                 #preciso obtener ip de get interface id
                 nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
-                ont_check("name",nombre,llave)
+                chequeo = ont_check("name",nombre["RX"],llave)
                 if chequeo == 0:
                     print(nodo)
                     faltante = faltante + 1

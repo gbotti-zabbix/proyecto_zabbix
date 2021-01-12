@@ -325,6 +325,3 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 
-test = get_inter_id("11289","eafffac9d622b5939c3c3e65df2aff91")
-print(test["ip"])
-print(test["inter_id"])

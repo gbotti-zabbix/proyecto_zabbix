@@ -60,9 +60,8 @@ def host_get(nodo,auth):
     }
     hostid = requester(host_get)
     if len(hostid.json()["result"]) < 1:
-        print("No se encontro el nodo: {}".format(nodo))
+        print("Host get no encontro el nodo: {}".format(nodo))
     else:
-        print(hostid.json()["result"][0]["hostid"])
         return hostid.json()["result"][0]["hostid"]
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID. TAMBIEN DEVUELVE IP DE LA INTERFACE.

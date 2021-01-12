@@ -42,6 +42,10 @@ def orquestador_carga_ont(metodo):
                     encontrado = encontrado + 1
         print("{} ONTs encontradas, {} sin encontrar y {} descartadas".format(encontrado,faltante,descarte))
         logout(llave)
+
+orquestador_carga_ont("auto")
+
+
 #DATOS DE LAS ONT QUE YA RECABE
 '''
 *LLave de logeo a la api
@@ -59,10 +63,7 @@ def orquestador_carga_ont(metodo):
 #DATOS DE LAS ONT QUE NO RECABE
 '''
 APP ID
-
-
-
-orquestador_carga_ont("auto")
+'''
 
 #create_ont("AAA_TEST_ONT","TEST_LLAVE","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")
 #create_ont("AAB_TEST_ONT","TEST_LLAVE_2","11288","1363","TEST OID","71245","fc6c4c0d30ed633e8dd173e4f69e628b")

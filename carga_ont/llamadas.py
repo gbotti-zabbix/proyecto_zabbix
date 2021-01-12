@@ -126,6 +126,7 @@ def get_oid(tipo,puerto):
             print("El valor de ONT es incorrecto")
             pass
         else:
+            try:
                 oid_rx = base_RX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
                 oid_tx = base_TX + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
                 oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)

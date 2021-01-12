@@ -24,6 +24,7 @@ def orquestador_carga_ont(metodo):
                 descarte = descarte +1
             else:
                 if chequeo == 0:
+                    print(nodo)
                     faltante = faltante + 1
                 elif chequeo == 1:
                     encontrado = encontrado + 1

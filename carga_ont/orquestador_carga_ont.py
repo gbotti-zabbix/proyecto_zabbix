@@ -26,12 +26,14 @@ def orquestador_carga_ont(metodo):
                 try:
                     ip = inter_id["ip"]
                 except TypeError as e:
+                    faltante = faltante + 1
                     pass
                 oid = get_oid("zte",puerto)
                 try:
                     nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
                 except IndexError as ee:
                     print("No se pudo generar nombre para {}".format(rbs))
+                    faltante = faltante + 1
                     pass
                 chequeo = ont_check("name",nombre["RX"],llave)
                 #aca crearia la lista de las ont no creadas y crearia las que corresponde.

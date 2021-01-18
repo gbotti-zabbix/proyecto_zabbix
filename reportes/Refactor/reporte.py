@@ -50,7 +50,7 @@ def apend_data_PON(workbook,hojas,periodo):
         if (direccion == "RX" and (puerto == "22/1" or puerto == "21/1")) or (direccion == "RX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Bajada Uplink"].append(lista_append)
-        elif (direccion == "TX" and (puerto == "22/1" or puerto == "21/1") or (direccion == "TX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")):
+        elif direccion == "TX" and (puerto == "22/1" or puerto == "21/1"):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida Uplink"].append(lista_append)
         elif direccion == "TX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):

@@ -194,9 +194,12 @@ def sacar_grupo(grupos):
 
 
 #Regex para extraer nodo/slot/puerto a partir del nombre de la interfaz
-def regex_puerto(nombre):
+def regex_puerto(nombre,tipo):
     Puerto = ""
-    match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    if tipo == "PON":
+        match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    elif tipo == "ONT":
+        match_puerto = re.search("([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
     if match_puerto:
         Puerto = match_puerto.group()
     return Puerto
@@ -241,7 +244,7 @@ def parseo_ont():
                 Tipo = sacar_grupo(linea["groups"])
                 Nodo = linea["host"]
                 Nombre = linea["name"]
-                Puerto = regex_puerto(Nombre)
+                Puerto = regex_puerto(Nombre,"ONT")
                 Direccion = Nombre[-2:]
                 Etiqueta = regex_etiqueta(Nombre)
 
@@ -299,7 +302,7 @@ def parseo_pon():
                     Tipo = sacar_grupo(linea["groups"])
                     Nodo = linea["host"]
                     Nombre = linea["name"]
-                    Puerto = regex_puerto(Nombre)[2:]
+                    Puerto = regex_puerto(Nombre,"PON")[2:]
                     Direccion = sacar_direccion(Nombre)
 
                     #Fecha y hora salen a partir de procesar tiempo

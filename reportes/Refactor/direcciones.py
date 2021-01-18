@@ -87,7 +87,7 @@ descripcion_ONT = {"A1":"Modelo Nodo: Modelo del nodo. C300, ISAM FX, MA5800, et
 hojas_PON = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink),DefiniciónEncabezados("Descripciones",descripcion_PON)]
 hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT),DefiniciónEncabezados("Descripciones",descripcion_ONT)]
 
-
+c300_19p = ["G-AZNAREZ-01Z", "MARISCALA-01Z", "A-ARENA-01Z"]
 #=========dato base datos========================#
 #-variables para conexión a la base de datos
 host_DB="localhost"

@@ -14,8 +14,9 @@ def orquestador_carga_ont(metodo):
         llave = autorizar()
         lista_rbs = get_rbs()
         for rbs in lista_rbs:
-            modelo = rbs[0]
-            nodo = rbs[1]
+            if rbs[0][-1] == "Z":
+                modelo = "C300"
+            nodo = rbs[0]
             puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
             if modelo != "C300":
                 print("Se descarto la ONT {} {}".format(nodo,puerto))
@@ -29,12 +30,16 @@ def orquestador_carga_ont(metodo):
                     faltante = faltante + 1
                     pass
                 oid = get_oid("zte",puerto)
+                #GET NAME VIEJO CON OID
+                '''
                 try:
                     nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
                 except IndexError as ee:
                     print("No se pudo generar nombre para {}".format(rbs))
                     faltante = faltante + 1
                     pass
+                '''
+                nombre = (get_name("Radio Base"),puerto,etiqueta)
                 chequeo = ont_check("name",nombre["RX"],llave)
                 #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                 if chequeo == 0:

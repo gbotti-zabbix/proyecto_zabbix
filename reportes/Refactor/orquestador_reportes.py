@@ -69,7 +69,10 @@ def orquestador_reportes():
 
                 #--- Proceso BD inventario tlk-----#
                 logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
-            #if fin existe archivo TLK #        
+            #if fin existe archivo TLK # 
+            # Carga de inventario RBS de DSC #
+
+            # Fin de Carga inventario RBS de DSC #        
             # existe archivo Zabbix #
             elif checkFileExistance(crudozabbix()):
                 #Parseo archivo de Zabbix PON y ONT

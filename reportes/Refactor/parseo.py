@@ -11,6 +11,7 @@ import sys
 from datetime import datetime, date
 from conector import conector
 from direcciones import crudozabbix,archivo_pickle_ONT,archivo_pickle_PON
+from consultas import sql_get_nodos
 
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
 def FileCheck(fn):
@@ -183,14 +184,10 @@ def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
 
 #Extraigo grupo de nodos
 def sacar_grupo(grupos):
-    tipo = ""
-    if "C300"  in grupos:
-        Tipo = "C300"
-    elif "MA5800" in grupos:
-        Tipo = "MA5800"
-    elif "ISAM-FX" in grupos:
-        Tipo = "ISAM-FX"
-    return Tipo
+    tipos = conector(sql_get_nodos,"select","Seleccionando medlo de nodos")
+    for tipo in tipos:
+        if tipo in grupos:
+            return tipo
 
 
 #Regex para extraer nodo/slot/puerto a partir del nombre de la interfaz

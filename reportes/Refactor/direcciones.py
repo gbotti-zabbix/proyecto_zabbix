@@ -14,23 +14,24 @@ pid = "/tmp/orquestador_reportes_zabbix.pid"
 #=======  Archivos inventarios y procesados=========#
 
 # -directorio origen y destino de archivos
-path_files="/var/lib/reportes-zabbix/reporte_tlk/"  #directorio trabajo
+path_files_tlk="/var/lib/reportes-zabbix/reporte_tlk/"  #directorio trabajo reporte tlk
+path_files_RBS="/var/lib/reportes-zabbix/reporte_RBS/"  #directorio trabajo reporte RBS
 
 file_tlk="PLN245_procesado.TXT"               #nombre archivo origen
 file_tlk_dst="PLN245_parseado.csv"              #nombre archivo destino
 file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro archivo original
 
-archivo_tlk = path_files+file_tlk
-archivo_tlk_dst = path_files+file_tlk_dst
-archivo_tlk_viejo = file_tlk+file_tlk_old
+archivo_tlk = path_files_tlk+file_tlk
+archivo_tlk_dst = path_files_tlk+file_tlk_dst
+archivo_tlk_viejo = path_files_tlk+file_tlk_old
 
-file_rbs_DCS= "vacio"
-file_rbs_DCS_dst= "vacio"
-file_rbs_DCS_old= "vacio"
+file_rbs_DCS= "reportes_RBS.csv"
+file_rbs_DCS_dst= "RBS_parseado.csv"
+file_rbs_DCS_old= "reportes_RBS.old.csv"
 
-archivo_rbs_DCS= path_files+file_rbs_DCS
-archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
-archivo_rbs_DCS_old = path_files+file_rbs_DCS_old
+archivo_rbs_DCS= path_files_RBS+file_rbs_DCS
+archivo_rbs_DCS_dst= path_files_RBS+file_rbs_DCS_dst
+archivo_rbs_DCS_old = path_files_RBS+file_rbs_DCS_old
 
 
 
@@ -116,7 +117,7 @@ file_tlk_old="PLN245_procesado.old.TXT"              #luego parseo renombro arch
 
 archivo_tlk = path_files+file_tlk
 archivo_tlk_dst = path_files+file_tlk_dst
-archivo_tlk_viejo = file_tlk+file_tlk_old
+archivo_tlk_viejo = path_files+file_tlk_old
 
 file_rbs_DCS= "vacio"
 file_rbs_DCS_dst= "vacio"

@@ -137,7 +137,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 
 
 def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
-    """Función que recibe el archivo de Radbio Bases y luego lo parsea,
+    """Función que recibe el archivo de Radbio Bases DSC y luego lo parsea,
        Recibe el nombre arhivo origen a paresar, el nombre archivo destino
         parseado y como renombrar el archivo original
     """

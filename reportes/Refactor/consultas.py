@@ -1,8 +1,5 @@
 #!/usr/bin/python
 
-######parseo zabbix#####
-sql_get_nodos = "SELECT `modelo` FROM `t_diccionario_nodos_tlk`;"
-
 ######pusheo zabbix#####
 sql_truncate_cdiarios_PON = 'TRUNCATE crudos_diarios;'
 sql_truncate_cdiarios_ONT = 'TRUNCATE crudos_diarios_ont;'

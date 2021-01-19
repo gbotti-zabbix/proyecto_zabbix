@@ -88,6 +88,9 @@ hojas_PON = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), Definici
 hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT),DefiniciónEncabezados("Descripciones",descripcion_ONT)]
 
 c300_19p = ["G-AZNAREZ-01Z", "MARISCALA-01Z", "A-ARENA-01Z"]
+
+modelos_nodos = ["MA5600T","MA5800","C300","ISAM FX","C600"]
+
 #=========dato base datos========================#
 #-variables para conexión a la base de datos
 host_DB="localhost"

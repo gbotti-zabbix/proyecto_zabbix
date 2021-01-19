@@ -39,7 +39,7 @@ def orquestador_carga_ont(metodo):
                     faltante = faltante + 1
                     pass
                 '''
-                nombre = (get_name("Radio Base"),puerto,etiqueta)
+                nombre = get_name("Radio Base",puerto,etiqueta)
                 chequeo = ont_check("name",nombre["RX"],llave)
                 #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                 if chequeo == 0:

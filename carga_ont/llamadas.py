@@ -15,7 +15,7 @@ from conector import conector
 
 #SACO LISTADO DE ONT A CHEKEAR
 def get_rbs():
-    sql = "SELECT `modelo_nodo`,`nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;"
+    sql = "SELECT `nodo`,`etiqueta_ont`,`slot`,`puerto`,`ont` FROM `t_servicios_RBS`"
     rbs = conector(sql,"select","Consultando ONTS")
     return rbs
 
@@ -267,12 +267,21 @@ def dic_oid_zte(clave):
     return dic[clave]
 
 #Saco etiqueta para el name y lo devuelvo formateado. TIPO ES Radio Base, ONT. Retorna un DICC con los nombres.
+#CODIGO ORIGINAL, USA OID Y HACE SNMP WALK
+'''
 def get_name(ip,oid,puerto,tipo):
+    
+
     #LA IP LA SACO DESDE get inter_id
     etiqueta = os.popen("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid)).read()
     etiqueta = etiqueta.split("\"")
     RX = "{} : {} : {} : RX".format(tipo,puerto,etiqueta[1])
     TX = "{} : {} : {} : TX".format(tipo,puerto,etiqueta[1])
+    return {"RX":RX,"TX":TX}
+'''
+def get_name(tipo,puerto,etiqueta):
+    RX = "{} : {} : {} : RX".format(tipo,puerto,etiqueta)
+    TX = "{} : {} : {} : TX".format(tipo,puerto,etiqueta)
     return {"RX":RX,"TX":TX}
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA

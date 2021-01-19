@@ -37,9 +37,9 @@ def f_cargar_inv_RBS_en_BD (archivo_csv):
     conector(sql,"Truncar",comentario_sql)
     
     #cargo Archivo
-    sql_cargar_PLN = "LOAD DATA INFILE \'"+archivo_csv+"\' INTO TABLE t_servicios_RBS FIELDS TERMINATED BY \',\' ENCLOSED BY \'\"\' LINES TERMINATED BY \'\\r\\n\' ;"
+    sql_cargar_RBS= "LOAD DATA INFILE \'"+archivo_csv+"\' INTO TABLE t_servicios_RBS FIELDS TERMINATED BY \',\' ENCLOSED BY \'\"\' LINES TERMINATED BY \'\\r\\n\' ;"
     comentario_sql = "Cargar reporte RBS paresado"
-    conector(sql_cargar_PLN,"Load",comentario_sql)
+    conector(sql_cargar_RBS,"Load",comentario_sql)
 
 def f_procesar_resumne_tlk_BD():
     #-------- Borro todas las tablas-----#

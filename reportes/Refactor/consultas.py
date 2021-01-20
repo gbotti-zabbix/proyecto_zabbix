@@ -117,3 +117,9 @@ sql_ont_semanal = "SELECT * FROM reporte_semanal_ont order by pico DESC"
 sql_ont_mensual = "SELECT * FROM reporte_mensual_ont order by pico DESC"
 sql_pon_semanal = "SELECT * FROM reporte_semanal order by pico DESC"
 sql_pon_mensual = "SELECT * FROM reporte_mensual order by pico DESC"
+
+#####Auditoria#####
+
+auditoria_ont = "SELECT `fecha` FROM `crudos_diarios_ont` WHERE `fecha` = '{}' limit 1;"
+auditoria_pon = "SELECT `fecha` FROM `crudos_diarios` WHERE `fecha` = '{}' limit 1;"
+

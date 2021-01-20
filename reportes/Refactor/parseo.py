@@ -355,6 +355,6 @@ def parseo_pon():
 
 
 
-f_parseo_inventario_RBS(direcciones.archivo_rbs_DCS,direcciones.archivo_rbs_DCS_dst,direcciones.archivo_rbs_DCS_old)
+
 
 

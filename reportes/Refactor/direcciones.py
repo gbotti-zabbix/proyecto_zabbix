@@ -7,7 +7,6 @@ from datetime import date
 
 #========PRODUCCIÓN=========#
 
-
 #---   LOGS  --------------
 file_log= "/var/log/reportes_zabbix/reportes.log"
 pid = "/tmp/orquestador_reportes_zabbix.pid"
@@ -122,9 +121,9 @@ archivo_tlk = path_files+file_tlk
 archivo_tlk_dst = path_files+file_tlk_dst
 archivo_tlk_viejo = path_files+file_tlk_old
 
-file_rbs_DCS= "vacio"
-file_rbs_DCS_dst= "vacio"
-file_rbs_DCS_old= "vacio"
+file_rbs_DCS= "reportes_RBS.csv"
+file_rbs_DCS_dst= "RBS_parseado.csv"
+file_rbs_DCS_old= "reportes_RBS.old.csv"
 
 archivo_rbs_DCS= path_files+file_rbs_DCS
 archivo_rbs_DCS_dst= path_files+file_rbs_DCS_dst
@@ -178,6 +177,10 @@ encabezados_ONT = {"A1":"Modelo Nodo","B1":"Nodo","C1":"Slot/Puerto/ONT","D1":"E
 hojas_PON = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink)]
 hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT)]
 
+c300_19p = ["G-AZNAREZ-01Z", "MARISCALA-01Z", "A-ARENA-01Z"]
+
+modelos_nodos = ["MA5600T","MA5800","C300","ISAM FX","C600"]
+
 #=========dato base datos========================#
 #-variables para conexión a la base de datos
 host_DB="192.168.211.4"
@@ -187,5 +190,4 @@ database_DB="reportes_zabbix_test"
 
 
 #========DESARROLLO===========#
-
 """

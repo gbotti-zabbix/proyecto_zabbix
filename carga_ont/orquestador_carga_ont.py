@@ -9,6 +9,7 @@ def orquestador_carga_ont(metodo):
         pass
     elif metodo == "auto":
         lista = []
+        repetidas = []
         faltante = 0
         encontrado = 0
         descarte = 0
@@ -42,21 +43,22 @@ def orquestador_carga_ont(metodo):
                 etiqueta = rbs[1]
                 nombre = get_name("Radio Base",puerto,etiqueta)
                 zkey = get_zabbix_key(puerto)
-                chequeo = ont_check("key_",hostid,zkey["RX"],llave)
-                #aca crearia la lista de las ont no creadas y crearia las que corresponde.
-                if chequeo == 0:
-                    print(nodo,zkey)
-                    faltante = faltante + 1
-                elif chequeo == 1:
-                    if hostid+zkey in lista:
-                        pass
-                    else:
+                if str(hostid)+str(zkey["RX"]) in lista:
+                    repetidas.append(str(hostid)+str(zkey["RX"]))
+                else:
+                    chequeo = ont_check("key_",hostid,zkey["RX"],llave)
+                    #aca crearia la lista de las ont no creadas y crearia las que corresponde.
+                    if chequeo == 0:
+                        print(nodo,zkey)
+                        faltante = faltante + 1
+                    elif chequeo == 1:
                         encontrado = encontrado + 1
-                        lista.append(hostid+zkey)
+                        lista.append(str(hostid)+str(zkey["RX"]))
 
-        print("{} ONTs encontradas, {} sin encontrar y {} descartadas".format(encontrado,faltante,descarte))
+        print("{} ONTs encontradas,{} repetidas, {} sin encontrar y {} descartadas".format(encontrado,len(repetidas),faltante,descarte))
         logout(llave)
-
+        print(repetidas)
+        
 orquestador_carga_ont("auto")
 
 

@@ -284,6 +284,11 @@ def get_name(tipo,puerto,etiqueta):
     TX = "{} : {} : {} : TX".format(tipo,puerto,etiqueta)
     return {"RX":RX,"TX":TX}
 
+def get_zabbix_key(puerto):
+    TX = "PONTX[zxAnPonOnuIfTxOctets.ONT{}]".format(puerto)
+    RX = "PONRX[zxAnPonOnuIfRxOctets.ONT{}]".format(puerto)
+    return {"RX":RX,"TX":TX}
+
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = {
@@ -328,3 +333,8 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
+
+test = get_zabbix_key("15/15/15")
+
+print(test["RX"])
+print(test["TX"])

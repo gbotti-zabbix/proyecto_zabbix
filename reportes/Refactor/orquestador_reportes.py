@@ -62,10 +62,10 @@ def orquestador_reportes():
                 #-----llamo a parser inventario RBS----#
                 logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
                 logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
-                #f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
+                f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
 
                 #----Cargo inventario RBS parseado a la BD---#
-                #f_cargar_inv_en_BD(archivo_rbs_DCS_dst)
+                f_cargar_inv_en_BD(archivo_rbs_DCS_dst)
 
                 #--- Proceso BD inventario tlk-----#
                 logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")

@@ -24,7 +24,7 @@ def f_cargar_inv_en_BD (archivo_csv):
     comentario_sql = "Cargar reporte telelink CSV paresado"
     conector(sql_cargar_PLN,"Load",comentario_sql)
 
-def f_cargar_inv_RBS_en_BD (archivo_csv):
+def f_cargar_inv_RBS_en_BD (archivo_csv_RBS):
     """
     Función carga el archivo de  inventario de Radio BASES parseado en csv a la BD
     Recibe la direcciónd el archivo parseado
@@ -37,7 +37,7 @@ def f_cargar_inv_RBS_en_BD (archivo_csv):
     conector(sql,"Truncar",comentario_sql)
     
     #cargo Archivo
-    sql_cargar_RBS= "LOAD DATA INFILE \'"+archivo_csv+"\' INTO TABLE t_servicios_RBS FIELDS TERMINATED BY \',\' ENCLOSED BY \'\"\' LINES TERMINATED BY \'\\r\\n\' ;"
+    sql_cargar_RBS= "LOAD DATA LOCAL INFILE \'"+archivo_csv_RBS+"\' INTO TABLE t_servicios_RBS FIELDS TERMINATED BY \',\' ENCLOSED BY \'\"\' LINES TERMINATED BY \'\\r\\n\' ;"
     comentario_sql = "Cargar reporte RBS paresado"
     conector(sql_cargar_RBS,"Load",comentario_sql)
 

@@ -8,6 +8,7 @@ import json
 import re
 import sys
 
+
 from datetime import datetime, date
 from conector import conector
 from direcciones import crudozabbix,archivo_pickle_ONT,archivo_pickle_PON, modelos_nodos
@@ -140,6 +141,26 @@ def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
        Recibe el nombre arhivo origen a paresar, el nombre archivo destino
         parseado y como renombrar el archivo original
     """
+    logger.info ("\n--Se comenzo parseo arhivo RBS --")
+    #-- Cargo diccionarios para trabajar con nombres ----
+    # debo cargar diccionario de TLK-NOMBRE GESTION
+    sql = "SELECT cod_tlk,nom_gestion FROM t_tlk_nombregestion;"
+    comentario="Traer nombre gestion"
+    dic_gestion={}
+    resultado= conector(sql,"select",comentario)
+    for x in resultado:
+        dic_gestion[x[0]]=[x[1]] 
+
+
+    
+
+    # debo cargar equivelente - (TIPO NODO)<-->
+    sql = "SELECT nro_tlk,modelo,letra_gestion from t_diccionario_nodos_tlk;"
+    comentario="Traer tipos nodos"
+    dic_nodo={}
+    resultado= conector(sql,"select",comentario)
+    for x in resultado:
+        dic_nodo[x[0]]=[x[1],x[2]] 
 
     contador=0 # contador de lines de archivo
     with open(archivo_origen,'r') as archivo:
@@ -330,4 +351,10 @@ def parseo_pon():
     #Logeo Ingresos
     logger.info("Finalizo el Parseo de PON")
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
+
+
+
+
+f_parseo_inventario_RBS(direcciones.archivo_rbs_DCS,direcciones.archivo_rbs_DCS_dst,direcciones.archivo_rbs_DCS_old)
+
 

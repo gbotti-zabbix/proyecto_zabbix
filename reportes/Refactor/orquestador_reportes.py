@@ -10,7 +10,7 @@ from daemonize import Daemonize
 from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid
 from datetime import datetime
 from pusheo import f_cargar_inv_en_BD,f_cargar_inv_RBS_en_BD, pusheo_crudos_diarios_PON, pusheo_crudos_diarios_ONT, f_procesar_resumne_tlk_BD
-from parseo import parseo_ont, parseo_pon, f_parsear_inventario,f_parseo_inventario_RBS
+from parseo import parseo_ont, parseo_pon, f_parsear_inventario, f_parseo_inventario_RBS
 from flujo_db import flujos
 from reporte import reportes_xlsx
 
@@ -65,7 +65,7 @@ def orquestador_reportes():
                 f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
 
                 #----Cargo inventario RBS parseado a la BD---#
-                f_cargar_inv_en_BD(archivo_rbs_DCS_dst)
+                f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
 
                 #--- Proceso BD inventario tlk-----#
                 logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")

@@ -20,11 +20,12 @@ def get_rbs():
     return rbs
 
 #CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
-#OPCION MARCA COMO BUSCAR (key_,name), PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
-def ont_check(opcion,parametro,auth):
+#OPCION MARCA COMO BUSCAR (key_,name), HOST ID PARA ESPECIFICAR NODO DONDE SE BUSCA, PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
+def ont_check(opcion,hostid,parametro,auth):
     ont_check = {
     "jsonrpc": "2.0",
     "method": "item.get",
+    "hostids": "{}".format(hostid),
     "params": {
         "output": ["{}".format(opcion)],
         "search": {
@@ -333,8 +334,3 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         else:
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
-
-test = get_zabbix_key("15/15/15")
-
-print(test["RX"])
-print(test["TX"])

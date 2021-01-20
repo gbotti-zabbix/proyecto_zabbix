@@ -103,6 +103,8 @@ def orquestador_reportes():
                 time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
+        time.sleep(1200)
+        orquestador_reportes()
 
 #-----main----#
 

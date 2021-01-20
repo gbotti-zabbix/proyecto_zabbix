@@ -43,7 +43,7 @@ def orquestador_carga_ont(metodo):
                 etiqueta = rbs[1]
                 nombre = get_name("Radio Base",puerto,etiqueta)
                 zkey = get_zabbix_key(puerto)
-                comparador = str(nodo)+str(zkey["RX"]+str(hostid))
+                comparador = str(nodo)+str(zkey["RX"])+str(hostid)
                 if comparador in lista:
                     repetidas.append(comparador)
                 else:

@@ -8,6 +8,7 @@ def orquestador_carga_ont(metodo):
         #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
         pass
     elif metodo == "auto":
+        lista = []
         faltante = 0
         encontrado = 0
         descarte = 0
@@ -47,7 +48,12 @@ def orquestador_carga_ont(metodo):
                     print(nodo,zkey)
                     faltante = faltante + 1
                 elif chequeo == 1:
-                    encontrado = encontrado + 1
+                    if hostid+zkey in lista:
+                        pass
+                    else:
+                        encontrado = encontrado + 1
+                        lista.append(hostid+zkey)
+
         print("{} ONTs encontradas, {} sin encontrar y {} descartadas".format(encontrado,faltante,descarte))
         logout(llave)
 

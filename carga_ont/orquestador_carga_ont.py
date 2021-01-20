@@ -41,7 +41,7 @@ def orquestador_carga_ont(metodo):
                 etiqueta = rbs[1]
                 nombre = get_name("Radio Base",puerto,etiqueta)
                 zkey = get_zabbix_key(puerto)
-                chequeo = ont_check("_key",hostid,zkey["RX"],llave)
+                chequeo = ont_check("key_",hostid,zkey["RX"],llave)
                 #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                 if chequeo == 0:
                     print(nodo,zkey)

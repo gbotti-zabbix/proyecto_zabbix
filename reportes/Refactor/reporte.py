@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 import sys
 import logger
 
-from direcciones import excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual, hojas_PON, hojas_ONT, c300_19p
+from direcciones import excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual, hojas_PON, hojas_ONT, c300_19p, puertos_uplink, puertos_uplink_h, puertos_uplink_19, puertos_uplink_omitidos_z, puertos_uplink_omitidos_z_19
 from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon_mensual
 from conector import conector
 
@@ -47,16 +47,16 @@ def apend_data_PON(workbook,hojas,periodo):
         datos = dato[12]
         emp = dato[13]
         rbs = dato[14]
-        if (direccion == "RX" and (puerto == "22/1" or puerto == "21/1")) or (direccion == "RX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")) or (direccion == "RX" and nodo in c300_19p and (puerto == "19/1" or puerto == "20/1")):
+        if (direccion == "RX" and puerto in puertos_uplink) or (direccion == "RX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "RX" and nodo in c300_19p and puerto in puertos_uplink_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Bajada Uplink"].append(lista_append)
-        elif (direccion == "TX" and (puerto == "22/1" or puerto == "21/1")) or (direccion == "TX" and tipo == "MA5800" and (puerto == "9/0" or puerto == "10/0")) or (direccion == "TX" and nodo in c300_19p and (puerto == "19/1" or puerto == "20/1")):
+        elif (direccion == "TX" and puerto in puertos_uplink) or (direccion == "TX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "TX" and nodo in c300_19p and puerto in puertos_uplink_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida Uplink"].append(lista_append)
-        elif direccion == "TX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
+        elif (direccion == "TX" and not puerto in puertos_uplink_omitidos_z) or (direccion == "TX" and nodo in c300_19p and not puerto in puertos_uplink_omitidos_z_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Bajada PON"].append(lista_append)
-        elif direccion == "RX" and not (puerto == "21/2" or puerto == "21/3" or puerto == "21/4" or puerto == "22/2" or puerto == "22/3" or puerto == "22/4"):
+        elif (direccion == "RX" and not puerto in puertos_uplink_omitidos_z) or (direccion == "TX" and nodo in c300_19p and not puerto in puertos_uplink_omitidos_z_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Subida PON"].append(lista_append)
 

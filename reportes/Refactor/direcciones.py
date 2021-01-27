@@ -87,9 +87,22 @@ descripcion_ONT = {"A1":"Modelo Nodo: Modelo del nodo. C300, ISAM FX, MA5800, et
 hojas_PON = [DefiniciónEncabezados("Subida PON", encabezados_PON_PON), DefiniciónEncabezados("Bajada PON", encabezados_PON_PON), DefiniciónEncabezados("Subida Uplink", encabezados_PON_uplink), DefiniciónEncabezados("Bajada Uplink", encabezados_PON_uplink),DefiniciónEncabezados("Descripciones",descripcion_PON)]
 hojas_ONT = [DefiniciónEncabezados("Subida ONT", encabezados_ONT), DefiniciónEncabezados("Bajada ONT", encabezados_ONT),DefiniciónEncabezados("Descripciones",descripcion_ONT)]
 
+# NODOS DE 19'
 c300_19p = ["G-AZNAREZ-01Z", "MARISCALA-01Z", "A-ARENA-01Z"]
 
+#MODELOS DE NODOS EN PRODUCCION
 modelos_nodos = ["MA5600T","MA5800","C300","ISAM FX","C600"]
+
+#NUMERO DE LOS PUERTOS DE UPLINK
+puertos_uplink = ["21/1","22/1"]
+
+puertos_uplink_h = ["9/0","10/0"]
+
+puertos_uplink_19 = ["19/1","20/1"]
+
+puertos_uplink_omitidos_z = ["21/2","21/3","21/4","22/2","22/3","22/4",]
+
+puertos_uplink_omitidos_z_19 = ["19/2","19/3","19/4","20/2","20/3","20/4"]
 
 #=========dato base datos========================#
 #-variables para conexión a la base de datos

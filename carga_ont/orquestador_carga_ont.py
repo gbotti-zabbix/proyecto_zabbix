@@ -18,7 +18,7 @@ def orquestador_carga_ont(metodo):
         for rbs in lista_rbs:
             if rbs[0][-1] != "Z":
                 print("Se descarto la ONT {} {}".format(nodo,puerto))
-                print(rbs[7])
+                print(rbs[0])
                 descarte = descarte +1
                 pass
             else:

@@ -16,14 +16,14 @@ def orquestador_carga_ont(metodo):
         llave = autorizar()
         lista_rbs = get_rbs()
         for rbs in lista_rbs:
+            nodo = rbs[0]
+            puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
             if rbs[0][-1] != "Z":
                 print("Se descarto la ONT {} {}".format(nodo,puerto))
                 print(rbs[0])
                 descarte = descarte +1
                 pass
             else:
-                nodo = rbs[0]
-                puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
                 hostid = host_get(nodo,llave)
                 inter_id = get_inter_id(hostid,llave)
                 try:

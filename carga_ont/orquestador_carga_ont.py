@@ -18,6 +18,7 @@ def orquestador_carga_ont(metodo):
         for rbs in lista_rbs:
             if rbs[0][-1] != "Z":
                 print("Se descarto la ONT {} {}".format(nodo,puerto))
+                print(rbs[0][-1])
                 descarte = descarte +1
                 pass
             else:
@@ -50,7 +51,7 @@ def orquestador_carga_ont(metodo):
                     chequeo = ont_check("key_",hostid,zkey["RX"],llave)
                     #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                     if chequeo == 0:
-                        print(nodo,zkey)
+                        print(nodo,zkey,nombre)
                         lista.append(comparador)
                         faltante = faltante + 1
                     elif chequeo == 1:

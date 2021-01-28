@@ -5,10 +5,11 @@ import os
 from api import usuario_sv, contraseña_sv
 from requester import requester
 
-#IMPORTO EL CONECTOR DE REFACTOR
+#IMPORTO EL CONECTOR Y LOGGER DE REFACTOR
 import sys
 sys.path.append("./reportes/Refactor")
 from conector import conector
+import logger
 
 #sql para ont
 #SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;
@@ -37,6 +38,7 @@ def ont_check(opcion,hostid,parametro,auth):
     }
     chequeo = requester(ont_check)
     if len(chequeo.json()["result"]) < 1:
+        logger.info("No se encontro la ONT: {}".format(parametro))
         print("No se encontro la ONT: {}".format(parametro))
         return 0
     else:
@@ -61,6 +63,7 @@ def host_get(nodo,auth):
     }
     hostid = requester(host_get)
     if len(hostid.json()["result"]) < 1:
+        logger.info("Host get no encontro el nodo: {}".format(nodo))
         print("Host get no encontro el nodo: {}".format(nodo))
     else:
         return hostid.json()["result"][0]["hostid"]
@@ -82,6 +85,7 @@ def get_inter_id(hostid,auth):
     }
     interfaceid = requester(interfaceid)
     if len(interfaceid.json()["result"]) < 1:
+        logger.info("No se encontro el hostid: {}".format(hostid))
         print("No se encontro el hostid: {}".format(hostid))
     else:
         inter_id = interfaceid.json()["result"][0]["interfaceid"]
@@ -105,10 +109,9 @@ def get_app_id(hostid,auth):
     }
     app_id = requester(app_id)
     if len(app_id.json()["result"]) < 1:
+        logger.info("No se encontro el hostid: {}".format(hostid))
         print("No se encontro el hostid: {}".format(hostid))
     else:
-        print(app_id.json()["result"])
-        print(app_id.json()["result"][0]["applicationid"])
         return app_id.json()["result"][0]["applicationid"]
 
 #SACAR OID SEGUN VENDOR DE NODO, SLOT, PUERTO Y ONT
@@ -122,6 +125,7 @@ def get_oid(tipo,puerto):
         puertopon = int(puerto[1])
         ont = int(puerto[2])
         if ont > 32:
+            logger.info("El valor de ONT es incorrecto")
             print("El valor de ONT es incorrecto")
             pass
         else:
@@ -131,8 +135,10 @@ def get_oid(tipo,puerto):
                 oid_etiqueta = base_etiqueta + dic_oid_zte(str(slot)+str(puertopon)) + "." + str(ont)
                 return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
             except KeyError as e:
+                logger.info("Uno de los valores del puerto es incorrecto")
                 print("Uno de los valores del puerto es incorrecto")
     else:
+        logger.info("No se han integrado funcionalidades para las ont de {}".format(tipo))
         print("No se han integrado funcionalidades para las ont de {}".format(tipo))
 
 #DEVUELVE OID A PARTIR DE CONCATENAR SLOT, PUERTO.
@@ -326,11 +332,14 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = requester(create_ont)
     try:
         if create_ont.json()["error"]["code"] == -32602:
+            logger.info("La ONT con key \"{}\" ya existe".format(llave))
             print("La ONT con key \"{}\" ya existe".format(llave))
             return 0
     except KeyError as e:
         if len(create_ont.json()["result"]) > 0:
+            logger.info(create_ont.json()["result"])
             print(create_ont.json()["result"])
         else:
+            logger.info("Algo salio mal al crear la ONT: {}".format(nombre))
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 

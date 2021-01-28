@@ -51,7 +51,9 @@ def orquestador_carga_ont(metodo):
                     chequeo = ont_check("key_",hostid,zkey["RX"],llave)
                     #aca crearia la lista de las ont no creadas y crearia las que corresponde.
                     if chequeo == 0:
-                        print(nodo,zkey,nombre)
+                        print(nodo,zkey)
+                        print(nombre)
+                        print("******")
                         lista.append(comparador)
                         faltante = faltante + 1
                     elif chequeo == 1:

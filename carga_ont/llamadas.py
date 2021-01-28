@@ -332,6 +332,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = requester(create_ont)
     try:
         if create_ont.json()["error"]["code"] == -32602:
+            print(create_ont.json()["error"])
             logger.info("La ONT con key \"{}\" ya existe".format(llave))
             print("La ONT con key \"{}\" ya existe".format(llave))
             return 0

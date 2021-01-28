@@ -332,8 +332,8 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     create_ont = requester(create_ont)
     try:
         if create_ont.json()["error"]["code"] == -32602:
-            logger.info("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["message"]))
-            print("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["message"]))
+            logger.info("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["data"]))
+            print("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["data"]))
             return 0
     except KeyError as e:
         if len(create_ont.json()["result"]) > 0:

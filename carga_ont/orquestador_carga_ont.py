@@ -45,6 +45,8 @@ def orquestador_carga_ont(metodo):
                 nombre = get_name("Radio Base",puerto,etiqueta)
                 zkey = get_zabbix_key(puerto)
                 comparador = str(nodo)+str(zkey["RX"])+str(hostid)
+                appid = get_app_id(hostid,llave)
+                print(appid)
                 if comparador in lista:
                     repetidas.append(comparador)
                 else:

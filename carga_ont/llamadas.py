@@ -40,6 +40,7 @@ def ont_check(opcion,hostid,parametro,auth):
     }
     chequeo = requester(ont_check)
     if len(chequeo.json()["result"]) < 1:
+        logger.info("******")
         logger.info("No se encontro la ONT: {}".format(parametro))
         print("No se encontro la ONT: {}".format(parametro))
         return 0
@@ -341,6 +342,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         if len(create_ont.json()["result"]) > 0:
             logger.info(str(create_ont.json()["result"]))
             print(create_ont.json()["result"])
+            logger.info("******")
         else:
             logger.info("Algo salio mal al crear la ONT: {}".format(nombre))
             print("Algo salio mal al crear la ONT: {}".format(nombre))

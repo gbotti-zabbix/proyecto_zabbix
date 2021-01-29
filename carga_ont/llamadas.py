@@ -119,7 +119,7 @@ def get_app_id(hostid,auth):
 #SACAR OID SEGUN VENDOR DE NODO, SLOT, PUERTO Y ONT
 def get_oid(tipo,puerto):
     if tipo == "zte":
-        base_RX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.1.28527"
+        base_RX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.1.2852"
         base_TX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.44.2852"
         base_etiqueta = ".1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.2852"
         puerto = puerto.split("/")

@@ -341,6 +341,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             logger.info(str(create_ont.json()["result"]))
             print(create_ont.json()["result"])
             logger.info("******")
+            return create_ont.json()["result"]["itemids"][0]
         else:
             logger.info("Algo salio mal al crear la ONT: {}".format(nombre))
             print("Algo salio mal al crear la ONT: {}".format(nombre))

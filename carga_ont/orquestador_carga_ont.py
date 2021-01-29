@@ -64,7 +64,7 @@ def orquestador_carga_ont(metodo):
                         print(nombre)
                         print("******")
                         logger.info(str(nodo)+(" ")+str(zkey))
-                        logger.info(nombre)
+                        logger.info(str(nombre))
                         logger.info("******")
                         lista.append(comparador)
                         faltante = faltante + 1

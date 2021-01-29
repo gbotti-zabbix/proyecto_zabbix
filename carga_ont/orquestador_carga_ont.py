@@ -69,8 +69,8 @@ def orquestador_carga_ont(metodo):
                         lista.append(comparador)
                         faltante = faltante + 1
                         #Tiene que crear un ITEM PARA TX y OTRO PARA CX
-                        itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)["itemids"][0]
-                        itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)["itemids"][0]
+                        itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
+                        itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
                         nombreg = nombre["RX"][:-5]
                         create_graph(nombreg,itemid_1,itemid_2,llave)
                         #logger.info("Se crearon los item de ONT {} en el nodo {}".format(nombre,nodo))

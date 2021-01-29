@@ -13,8 +13,87 @@ import sys
 sys.path.append("./reportes/Refactor")
 from conector import conector
 
-#sql para ont
-#SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;
+#LISTA PRECARIA PARA GRAFICAS
+lista_precaria = [1094866,
+1094867,
+1094868,
+1094869,
+1094870,
+1094871,
+1094872,
+1094873,
+1094874,
+1094875,
+1094876,
+1094877,
+1094878,
+1094879,
+1094880,
+1094881,
+1094882,
+1094883,
+1094884,
+1094885,
+1094886,
+1094887,
+1094888,
+1094889,
+1094890,
+1094891,
+1094892,
+1094893,
+1094894,
+1094895,
+1094896,
+1094897,
+1094898,
+1094899,
+1094900,
+1094901,
+1094902,
+1094903,
+1094904,
+1094905,
+1094906,
+1094907,
+1094908,
+1094909,
+1094910,
+1094911,
+1094912,
+1094913,
+1094914,
+1094915,
+1094916,
+1094917,
+1094918,
+1094919,
+1094920,
+1094921,
+1094922,
+1094923,
+1094924,
+1094925,
+1094926,
+1094927,
+1094928,
+1094929,
+1094930,
+1094931,
+1094932,
+1094933,
+1094934,
+1094935,
+1094936,
+1094937,
+1094938,
+1094939,
+1094940,
+1094941,
+1094942,
+1094943,
+1094944,
+1094945]
 
 #SACO LISTADO DE ONT A CHEKEAR
 def get_rbs():
@@ -347,3 +426,30 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             logger.info("Algo salio mal al crear la ONT: {}".format(nombre))
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
+def create_graph():
+    '''
+    {
+    "jsonrpc": "2.0",
+    "method": "graph.create",
+    "params": {
+        "name": "MySQL bandwidth",
+        "width": 900,
+        "height": 200,
+        "gitems": [
+            {
+                "itemid": "22828",
+                "color": "00AA00"
+            },
+            {
+                "itemid": "22829",
+                "color": "3333FF"
+            }
+        ]
+    },
+    "auth": "038e1d7b1735c6a5436ee9eae095879e",
+    "id": 1
+    }
+    '''
+
+def graph_check():
+    pass

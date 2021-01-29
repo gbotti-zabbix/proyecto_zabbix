@@ -14,10 +14,7 @@ sys.path.append("./reportes/Refactor")
 from conector import conector
 
 #LISTA PRECARIA PARA GRAFICAS
-lista_precaria = ["Radio Base : 13/3/11 : P74723-E84291-ANTEL-RADIOBASE-CELULAR ",
-"1094866",
-"1094867",
-"Radio Base : 17/2/26 : P75363-E84343-E84346-ANTEL-RADIOBASE-CELULAR",
+lista_precaria = ["Radio Base : 17/2/26 : P75363-E84343-E84346-ANTEL-RADIOBASE-CELULAR",
 "1094868",
 "1094869",
 "Radio Base : 6/2/27 : P90558 - ANTEL RADIOBASE CELULAR",
@@ -468,38 +465,35 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 def create_graph():
-    print("Ipa chipa chipa?")
+    llave = "d293b5ac65ab3bc90e6f833c1f4cc2a2"
     listita = []
     for iid in lista_precaria:
         listita.append(iid)
         if len(listita) == 3:
-            print(listita)
-            listita =[]
-
-
-    '''
-    {
-    "jsonrpc": "2.0",
-    "method": "graph.create",
-    "params": {
-        "name": "MySQL bandwidth",
-        "width": 900,
-        "height": 200,
-        "gitems": [
-            {
-                "itemid": "22828",
-                "color": "00AA00"
-            },
-            {
-                "itemid": "22829",
-                "color": "3333FF"
+            create_graph = {
+                "jsonrpc": "2.0",
+                "method": "graph.create",
+                "params": {
+                    "name": "{}".format(listita[0]),
+                    "width": 900,
+                    "height": 200,
+                    "gitems": [
+                        {
+                            "itemid": "{}".format(listita[1]),
+                            "color": "199C0D"
+                        },
+                        {
+                            "itemid": "{}".format(listita[2]),
+                            "color": "F63100"
+                        }
+                    ]
+                },
+                "auth": "{}".format(llave),
+                "id": 1
             }
-        ]
-    },
-    "auth": "038e1d7b1735c6a5436ee9eae095879e",
-    "id": 1
-    }
-    '''
+            create_graph = requester(create_graph)
+            print(create_graph.json()["result"])
+            listita =[]
 
 def graph_check():
     pass

@@ -1,3 +1,6 @@
+#/usr/bin/python
+
+import logger
 import requests
 import json
 import os 
@@ -9,7 +12,6 @@ from requester import requester
 import sys
 sys.path.append("./reportes/Refactor")
 from conector import conector
-import logger
 
 #sql para ont
 #SELECT `nombre_gestion`,`slot_nodo`,`puerto_nodo`,`nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk`>0;

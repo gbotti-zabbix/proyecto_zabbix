@@ -1,6 +1,7 @@
 #/usr/bin/python
 
 import sys
+import logger
 
 from requester import requester
 from getpass import getpass
@@ -32,7 +33,10 @@ def logout(llave):
     deslogeo = requester(logout)
     try:
         if deslogeo.json()["result"] == True:
+
             print("Deslogeo correcto")
+            logger.info("Deslogeo correcto")
     except Exception as e:
         print("Ocurrio un error al intentar deslogar el id: {}".format(llave))
+        logger.info("Ocurrio un error al intentar deslogar el id: {}".format(llave))
 

@@ -73,7 +73,7 @@ def orquestador_carga_ont(metodo):
                         create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
                         create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
                         #logger.info("Se crearon los item de ONT {} en el nodo {}".format(nombre,nodo))
-                        contador_break = contador_break + 1
+                        #contador_break = contador_break + 1
                     elif chequeo == 1:
                         encontrado = encontrado + 1
                         lista.append(comparador)

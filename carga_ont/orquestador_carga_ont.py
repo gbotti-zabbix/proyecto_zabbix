@@ -63,6 +63,9 @@ def orquestador_carga_ont(metodo):
                         print(nodo,zkey)
                         print(nombre)
                         print("******")
+                        logger.info(nodo,zkey)
+                        logger.info(nombre)
+                        logger.info("******")
                         lista.append(comparador)
                         faltante = faltante + 1
                         #Tiene que crear un ITEM PARA TX y OTRO PARA CX

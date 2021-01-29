@@ -337,7 +337,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             return 0
     except KeyError as e:
         if len(create_ont.json()["result"]) > 0:
-            logger.info(create_ont.json()["result"])
+            logger.info(str(create_ont.json()["result"]))
             print(create_ont.json()["result"])
         else:
             logger.info("Algo salio mal al crear la ONT: {}".format(nombre))

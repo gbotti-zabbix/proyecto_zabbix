@@ -33,7 +33,7 @@ def checklunes():
 
 
 def checkdia():
-    if datetime.now().strftime("%d") == "1":
+    if datetime.now().strftime("%d") == "01":
         return 1
     else:
         return 0

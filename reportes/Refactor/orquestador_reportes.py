@@ -110,6 +110,16 @@ def orquestador_reportes():
 
 #orquestador()
 #demonio
+def hard_check():
+    if checkdia() == 1:
+        #Ejecuto funcione sql mensual")
+        flujos("mes")
+        #Saco reporte mensual")
+        reportes_xlsx("PON","mes")
+        reportes_xlsx("ONT","mes")
+
+hard_check()
+
 
 daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
 daemon.start()

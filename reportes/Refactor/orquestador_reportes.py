@@ -110,7 +110,7 @@ def orquestador_reportes():
 
 #orquestador()
 #demonio
-reportes_xlsx("PON","semana")
+
 
 daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
 daemon.start()

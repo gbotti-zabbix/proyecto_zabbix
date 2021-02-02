@@ -111,4 +111,4 @@ def reportes_xlsx(tipo,periodo):
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
 
-reportes_xlsx("PON","semana")
+reportes_xlsx("PON","mes")

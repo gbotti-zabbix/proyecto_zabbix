@@ -53,10 +53,10 @@ def apend_data_PON(workbook,hojas,periodo):
         elif (direccion == "TX" and puerto in puertos_uplink) or (direccion == "TX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "TX" and nodo in c300_19p and puerto in puertos_uplink_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida Uplink"].append(lista_append)
-        elif (direccion == "TX" and nodo in c300_19p and not puerto in puertos_uplink_omitidos_z_19) or (direccion == "TX" and not puerto in puertos_uplink_omitidos_z):
+        elif (direccion == "TX" and nodo in c300_19p and puerto not in puertos_uplink_omitidos_z_19) or (direccion == "TX" and puerto not in puertos_uplink_omitidos_z):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/2500,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Bajada PON"].append(lista_append)
-        elif (direccion == "TX" and nodo in c300_19p and not puerto in puertos_uplink_omitidos_z_19) or (direccion == "RX" and not puerto in puertos_uplink_omitidos_z):
+        elif (direccion == "TX" and nodo in c300_19p and puerto not in puertos_uplink_omitidos_z_19) or (direccion == "RX" and puerto not in puertos_uplink_omitidos_z):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/1250,prom_hora_pico,prom_picos_diarios,promedio_hora,wf,datos,emp,rbs]
             workbook["Subida PON"].append(lista_append)
 
@@ -110,3 +110,6 @@ def reportes_xlsx(tipo,periodo):
                 workbook.save(filename=excel_PON_semanal())
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
+
+reportes_xlsx("PON","semana")
+reportes_xlsx("PON","mes")

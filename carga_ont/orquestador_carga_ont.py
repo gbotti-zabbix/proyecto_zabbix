@@ -102,6 +102,7 @@ def auditar_tlk():
         else:
             diferencia.append(rbs)
     print(diferencia)
+    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferencia)))
 
 #orquestador_carga_ont("auto")
 auditar_tlk()

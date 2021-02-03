@@ -34,9 +34,9 @@ def logout(llave):
     try:
         if deslogeo.json()["result"] == True:
 
-            print("Deslogeo correcto")
+            #print("Deslogeo correcto")
             logger.info("Deslogeo correcto")
     except Exception as e:
-        print("Ocurrio un error al intentar deslogar el id: {}".format(llave))
+        #print("Ocurrio un error al intentar deslogar el id: {}".format(llave))
         logger.info("Ocurrio un error al intentar deslogar el id: {}".format(llave))
 

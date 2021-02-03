@@ -1,0 +1,1 @@
+auditoria_ont = "/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt"

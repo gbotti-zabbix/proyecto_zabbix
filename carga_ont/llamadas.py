@@ -20,6 +20,11 @@ def get_rbs():
     rbs = conector(sql,"select","Consultando ONTS")
     return rbs
 
+def get_rbs_tlk():
+    sql ="SELECT `id_tlk`, `nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk` > 0"
+    rbs = conector(sql,"select","Consultando ONTS de TLK")
+    return rbs
+
 #CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
 #OPCION MARCA COMO BUSCAR (key_,name), HOST ID PARA ESPECIFICAR NODO DONDE SE BUSCA, PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
 def ont_check(opcion,hostid,parametro,auth):

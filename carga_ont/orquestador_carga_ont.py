@@ -107,13 +107,17 @@ def auditar_tlk():
             pass
         else:
             diferenciag.append(rbs)
-    print("######")
-    print(diferenciatlk)
-    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
-    print("######")
-    print(diferenciag)
-    print("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
-    print("######")
+    with open("auditoriaont.txt","w") as archivo:
+        for rbs in diferenciatlk:
+            archivo.write(rbs)
+        archivo.write("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
+        archivo.write("######")
+        archivo.write("\n")
+        for rbs in diferenciag:
+            archivo.write(rbs)
+        archivo.write("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
+        archivo.write("######")
+        archivo.write("\n")
 
 #orquestador_carga_ont("auto")
 auditar_tlk()

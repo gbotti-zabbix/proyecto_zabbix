@@ -94,7 +94,7 @@ def auditar_tlk():
         dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
         nlista_g.append(dato)
     for rbs in lista_tlk:
-        dato = rbs[0] + "/" + rbs[1]
+        dato = rbs[0] + "/" + str(rbs[1])
         nlista_tlk.append(dato)
     for rbs in nlista_tlk:
         if rbs in nlista_g:

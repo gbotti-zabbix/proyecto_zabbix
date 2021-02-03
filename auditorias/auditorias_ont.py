@@ -3,7 +3,7 @@ from consultas import get_rbs_tlk, get_rbs
 
 from datetime import datetime
 
-
+from direcciones import auditoria_ont
 # auditar ONT con RBS
 
 def auditar_ont():
@@ -32,7 +32,7 @@ def auditar_ont():
             pass
         else:
             diferenciag.append(rbs)
-    with open("/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt","a") as archivo:
+    with open(auditoria_ont,"a") as archivo:
         archivo.write("Comienza auditoria ONTs. Fecha {}".format(datetime.now()))
         archivo.write("\n")
         archivo.write("\n")

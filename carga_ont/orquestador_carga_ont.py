@@ -8,11 +8,11 @@ from sesiones import autorizar, logout
 
 def orquestador_carga_ont(metodo):  
     if metodo == "manual":
-        logger.info("Comienza la auditoria manual de ONTs")
+        logger.info("Comienza la carga manual de ONTs")
         #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
         pass
     elif metodo == "auto":
-        logger.info("Comienza la auditoria automatica de ONTs")
+        logger.info("Comienza la carga automatica de ONTs")
         lista = []
         repetidas = []
         faltante = 0

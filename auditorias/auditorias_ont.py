@@ -31,6 +31,7 @@ def auditar_ont():
         archivo.write("\n")
         archivo.write("\n")
         archivo.write("Chequeo TLK contra gestion.")
+        archivo.write("\n")
         for rbs in diferenciatlk:
             archivo.write(rbs)
             archivo.write("\n")
@@ -40,6 +41,7 @@ def auditar_ont():
         archivo.write("\n")
         archivo.write("\n")
         archivo.write("Chequeo Gestion contra TLK.")
+        archivo.write("\n")
         for rbs in diferenciag:
             archivo.write(rbs)
             archivo.write("\n")

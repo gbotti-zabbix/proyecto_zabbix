@@ -40,10 +40,10 @@ def ont_check(opcion,hostid,parametro,auth):
     if len(chequeo.json()["result"]) < 1:
         logger.info("******")
         logger.info("No se encontro la ONT: {}".format(parametro))
-        print("No se encontro la ONT: {}".format(parametro))
+        #print("No se encontro la ONT: {}".format(parametro))
         return 0
     else:
-        #print(chequeo.json()["result"])
+        ##print(chequeo.json()["result"])
         return 1
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
@@ -65,7 +65,7 @@ def host_get(nodo,auth):
     hostid = requester(host_get)
     if len(hostid.json()["result"]) < 1:
         logger.info("Host get no encontro el nodo: {}".format(nodo))
-        print("Host get no encontro el nodo: {}".format(nodo))
+        #print("Host get no encontro el nodo: {}".format(nodo))
     else:
         return hostid.json()["result"][0]["hostid"]
 
@@ -87,7 +87,7 @@ def get_inter_id(hostid,auth):
     interfaceid = requester(interfaceid)
     if len(interfaceid.json()["result"]) < 1:
         logger.info("No se encontro el hostid: {}".format(hostid))
-        print("No se encontro el hostid: {}".format(hostid))
+        #print("No se encontro el hostid: {}".format(hostid))
     else:
         inter_id = interfaceid.json()["result"][0]["interfaceid"]
         ip = interfaceid.json()["result"][0]["ip"]
@@ -111,7 +111,7 @@ def get_app_id(hostid,auth):
     app_id = requester(app_id)
     if len(app_id.json()["result"]) < 1:
         logger.info("No se encontro el hostid: {}".format(hostid))
-        print("No se encontro el hostid: {}".format(hostid))
+        #print("No se encontro el hostid: {}".format(hostid))
     else:
         return app_id.json()["result"][0]["applicationid"]
 
@@ -127,7 +127,7 @@ def get_oid(tipo,puerto):
         ont = int(puerto[2])
         if ont > 32:
             logger.info("El valor de ONT es incorrecto")
-            print("El valor de ONT es incorrecto")
+            #print("El valor de ONT es incorrecto")
             pass
         else:
             try:
@@ -137,10 +137,10 @@ def get_oid(tipo,puerto):
                 return {"oid_rx":oid_rx,"oid_tx":oid_tx,"oid_etiqueta":oid_etiqueta}
             except KeyError as e:
                 logger.info("Uno de los valores del puerto es incorrecto")
-                print("Uno de los valores del puerto es incorrecto")
+                #print("Uno de los valores del puerto es incorrecto")
     else:
         logger.info("No se han integrado funcionalidades para las ont de {}".format(tipo))
-        print("No se han integrado funcionalidades para las ont de {}".format(tipo))
+        #print("No se han integrado funcionalidades para las ont de {}".format(tipo))
 
 #DEVUELVE OID A PARTIR DE CONCATENAR SLOT, PUERTO.
 def dic_oid_zte(clave):
@@ -334,17 +334,17 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     try:
         if create_ont.json()["error"]["code"] == -32602:
             logger.info("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["data"]))
-            print("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["data"]))
+            #print("La ONT con nombre \"{}\" genero el error {}".format(nombre,create_ont.json()["error"]["data"]))
             return 0
     except KeyError as e:
         if len(create_ont.json()["result"]) > 0:
             logger.info(str(create_ont.json()["result"]))
-            print(create_ont.json()["result"])
+            #print(create_ont.json()["result"])
             logger.info("******")
             return create_ont.json()["result"]["itemids"][0]
         else:
             logger.info("Algo salio mal al crear la ONT: {}".format(nombre))
-            print("Algo salio mal al crear la ONT: {}".format(nombre))
+            #print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 def create_graph(nombre,itemid_1,itemid_2,llave):
     create_graph = {
@@ -372,13 +372,13 @@ def create_graph(nombre,itemid_1,itemid_2,llave):
     try:
         if create_graph.json()["error"]["code"] == -32602:
             logger.info("La ONT con nombre \"{}\" genero el error {} al crear su grafica".format(nombre,create_graph.json()["error"]["data"]))
-            print("La ONT con nombre \"{}\" genero el error {} al crear su grafica".format(nombre,create_graph.json()["error"]["data"]))
+            #print("La ONT con nombre \"{}\" genero el error {} al crear su grafica".format(nombre,create_graph.json()["error"]["data"]))
             return 0
     except KeyError as e:
         if len(create_graph.json()["result"]) > 0:
             logger.info(str(create_graph.json()["result"]))
-            print(create_graph.json()["result"])
+            #print(create_graph.json()["result"])
             logger.info("******")
         else:
             logger.info("Algo salio mal al crear la grafica de la ONT: {}".format(nombre))
-            print("Algo salio mal al crear la grafica de la ONT: {}".format(nombre))
+            #print("Algo salio mal al crear la grafica de la ONT: {}".format(nombre))

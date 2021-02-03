@@ -1,7 +1,7 @@
 #/usr/bin/python
 import logger
 
-from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph, get_rbs_tlk
+from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph
 from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
@@ -84,49 +84,8 @@ def orquestador_carga_ont(metodo):
         logout(llave)
         print(repetidas)
         
-def auditar_tlk():
-    lista_g = get_rbs()
-    lista_tlk = get_rbs_tlk()
-    nlista_g = []
-    nlista_tlk = []
-    diferenciatlk = []
-    diferenciag = []
-    for rbs in lista_g:
-        dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
-        nlista_g.append(dato)
-    for rbs in lista_tlk:
-        dato = rbs[0] + "/" + str(rbs[1])
-        nlista_tlk.append(dato)
-    for rbs in nlista_tlk:
-        if rbs in nlista_g:
-            pass
-        else:
-            diferenciatlk.append(rbs)
-    for rbs in nlista_g:
-        if rbs in nlista_tlk:
-            pass
-        else:
-            diferenciag.append(rbs)
-    with open("/var/lib/reportes-zabbix/auditoria_ont.txt","w") as archivo:
-        for rbs in diferenciatlk:
-            archivo.write(rbs)
-            archivo.write("\n")
-        archivo.write("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
-        archivo.write("\n")        
-        archivo.write("######")
-        archivo.write("\n")
-        archivo.write("\n")
-        for rbs in diferenciag:
-            archivo.write(rbs)
-            archivo.write("\n")
-        archivo.write("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
-        archivo.write("\n")
-        archivo.write("######")
-        archivo.write("\n")
-        archivo.write("\n")
 
-#orquestador_carga_ont("auto")
-auditar_tlk()
+orquestador_carga_ont("auto")
 
 #DATOS DE LAS ONT QUE YA RECABE
 '''

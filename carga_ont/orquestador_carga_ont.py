@@ -112,12 +112,14 @@ def auditar_tlk():
             archivo.write(rbs)
             archivo.write("\n")
         archivo.write("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
+        archivo.write("\n")        
         archivo.write("######")
         archivo.write("\n")
         for rbs in diferenciag:
             archivo.write(rbs)
             archivo.write("\n")
         archivo.write("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
+        archivo.write("\n")
         archivo.write("######")
         archivo.write("\n")
 

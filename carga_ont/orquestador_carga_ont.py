@@ -86,7 +86,7 @@ def orquestador_carga_ont(metodo):
         
 def auditar_tlk():
     lista_g = get_rbs()
-    lista_tlk = get_rbs_tlk
+    lista_tlk = get_rbs_tlk()
     nlista_g = []
     nlista_tlk = []
     diferencia = []

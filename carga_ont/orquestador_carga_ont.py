@@ -115,12 +115,14 @@ def auditar_tlk():
         archivo.write("\n")        
         archivo.write("######")
         archivo.write("\n")
+        archivo.write("\n")
         for rbs in diferenciag:
             archivo.write(rbs)
             archivo.write("\n")
         archivo.write("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
         archivo.write("\n")
         archivo.write("######")
+        archivo.write("\n")
         archivo.write("\n")
 
 #orquestador_carga_ont("auto")

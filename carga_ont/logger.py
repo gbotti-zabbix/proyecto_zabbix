@@ -2,7 +2,7 @@
 
 from datetime import datetime, date, timedelta
 
-file_log = "/var/log/carga_ont/ont.log"
+from direcciones import file_log
 
 def error(mensaje):
     with open(file_log,"a") as log:

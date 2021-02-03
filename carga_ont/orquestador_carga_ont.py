@@ -1,7 +1,7 @@
 #/usr/bin/python
 import logger
 
-from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph
+from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph, get_rbs_tlk
 from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
@@ -84,8 +84,27 @@ def orquestador_carga_ont(metodo):
         logout(llave)
         print(repetidas)
         
-orquestador_carga_ont("auto")
+def auditar_tlk():
+    lista_g = get_rbs()
+    lista_tlk = get_rbs_tlk
+    nlista_g = []
+    nlista_tlk = []
+    diferencia = []
+    for rbs in lista_g:
+        dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
+        nlista_g.append(dato)
+    for rbs in lista_tlk:
+        dato = rbs[0] + "/" + rbs[1]
+        nlista_tlk.append(dato)
+    for rbs in nlista_tlk:
+        if rbs in nlista_g:
+            pass
+        else:
+            diferencia.append(rbs)
+    print(diferencia)
 
+#orquestador_carga_ont("auto")
+auditar_tlk()
 
 #DATOS DE LAS ONT QUE YA RECABE
 '''

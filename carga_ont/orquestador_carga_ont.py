@@ -111,8 +111,8 @@ def auditar_tlk():
     print(diferenciatlk)
     print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
     print("######")
-    print(diferenciatlk)
-    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
+    print(diferenciag)
+    print("{} ONTs en Gestion no se encontraron el listado de TLK.".format(len(diferenciag)))
     print("######")
 
 #orquestador_carga_ont("auto")

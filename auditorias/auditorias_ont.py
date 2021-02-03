@@ -27,7 +27,7 @@ def auditar_ont():
         else:
             diferenciag.append(rbs)
     with open("/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt","w") as archivo:
-        archivo.write("Comienza auditoria ONTs. Fecha {}".fromat(datetime.now))
+        archivo.write("Comienza auditoria ONTs. Fecha {}".format(datetime.now))
         archivo.write("\n")
         archivo.write("\n")
         for rbs in diferenciatlk:
@@ -46,7 +46,7 @@ def auditar_ont():
         archivo.write("######")
         archivo.write("\n")
         archivo.write("\n")
-        archivo.write("Finalizo auditoria ONTs. Fecha {}".fromat(datetime.now))
+        archivo.write("Finalizo auditoria ONTs. Fecha {}".format(datetime.now))
 
 
 auditar_ont()

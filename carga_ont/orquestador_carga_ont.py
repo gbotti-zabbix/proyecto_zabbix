@@ -89,7 +89,8 @@ def auditar_tlk():
     lista_tlk = get_rbs_tlk()
     nlista_g = []
     nlista_tlk = []
-    diferencia = []
+    diferenciatlk = []
+    diferenciag = []
     for rbs in lista_g:
         dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
         nlista_g.append(dato)
@@ -100,9 +101,19 @@ def auditar_tlk():
         if rbs in nlista_g:
             pass
         else:
-            diferencia.append(rbs)
-    print(diferencia)
-    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferencia)))
+            diferenciatlk.append(rbs)
+    for rbs in nlista_g:
+        if rbs in nlista_tlk:
+            pass
+        else:
+            diferenciag.append(rbs)
+    print("######")
+    print(diferenciatlk)
+    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
+    print("######")
+    print(diferenciatlk)
+    print("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))
+    print("######")
 
 #orquestador_carga_ont("auto")
 auditar_tlk()

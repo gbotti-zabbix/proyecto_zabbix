@@ -50,6 +50,7 @@ def auditar_ont():
         archivo.write("\n")
         archivo.write("Finalizo auditoria ONTs. Fecha {}".format(datetime.now()))
         archivo.write("\n")
+        archivo.write("\n")
 
 
 auditar_ont()

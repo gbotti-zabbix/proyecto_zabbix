@@ -107,7 +107,7 @@ def auditar_tlk():
             pass
         else:
             diferenciag.append(rbs)
-    with open("auditoriaont.txt","w") as archivo:
+    with open("/var/lib/reportes-zabbix/auditoriaont.txt","w") as archivo:
         for rbs in diferenciatlk:
             archivo.write(rbs)
         archivo.write("{} ONTs en TLK no se encontraron el listado de gestion.".format(len(diferenciatlk)))

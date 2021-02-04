@@ -1,7 +1,7 @@
 
 from consultas import get_rbs_tlk, get_rbs
-from direcciones_auditorias import datetime
-from direcciones import auditoria_ont
+from datetime import datetime
+from direcciones_auditorias import auditoria_ont
 
 # auditar ONT con RBS
 def auditar_ont():

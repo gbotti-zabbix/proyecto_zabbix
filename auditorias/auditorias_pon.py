@@ -6,23 +6,23 @@ def auditar_pon():
     lista_zbx = get_puertos_pon_zbx()
     lista_tlk = get_puertos_pon_tlk()
     nlista_zbx = []
+    nlista_tlk = []
     diferenciatk = []
     diferenciazbx = []
     for puerto in lista_zbx:
         nlista_zbx.append(puerto[0]+"_"+puerto[1])
+    for puerto in lista_tlk:
+        nlista_tlk.append(puerto[0])
     for puerto in nlista_zbx:
-        if puerto in lista_tlk:
+        if puerto in nlista_tlk:
             pass
         else:
             diferenciazbx.append(puerto)
-    for puerto in lista_tlk:
+    for puerto in nlista_tlk:
         if puerto in nlista_zbx:
             pass
         else:
             diferenciatk.append(puerto)
-    print(diferenciatk)
-    print(diferenciazbx)
-    '''
     with open(auditoria_pon,"a") as archivo:
         archivo.write("Comienza auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
@@ -46,6 +46,5 @@ def auditar_pon():
         archivo.write("Finalizo auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
         archivo.write("\n")
-        '''
 
 auditar_pon()

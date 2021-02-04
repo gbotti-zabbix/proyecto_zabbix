@@ -1,11 +1,9 @@
 
 from consultas import get_rbs_tlk, get_rbs
-
 from datetime import datetime
-
 from direcciones import auditoria_ont
-# auditar ONT con RBS
 
+# auditar ONT con RBS
 def auditar_ont():
     ''' funcion trae 2 listados, el listado de DSC  y el listado de tlk 
     y escribe un archivo con las diferencias 
@@ -58,8 +56,5 @@ def auditar_ont():
 
 
 auditar_ont()
-
-
-# auditar puertos monitoreados en zabbix y puertos habilitados en Tlk
 
 # auditar perfiles configurados

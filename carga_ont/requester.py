@@ -3,7 +3,7 @@
 import requests
 import json
 
-from direcciones import url
+from direcciones_carga_ont import url
 
 encabezado = {"Content-Type": "application/json-rpc"}
 

@@ -1,4 +1,4 @@
-from direcciones_auditorias import auditoria_pon
+from direcciones_auditorias import auditoria_pon, puertos_uplink, puertos_uplink_h, c300_19p, puertos_uplink_19
 from consultas import get_puertos_pon_tlk, get_puertos_pon_zbx
 from datetime import datetime
 
@@ -10,7 +10,10 @@ def auditar_pon():
     diferenciatk = []
     diferenciazbx = []
     for puerto in lista_zbx:
-        nlista_zbx.append(puerto[0]+"_"+puerto[1])
+        if (puerto[1] in puertos_uplink) or ((puerto[0][-1:] == "H") and (puerto[1] in puertos_uplink_h)) or ((puerto[0] in c300_19p) and (puerto[1] in puertos_uplink_19)):
+            pass
+        else:
+            nlista_zbx.append(puerto[0]+"_"+puerto[1])
     for puerto in lista_tlk:
         nlista_tlk.append(puerto[0])
     for puerto in nlista_zbx:
@@ -32,7 +35,6 @@ def auditar_pon():
         for puerto in diferenciazbx:
             archivo.write(puerto)
             archivo.write("\n")
-        archivo.write("{} puertos PON en Zabbix no se encontraron el listado de TLK.".format(len(diferenciazbx)))
         archivo.write("\n")
         archivo.write("\n")
         archivo.write("####Chequeo TLK contra Zabbix.####")
@@ -42,6 +44,7 @@ def auditar_pon():
             archivo.write("\n")
         archivo.write("{} puertos PON en TLK no se encontraron el listado de Zabbix.".format(len(diferenciatk)))
         archivo.write("\n")
+        archivo.write("{} puertos PON en Zabbix no se encontraron el listado de TLK.".format(len(diferenciazbx)))
         archivo.write("\n")
         archivo.write("Finalizo auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")

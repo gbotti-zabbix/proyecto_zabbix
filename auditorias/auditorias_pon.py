@@ -20,6 +20,9 @@ def auditar_pon():
             pass
         else:
             diferenciatk.append(puerto)
+    print(diferenciatk)
+    print(diferenciazbx)
+    '''
     with open(auditoria_pon,"a") as archivo:
         archivo.write("Comienza auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
@@ -43,6 +46,6 @@ def auditar_pon():
         archivo.write("Finalizo auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
         archivo.write("\n")
-
+        '''
 
 auditar_pon()

@@ -1,4 +1,4 @@
-from direcciones import auditoria_pon
+from direcciones_auditorias import auditoria_pon
 from consultas import get_puertos_pon_tlk, get_puertos_pon_zbx
 
 def auditar_pon():

@@ -42,3 +42,6 @@ def auditar_pon():
         archivo.write("Finalizo auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
         archivo.write("\n")
+
+
+auditar_pon()

@@ -30,13 +30,11 @@ def auditar_pon():
     with open(auditoria_pon,"a") as archivo:
         archivo.write("Comienza auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")
-        archivo.write("\n")
         archivo.write("####Chequeo Zabbix contra TLK.####")
         archivo.write("\n")
         for puerto in diferenciazbx:
             archivo.write("{} : Zabbix : ".format(str(fecha.year)+"/"+str(fecha.month)+"/"+str(fecha.day)) + puerto)
             archivo.write("\n")
-        archivo.write("\n")
         archivo.write("\n")
         archivo.write("####Chequeo TLK contra Zabbix.####")
         archivo.write("\n")
@@ -48,7 +46,6 @@ def auditar_pon():
         archivo.write("{} puertos PON en Zabbix no se encontraron el listado de TLK.".format(len(diferenciazbx)))
         archivo.write("\n")
         archivo.write("Finalizo auditoria PON. Fecha {}".format(datetime.now()))
-        archivo.write("\n")
         archivo.write("\n")
 
 auditar_pon()

@@ -3,6 +3,7 @@ from consultas import get_puertos_pon_tlk, get_puertos_pon_zbx
 from datetime import datetime
 
 def auditar_pon():
+    fecha = datetime.now()
     lista_zbx = get_puertos_pon_zbx()
     lista_tlk = get_puertos_pon_tlk()
     nlista_zbx = []
@@ -33,7 +34,7 @@ def auditar_pon():
         archivo.write("####Chequeo Zabbix contra TLK.####")
         archivo.write("\n")
         for puerto in diferenciazbx:
-            archivo.write("Zabbix : " + puerto)
+            archivo.write("{} : Zabbix : ".format(fecha.year+"/"+fecha.month+"/"+fecha.day) + puerto)
             archivo.write("\n")
         archivo.write("\n")
         archivo.write("\n")

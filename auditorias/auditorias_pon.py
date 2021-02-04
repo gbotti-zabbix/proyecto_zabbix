@@ -33,14 +33,14 @@ def auditar_pon():
         archivo.write("####Chequeo Zabbix contra TLK.####")
         archivo.write("\n")
         for puerto in diferenciazbx:
-            archivo.write(puerto)
+            archivo.write("Zabbix : " + puerto)
             archivo.write("\n")
         archivo.write("\n")
         archivo.write("\n")
         archivo.write("####Chequeo TLK contra Zabbix.####")
         archivo.write("\n")
         for puerto in diferenciatk:
-            archivo.write(puerto)
+            archivo.write("TLK : " + puerto)
             archivo.write("\n")
         archivo.write("{} puertos PON en TLK no se encontraron el listado de Zabbix.".format(len(diferenciatk)))
         archivo.write("\n")

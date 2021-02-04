@@ -1,6 +1,6 @@
 from direcciones_auditorias import auditoria_pon
 from consultas import get_puertos_pon_tlk, get_puertos_pon_zbx
-from direcciones_auditorias import datetime
+from datetime import datetime
 
 def auditar_pon():
     lista_zbx = get_puertos_pon_zbx()

@@ -1,7 +1,8 @@
 #/usr/bin/python
 import logger
+import sys
 
-from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph
+from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph, get_name_auto
 from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
@@ -9,8 +10,46 @@ from sesiones import autorizar, logout
 def orquestador_carga_ont(metodo):  
     if metodo == "manual":
         logger.info("Comienza la carga manual de ONTs")
-        #TENGO QUE LLAMAR A LAS FUNCIOENS CON INPUTS
-        pass
+        opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
+        while opcion > 2 or opcion < 1:
+            print("Opcion incorrecta \n")
+            opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
+        else:
+            if opcion == 1:
+                tipo = "ONT"
+            elif opcion == 2:
+                tipo = "Radio Base"
+        opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
+        if opcion_e == "1":
+            etiqueta_m = input("Ingrese la etiqueta:\n")
+        else:
+            pass
+        nodo = input("Ingrese nombre de nodo en Gestion:\n")
+        puerto = input("Ingrese Slot/Puerto/ONT:\n")
+        llave = autorizar()
+        hostid = host_get(nodo,llave)
+        inter_id = get_inter_id(hostid,llave)
+        ip = inter_id["ip"]
+        oid = get_oid("zte",puerto)
+        try:
+            nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
+        except IndexError as ee:
+            print("No se pudo generar nombre para {}".format(nodo,"/",puerto))
+            raise SystemExit(0)
+        zkey = get_zabbix_key(puerto)
+        appid = get_app_id(hostid,llave)
+        chequeo = ont_check("key_",hostid,zkey["RX"],llave)
+        if chequeo == 0:
+            logger.info(str(nodo)+(" ")+str(zkey))
+            logger.info(str(nombre))
+            logger.info("******")
+            itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
+            itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
+            nombreg = nombre["RX"][:-5]
+            create_graph(nombreg,itemid_1,itemid_2,llave)
+            print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
+        elif chequeo == 1:
+            print("La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
     elif metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []
@@ -87,4 +126,8 @@ def orquestador_carga_ont(metodo):
         #print(repetidas)
         
 
-orquestador_carga_ont("auto")
+#Menu
+if sys.argv[1] == "auto":
+    orquestador_carga_ont("auto")
+elif sys.argv[1] == "manual":
+    orquestador_carga_ont("manual")

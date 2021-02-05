@@ -7,52 +7,52 @@ from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
 
-def orquestador_carga_ont(metodo):  
-    if metodo == "manual":
-        logger.info("Comienza la carga manual de ONTs")
-        opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
-        while opcion > 2 or opcion < 1:
-            print("Opcion incorrecta \n")
+def orquestador_carga_ont(metodo):
+    try:
+        if metodo == "manual":
+            logger.info("Comienza la carga manual de ONTs")
             opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
-        else:
-            if opcion == 1:
-                tipo = "ONT"
-            elif opcion == 2:
-                tipo = "Radio Base"
-        nodo = input("Ingrese nombre de nodo en Gestion:\nEjemplo: AGUADA-13Z\n")
-        puerto = input("Ingrese Slot/Puerto/ONT:\nEjemplo: 17/1/4\n")
-        llave = autorizar()
-        hostid = host_get(nodo,llave)
-        try:
+            while opcion > 2 or opcion < 1:
+                print("Opcion incorrecta \n")
+                opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
+            else:
+                if opcion == 1:
+                    tipo = "ONT"
+                elif opcion == 2:
+                    tipo = "Radio Base"
+            nodo = input("Ingrese nombre de nodo en Gestion:\nEjemplo: AGUADA-13Z\n")
+            puerto = input("Ingrese Slot/Puerto/ONT:\nEjemplo: 17/1/4\n")
+            llave = autorizar()
+            hostid = host_get(nodo,llave)
             inter_id = get_inter_id(hostid,llave)
-        except Exception as e:
-            print("Dale viejo que hacemo")
-        ip = inter_id["ip"]
-        oid = get_oid("zte",puerto)
-        opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
-        if opcion_e == "1":
-            etiqueta = input("Ingrese la etiqueta:\nEjemplo: GP0801-22024459-PINAZO-MORAN\n")
-            nombre = get_name(tipo,puerto,etiqueta)
-        else:
-            try:
-                nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
-            except IndexError as ee:
-                print("ERROR: No se pudo generar nombre para {}".format(nodo,"/",puerto))
-                raise SystemExit(0)
-        zkey = get_zabbix_key(puerto)
-        appid = get_app_id(hostid,llave)
-        chequeo = ont_check("key_",hostid,zkey["RX"],llave)
-        if chequeo == 0:
-            logger.info(str(nodo)+(" ")+str(zkey))
-            logger.info(str(nombre))
-            logger.info("******")
-            itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
-            itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
-            nombreg = nombre["RX"][:-5]
-            create_graph(nombreg,itemid_1,itemid_2,llave)
-            print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
-        elif chequeo == 1:
-            print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
+            ip = inter_id["ip"]
+            oid = get_oid("zte",puerto)
+            opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
+            if opcion_e == "1":
+                etiqueta = input("Ingrese la etiqueta:\nEjemplo: GP0801-22024459-PINAZO-MORAN\n")
+                nombre = get_name(tipo,puerto,etiqueta)
+            else:
+                try:
+                    nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
+                except IndexError as ee:
+                    print("ERROR: No se pudo generar nombre para {}".format(nodo,"/",puerto))
+                    raise SystemExit(0)
+            zkey = get_zabbix_key(puerto)
+            appid = get_app_id(hostid,llave)
+            chequeo = ont_check("key_",hostid,zkey["RX"],llave)
+            if chequeo == 0:
+                logger.info(str(nodo)+(" ")+str(zkey))
+                logger.info(str(nombre))
+                logger.info("******")
+                itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
+                itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
+                nombreg = nombre["RX"][:-5]
+                create_graph(nombreg,itemid_1,itemid_2,llave)
+                print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
+            elif chequeo == 1:
+                print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
+    except Exception as e:
+        print("Echeption")
     elif metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []

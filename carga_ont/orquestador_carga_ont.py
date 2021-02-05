@@ -24,10 +24,7 @@ def orquestador_carga_ont(metodo):
         llave = autorizar()
         hostid = host_get(nodo,llave)
         inter_id = get_inter_id(hostid,llave)
-        try:
-            ip = inter_id["ip"]
-        except TypeError as e:
-            print("El nodo {} no existe en Zabbix".format(nodo))
+        ip = inter_id["ip"]
         oid = get_oid("zte",puerto)
         opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
         if opcion_e == "1":

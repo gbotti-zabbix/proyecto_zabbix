@@ -26,7 +26,7 @@ def orquestador_carga_ont(metodo):
         try:
             inter_id = get_inter_id(hostid,llave)
         except TypeError as e:
-            print("Dale viejo que hacemo")
+            print("Dale viejo que hacemoooo")
         ip = inter_id["ip"]
         oid = get_oid("zte",puerto)
         opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")

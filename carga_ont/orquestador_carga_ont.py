@@ -19,11 +19,6 @@ def orquestador_carga_ont(metodo):
                 tipo = "ONT"
             elif opcion == 2:
                 tipo = "Radio Base"
-        opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
-        if opcion_e == "1":
-            etiqueta = input("Ingrese la etiqueta:\nEjemplo: GP0801-22024459-PINAZO-MORAN\n")
-        else:
-            pass
         nodo = input("Ingrese nombre de nodo en Gestion:\nEjemplo: AGUADA-13Z\n")
         puerto = input("Ingrese Slot/Puerto/ONT:\nEjemplo: 17/1/4\n")
         llave = autorizar()
@@ -31,7 +26,9 @@ def orquestador_carga_ont(metodo):
         inter_id = get_inter_id(hostid,llave)
         ip = inter_id["ip"]
         oid = get_oid("zte",puerto)
-        if etiqueta == "":
+        opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
+        if opcion_e == "1":
+            etiqueta = input("Ingrese la etiqueta:\nEjemplo: GP0801-22024459-PINAZO-MORAN\n")
             nombre = get_name(tipo,puerto,etiqueta)
         else:
             try:

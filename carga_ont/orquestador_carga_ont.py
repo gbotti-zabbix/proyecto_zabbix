@@ -7,9 +7,9 @@ from sesiones import autorizar, logout
 
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
 
-def orquestador_carga_ont(metodo):
-    try:
-        if metodo == "manual":
+def orquestador_carga_ont(metodo):  
+    if metodo == "manual":
+        try:
             logger.info("Comienza la carga manual de ONTs")
             opcion = int(input("Carga: \n 1- ONT \n 2- ONT con RBS\n"))
             while opcion > 2 or opcion < 1:
@@ -51,9 +51,9 @@ def orquestador_carga_ont(metodo):
                 print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
             elif chequeo == 1:
                 print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
-    except TypeError as e:
-        print("Echeption")
-    if metodo == "auto":
+        except TypeError as e:
+            print("Eechechion")
+    elif metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []
         repetidas = []

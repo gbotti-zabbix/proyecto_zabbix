@@ -53,7 +53,7 @@ def orquestador_carga_ont(metodo):
                 print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
     except Exception as e:
         print("Echeption")
-    elif metodo == "auto":
+    if metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []
         repetidas = []

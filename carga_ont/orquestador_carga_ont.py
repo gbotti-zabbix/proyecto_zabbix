@@ -31,11 +31,14 @@ def orquestador_carga_ont(metodo):
         inter_id = get_inter_id(hostid,llave)
         ip = inter_id["ip"]
         oid = get_oid("zte",puerto)
-        try:
-            nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
-        except IndexError as ee:
-            print("No se pudo generar nombre para {}".format(nodo,"/",puerto))
-            raise SystemExit(0)
+        if etiqueta_m:
+            nombre = etiqueta_m
+        else:
+            try:
+                nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
+            except IndexError as ee:
+                print("ERROR: No se pudo generar nombre para {}".format(nodo,"/",puerto))
+                raise SystemExit(0)
         zkey = get_zabbix_key(puerto)
         appid = get_app_id(hostid,llave)
         chequeo = ont_check("key_",hostid,zkey["RX"],llave)
@@ -49,7 +52,7 @@ def orquestador_carga_ont(metodo):
             create_graph(nombreg,itemid_1,itemid_2,llave)
             print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
         elif chequeo == 1:
-            print("La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
+            print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
     elif metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []

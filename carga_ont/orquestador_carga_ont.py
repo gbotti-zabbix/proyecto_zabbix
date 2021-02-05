@@ -31,7 +31,7 @@ def orquestador_carga_ont(metodo):
         inter_id = get_inter_id(hostid,llave)
         ip = inter_id["ip"]
         oid = get_oid("zte",puerto)
-        if etiqueta:
+        if etiqueta = "":
             nombre = get_name(tipo,puerto,etiqueta)
         else:
             try:

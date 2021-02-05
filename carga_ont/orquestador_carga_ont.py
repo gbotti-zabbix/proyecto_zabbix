@@ -22,10 +22,13 @@ def orquestador_carga_ont(metodo):
         opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
         if opcion_e == "1":
             etiqueta_m = input("Ingrese la etiqueta:\n")
+            print("Ejemplo: GP0801-22024459-PINAZO-MORAN\n")
         else:
             pass
         nodo = input("Ingrese nombre de nodo en Gestion:\n")
+        print("Ejemplo: AGUADA-13Z\n")
         puerto = input("Ingrese Slot/Puerto/ONT:\n")
+        print("Ejemplo: 17/1/4")
         llave = autorizar()
         hostid = host_get(nodo,llave)
         inter_id = get_inter_id(hostid,llave)

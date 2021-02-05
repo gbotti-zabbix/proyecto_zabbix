@@ -25,7 +25,7 @@ def orquestador_carga_ont(metodo):
         hostid = host_get(nodo,llave)
         try:
             inter_id = get_inter_id(hostid,llave)
-        except TypeError as e:
+        except Exception as e:
             print("Dale viejo que hacemo")
         ip = inter_id["ip"]
         oid = get_oid("zte",puerto)

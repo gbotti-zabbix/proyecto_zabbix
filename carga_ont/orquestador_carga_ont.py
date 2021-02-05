@@ -52,7 +52,7 @@ def orquestador_carga_ont(metodo):
             elif chequeo == 1:
                 print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
         except TypeError as e:
-            print("Eechechion")
+            print("El nodo {} o puerto {} no existen en Zabbix".format(nodo,puerto))
     elif metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")
         lista = []

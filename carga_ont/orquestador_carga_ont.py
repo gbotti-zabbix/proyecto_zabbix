@@ -51,7 +51,7 @@ def orquestador_carga_ont(metodo):
                 print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))
             elif chequeo == 1:
                 print("ERROR: La ONT {} con puerto {} ya esta siendo monitoreada en el nodo {}".format(nombre,puerto,nodo))
-    except Exception as e:
+    except TypeError as e:
         print("Echeption")
     if metodo == "auto":
         logger.info("Comienza la carga automatica de ONTs")

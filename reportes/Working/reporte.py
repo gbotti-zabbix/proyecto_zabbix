@@ -96,10 +96,10 @@ def reportes_xlsx(tipo,periodo):
             apend_data_ONT(workbook,hojas_ONT,periodo)
             if periodo == "mes":
                 workbook.save(filename=excel_ONT_mensual())
-                os.chmod(excel_ONT_mensual(),775)
+                os.chmod(excel_ONT_mensual(),0755)
             elif periodo == "semana":
                 workbook.save(filename=excel_ONT_semanal())
-                os.chmod(excel_ONT_semanal(),775)
+                os.chmod(excel_ONT_semanal(),0755)
             logger.info("Se culmino la creacion del reporte {} de ONT".format(periodo))
 
     elif tipo == "PON":
@@ -109,19 +109,13 @@ def reportes_xlsx(tipo,periodo):
             apend_data_PON(workbook,hojas_PON,periodo)
             if periodo == "mes":
                 workbook.save(filename=excel_PON_mensual())
-                #os.system("chmod 775 {}".format(excel_PON_semanal))
+                os.chmod(excel_PON_mensual(),0755)
             elif periodo == "semana":
                 workbook.save(filename=excel_PON_semanal())
-                #os.system("chmod 775 {}".format(excel_PON_semanal))
+                os.chmod(excel_PON_mensual(),0755)
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
-#reportes_xlsx("PON","semana")
+reportes_xlsx("PON","semana")
 reportes_xlsx("ONT","semana")
-#reportes_xlsx("PON","mes")
+reportes_xlsx("PON","mes")
 reportes_xlsx("ONT","mes")
-
-print(excel_ONT_mensual())
-print(excel_ONT_semanal())
-
-print(type(excel_ONT_mensual()))
-print(type(excel_ONT_semanal()))

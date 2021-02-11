@@ -1,6 +1,6 @@
 #IMPORTO EL CONECTOR Y LOGGER DE REFACTOR
 import sys
-sys.path.append("./reportes/Refactor")
+sys.path.append("./reportes/Working")
 from conector import conector
 
 def get_rbs():

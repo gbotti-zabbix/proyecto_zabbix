@@ -119,3 +119,6 @@ def reportes_xlsx(tipo,periodo):
 reportes_xlsx("ONT","semana")
 #reportes_xlsx("PON","mes")
 reportes_xlsx("ONT","mes")
+
+print(excel_ONT_mensual())
+print(excel_ONT_semanal())

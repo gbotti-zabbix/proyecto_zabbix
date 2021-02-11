@@ -115,7 +115,4 @@ def reportes_xlsx(tipo,periodo):
                 os.chmod(excel_PON_semanal(),0o755)
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
-reportes_xlsx("PON","semana")
-reportes_xlsx("ONT","semana")
-reportes_xlsx("PON","mes")
-reportes_xlsx("ONT","mes")
+

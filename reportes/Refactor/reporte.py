@@ -6,6 +6,7 @@ import mysql.connector
 from datetime import datetime, date, timedelta
 import sys
 import logger
+import os
 
 from direcciones import excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual, hojas_PON, hojas_ONT, c300_19p, puertos_uplink, puertos_uplink_h, puertos_uplink_19, puertos_uplink_omitidos_z, puertos_uplink_omitidos_z_19
 from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon_mensual
@@ -95,8 +96,10 @@ def reportes_xlsx(tipo,periodo):
             apend_data_ONT(workbook,hojas_ONT,periodo)
             if periodo == "mes":
                 workbook.save(filename=excel_ONT_mensual())
+                os.system("chmod 775 {}".format(excel_ONT_mensual))
             elif periodo == "semana":
                 workbook.save(filename=excel_ONT_semanal())
+                os.system("chmod 775 {}".format(excel_ONT_semanal))
             logger.info("Se culmino la creacion del reporte {} de ONT".format(periodo))
 
     elif tipo == "PON":
@@ -106,7 +109,13 @@ def reportes_xlsx(tipo,periodo):
             apend_data_PON(workbook,hojas_PON,periodo)
             if periodo == "mes":
                 workbook.save(filename=excel_PON_mensual())
+                os.system("chmod 775 {}".format(excel_PON_semanal))
             elif periodo == "semana":
                 workbook.save(filename=excel_PON_semanal())
+                os.system("chmod 775 {}".format(excel_PON_semanal))
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
+reportes_xlsx("PON","semana")
+reportes_xlsx("ONT","semana")
+reportes_xlsx("PON","mes")
+reportes_xlsx("ONT","mes")

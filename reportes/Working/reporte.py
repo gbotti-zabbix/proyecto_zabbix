@@ -112,7 +112,7 @@ def reportes_xlsx(tipo,periodo):
                 os.chmod(excel_PON_mensual(),0o755)
             elif periodo == "semana":
                 workbook.save(filename=excel_PON_semanal())
-                os.chmod(excel_PON_mensual(),0o755)
+                os.chmod(excel_PON_semana(),0o755)
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
 reportes_xlsx("PON","semana")

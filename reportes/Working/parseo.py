@@ -258,7 +258,7 @@ def parseo_ont():
             linea = json.loads(linea)
             if "ONT" in linea["applications"] and "Radio Base" in linea["name"]:
                 Tipo = sacar_grupo(linea["groups"])
-                Nodo = linea["host"]
+                Nodo = linea["host"]["host"]
                 Nombre = linea["name"]
                 Puerto = regex_puerto(Nombre,"ONT")
                 Direccion = Nombre[-2:]
@@ -316,7 +316,7 @@ def parseo_pon():
                 if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]):
 
                     Tipo = sacar_grupo(linea["groups"])
-                    Nodo = linea["host"]
+                    Nodo = linea["host"]["host"]
                     Nombre = linea["name"]
                     Puerto = regex_puerto(Nombre,"PON")[2:]
                     Direccion = sacar_direccion(Nombre)

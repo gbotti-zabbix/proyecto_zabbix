@@ -11,7 +11,7 @@ def auditar_pon():
     diferenciatk = []
     diferenciazbx = []
     for puerto in lista_zbx:
-        if (puerto[1] in puertos_uplink) or ((puerto[0][-1:] == "H") and (puerto[1] in puertos_uplink_h)) or ((puerto[0] in c300_19p) and (puerto[1] in puertos_uplink_19)):
+        if (puerto[1] in puertos_uplink) or ((puerto[0][-1:] == "M") and (puerto[1] in puertos_uplink_h)) or ((puerto[0] in c300_19p) and (puerto[1] in puertos_uplink_19)):
             pass
         else:
             nlista_zbx.append(puerto[0]+"_"+puerto[1])

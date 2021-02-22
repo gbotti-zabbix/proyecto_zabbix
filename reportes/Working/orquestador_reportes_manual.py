@@ -78,8 +78,8 @@ def orquestador_tlk():
         logger.error(traceback.format_exc())
 
 def orquestador_zbx():
-    fecha = input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n")
-    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(fecha)
+    fecham = input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n")
+    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(fecham)
     tarea_semanal = int(input("Precione 1 para generar reporte semanal\n"))
     tarea_mensual = int(input("Precione 1 para generar reporte mensual\n"))
     try:
@@ -93,7 +93,7 @@ def orquestador_zbx():
             #pusheo pickles de ONT y PON
             pusheo_crudos_diarios_PON()
             pusheo_crudos_diarios_ONT()
-            crudo_rename(fecha)
+            crudo_rename(fecham)
             #borra crudos pickle viejos ONT y PON
             os.system(limpiar_pickle_pon)
             os.system(limpiar_pickle_ont)
@@ -105,14 +105,14 @@ def orquestador_zbx():
             #Saco reporte semanal")
             reportes_xlsx("PON","semana")
             reportes_xlsx("ONT","semana")
-            reporte_rename(fecha)
+            reporte_rename(fecham)
         if checkdia(tarea_mensual) == 1:
             #Ejecuto funcione sql mensual")
             flujos("mes")
             #Saco reporte mensual")
             reportes_xlsx("PON","mes")
             reportes_xlsx("ONT","mes")
-            reporte_rename(fecha)
+            reporte_rename(fecham)
     except Exception as e:
         logger.error(traceback.format_exc())
 
@@ -127,5 +127,11 @@ def menu():
         orquestador_zbx()
 
 
-flujos("dia")
+#flujos("dia")
 #menu()
+
+
+
+with open("/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle","r") as archivo:
+    for line in archivo:
+        print(line)

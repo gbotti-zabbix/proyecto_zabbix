@@ -266,7 +266,8 @@ def parseo_ont():
 
                 #Fecha y hora salen a partir de procesar tiempo
                 Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
-                print(Tiempo)
+                debu = linea["clock"]
+                print(debu)
                 #
 
                 #Paso los bits a mega para picos y avg

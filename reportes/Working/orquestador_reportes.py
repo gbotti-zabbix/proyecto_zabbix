@@ -74,8 +74,8 @@ def orquestador_reportes():
             # existe archivo Zabbix #
             elif checkFileExistance(crudozabbix()):
                 #Parseo archivo de Zabbix PON y ONT
-                parseo_ont()
-                parseo_pon()
+                parseo_ont("auto")
+                parseo_pon("auto")
                 #Borro crudozabbix
                 os.remove(crudozabbix())
                 logger.info("Se borro archivo crudozabbix")

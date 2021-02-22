@@ -24,24 +24,21 @@ def checkFileExistance(filePath):
         return False
 
 
-def checklunes():
-    tarea_semanal = int(input("Precione 1 para generar reporte semanal\n"))
+def checklunes(tarea_semanal):
     if tarea_semanal == 1:
         return 1
     else:
         return 0
 
 
-def checkdia():
-    tarea_mensual = int(input("Precione 1 para generar reporte mensual\n"))
+def checkdia(tarea_mensual):
     if tarea_mensual == 1:
         return 1
     else:
         return 0
     
 
-def orquestador_reportes():
-    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n"))
+def orquestador_tlk():
     try:
         # existe archivo TLK #
         if checkFileExistance(archivo_tlk):
@@ -71,9 +68,15 @@ def orquestador_reportes():
             #--- Proceso BD inventario tlk-----#
             logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
         #if fin existe archivo TLK # 
-    
-        # existe archivo Zabbix #
-        elif checkFileExistance(crudozabbix):
+    except Exception as e:
+        logger.error(traceback.format_exc())
+
+def orquestador_zbx():
+    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n"))
+    tarea_semanal = int(input("Precione 1 para generar reporte semanal\n"))
+    tarea_mensual = int(input("Precione 1 para generar reporte mensual\n"))
+    try:
+        if checkFileExistance(crudozabbix):
             #Parseo archivo de Zabbix PON y ONT
             parseo_ont()
             parseo_pon()
@@ -88,13 +91,13 @@ def orquestador_reportes():
             os.system(limpiar_pickle_ont)
             #Ejecuto funciones sql diarias")
             flujos("dia")
-        elif checklunes() == 1:
+        if checklunes(tarea_semanal) == 1:
             #Ejecuto funcione sql semanal")
             flujos("semana")
             #Saco reporte semanal")
             reportes_xlsx("PON","semana")
             reportes_xlsx("ONT","semana")
-        elif checkdia() == 1:
+        if checkdia(tarea_mensual) == 1:
             #Ejecuto funcione sql mensual")
             flujos("mes")
             #Saco reporte mensual")
@@ -103,5 +106,14 @@ def orquestador_reportes():
     except Exception as e:
         logger.error(traceback.format_exc())
 
+def menu():
+    menu = int(input("1 para carga TLK \n 2 Para carga zbx \n 3 para ambos."))
+    if menu == 1:
+        orquestador_tlk()
+    elif menu == 2:
+        orquestador_zbx()
+    elif menu == 3:
+        orquestador_tlk()
+        orquestador_zbx()
 
-orquestador_reportes()
+menu()

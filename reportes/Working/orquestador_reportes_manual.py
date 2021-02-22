@@ -107,7 +107,7 @@ def orquestador_zbx():
         logger.error(traceback.format_exc())
 
 def menu():
-    menu = int(input("1 para carga TLK \n 2 Para carga zbx \n 3 para ambos."))
+    menu = int(input("1 para carga TLK \n 2 Para carga zbx \n 3 para ambos \n"))
     if menu == 1:
         orquestador_tlk()
     elif menu == 2:

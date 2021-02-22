@@ -241,7 +241,7 @@ def sacar_direccion(nombre):
         Direccion = "RX"
     return Direccion
 
-
+#define si es una carga manual o automatica de crudos
 def metodo(opcion):
     if opcion == "auto":
         return crudozabbix()

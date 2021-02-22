@@ -188,7 +188,7 @@ def parseo_pon():
                         tupla = (id_zabbix, id_tlk, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         print(tupla)
                         contador_carga = contador_carga + 1
-                        if contador_carga = 50:
+                        if contador_carga == 50:
                             break
                     else:
                         contador_error = contador_error + 1

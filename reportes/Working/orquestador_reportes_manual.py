@@ -131,11 +131,11 @@ def menu():
 
 
 #flujos("dia")
-#menu()
+menu()
 
 
 
-with open("/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle","rb") as archivo:
-    lista_tuplas = pickle.load(archivo)
-    for lista in lista_tuplas:
-        print(lista)
+# with open("/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle","rb") as archivo:
+#     lista_tuplas = pickle.load(archivo)
+#     for lista in lista_tuplas:
+#         print(lista)

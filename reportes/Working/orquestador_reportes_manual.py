@@ -86,17 +86,17 @@ def orquestador_zbx():
     try:
         if checkFileExistance(crudozabbix):
             #Parseo archivo de Zabbix PON y ONT
-            parseo_ont()
-            parseo_pon()
+            parseo_ont(crudozabbix)
+            parseo_pon(crudozabbix)
             #Borro crudozabbix
             os.remove(crudozabbix)
             logger.info("Se borro archivo crudozabbix")
             #pusheo pickles de ONT y PON
             pusheo_crudos_diarios_PON()
             pusheo_crudos_diarios_ONT()
-            crudo_rename(fecham)
             #Ejecuto funciones sql diarias")
             flujos("dia")
+            crudo_rename(fecham)
         if checklunes(tarea_semanal) == 1:
             #Ejecuto funcione sql semanal")
             flujos("semana")

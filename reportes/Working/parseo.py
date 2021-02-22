@@ -243,15 +243,18 @@ def sacar_direccion(nombre):
 
 
 #Parseo de ONT
-def parseo_ont():
+def parseo_ont(opcion):
 
     logger.info("Comienza el Parseo de ONTS")
     #Variables de contadores y escritura del pickle
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
-
-    with open(crudozabbix(),"r") as crudo:
+    if opcion == "auto":
+        crudozabbix = crudozabbix()
+    else:
+        crudozabbix = opcion
+    with open(crudozabbix,"r") as crudo:
         crudo = crudo.read().splitlines()
         for linea in crudo:
             #cada linea se pasa de json a dicc
@@ -292,16 +295,20 @@ def parseo_ont():
 
 
 #Parseo de Puertos PON
-def parseo_pon():
+def parseo_pon(opcion):
 
     logger.info("Comienza el Parseo de Puertos PON")
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
 
+    if opcion == "auto":
+        crudozabbix = crudozabbix()
+    else:
+        crudozabbix = opcion
 
     #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
-    with open(crudozabbix(),"r") as crudo:
+    with open(crudozabbix,"r") as crudo:
         #archivo parseado
             crudo = crudo.read().splitlines()
             #

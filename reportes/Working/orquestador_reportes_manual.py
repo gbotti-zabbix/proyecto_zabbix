@@ -37,6 +37,12 @@ def checkdia(tarea_mensual):
     else:
         return 0
     
+def crudo_rename(fecha):
+    os.rename(r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(datetime.today().date()),r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(fecha))
+    os.rename(r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(datetime.today().date()),r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle_ONT".format(fecha))
+
+def reporte_rename(fecha):
+    pass
 
 def orquestador_tlk():
     try:
@@ -72,7 +78,8 @@ def orquestador_tlk():
         logger.error(traceback.format_exc())
 
 def orquestador_zbx():
-    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n"))
+    fecha = input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n")
+    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(fecha)
     tarea_semanal = int(input("Precione 1 para generar reporte semanal\n"))
     tarea_mensual = int(input("Precione 1 para generar reporte mensual\n"))
     try:
@@ -86,6 +93,7 @@ def orquestador_zbx():
             #pusheo pickles de ONT y PON
             pusheo_crudos_diarios_PON()
             pusheo_crudos_diarios_ONT()
+            crudo_rename()
             #borra crudos pickle viejos ONT y PON
             os.system(limpiar_pickle_pon)
             os.system(limpiar_pickle_ont)
@@ -97,12 +105,14 @@ def orquestador_zbx():
             #Saco reporte semanal")
             reportes_xlsx("PON","semana")
             reportes_xlsx("ONT","semana")
+            reporte_rename()
         if checkdia(tarea_mensual) == 1:
             #Ejecuto funcione sql mensual")
             flujos("mes")
             #Saco reporte mensual")
             reportes_xlsx("PON","mes")
             reportes_xlsx("ONT","mes")
+            reporte_rename()
     except Exception as e:
         logger.error(traceback.format_exc())
 

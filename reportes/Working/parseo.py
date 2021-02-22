@@ -242,6 +242,13 @@ def sacar_direccion(nombre):
     return Direccion
 
 
+def metodo(opcion):
+    if opcion == "auto":
+        return crudozabbix()
+    else:
+        crudozabbix = opcion
+        return crudozabbix
+
 #Parseo de ONT
 def parseo_ont(opcion):
 
@@ -250,10 +257,7 @@ def parseo_ont(opcion):
     contador_carga = 0
     contador_error = 0
     lista_tuplas = []
-    if opcion == "auto":
-        crudozabbix = crudozabbix()
-    else:
-        crudozabbix = opcion
+    crudozabbix = metodo(opcion)
     with open(crudozabbix,"r") as crudo:
         crudo = crudo.read().splitlines()
         for linea in crudo:
@@ -302,10 +306,7 @@ def parseo_pon(opcion):
     contador_error = 0
     lista_tuplas = []
 
-    if opcion == "auto":
-        crudozabbix = crudozabbix()
-    else:
-        crudozabbix = opcion
+    crudozabbix = metodo(opcion)
 
     #abro el archivo en read y separo en listas de json, descomentar el basico o el hevy
     with open(crudozabbix,"r") as crudo:

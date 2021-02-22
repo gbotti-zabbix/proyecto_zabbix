@@ -266,6 +266,7 @@ def parseo_ont():
 
                 #Fecha y hora salen a partir de procesar tiempo
                 Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
+                print(Tiempo)
                 #
 
                 #Paso los bits a mega para picos y avg
@@ -274,7 +275,6 @@ def parseo_ont():
                 #
                 if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250):
                     tupla = (Tipo, Nodo,Puerto,Direccion, Etiqueta, Tiempo[1],Tiempo[0],Promedio,Pico)
-                    print(tupla)
                     lista_tuplas.append(tupla)
                     contador_carga = contador_carga + 1
                 else:

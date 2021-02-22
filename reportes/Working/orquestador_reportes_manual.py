@@ -10,7 +10,7 @@ import pickle
 import json
 import re
 #
-from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, limpiar_pickle_pon, limpiar_pickle_ont
+from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, limpiar_pickle_pon, limpiar_pickle_ont,modelos_nodos
 #date esta de mas
 from datetime import date, datetime
 from pusheo import f_cargar_inv_en_BD,f_cargar_inv_RBS_en_BD, pusheo_crudos_diarios_PON, pusheo_crudos_diarios_ONT, f_procesar_resumne_tlk_BD

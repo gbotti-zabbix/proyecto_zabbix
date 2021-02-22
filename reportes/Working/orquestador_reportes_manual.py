@@ -131,7 +131,7 @@ def menu():
 
 
 #flujos("dia")
-#menu()
+menu()
 
 
 

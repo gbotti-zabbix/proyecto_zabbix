@@ -7,6 +7,8 @@ import os
 import traceback
 #
 import pickle
+import json
+import re
 #
 from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, limpiar_pickle_pon, limpiar_pickle_ont
 #date esta de mas
@@ -139,6 +141,51 @@ from reporte import reportes_xlsx
 #     lista_tuplas = pickle.load(archivo)
 #     for lista in lista_tuplas:
 #         print(lista)
+
+
+''' Parseo de Inventario Zabbix'''
+
+#Extraigo grupo de nodos
+def sacar_grupo(grupos):
+    for tipo in modelos_nodos:
+        if tipo in grupos:
+            return tipo 
+
+
+#Regex para extraer nodo/slot/puerto a partir del nombre de la interfaz
+def regex_puerto(nombre,tipo):
+    Puerto = ""
+    if tipo == "PON":
+        match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    elif tipo == "ONT":
+        match_puerto = re.search("([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    if match_puerto:
+        Puerto = match_puerto.group()
+    return Puerto
+
+
+#Regex para armado de etiqueta en ONT
+def regex_etiqueta(nombre):
+    Etiqueta = ""
+    match_etiqueta = re.search("(?<=([0-9]) : ).*",nombre)
+    if match_etiqueta:
+        Etiqueta = match_etiqueta.group()[:-5]
+    return Etiqueta
+
+
+#Regex para formatear direccion
+def sacar_direccion(nombre):
+    Direccion =  ""
+    match_tx = re.search("Bits sent",nombre)
+    match_rx = re.search("Bits received",nombre)
+    if match_tx:
+        Direccion = "TX"
+    elif match_rx:
+        Direccion = "RX"
+    return Direccion
+
+
+
 
 
 def parseo_pon():

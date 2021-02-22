@@ -31,7 +31,6 @@ def checklunes(tarea_semanal):
     else:
         return 0
 
-
 def checkdia(tarea_mensual):
     if tarea_mensual == 1:
         return 1
@@ -39,8 +38,8 @@ def checkdia(tarea_mensual):
         return 0
     
 def crudo_rename(fecha):
-    os.rename(r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(datetime.today().date()),r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(fecha))
-    os.rename(r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(datetime.today().date()),r,"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle_ONT".format(fecha))
+    os.rename("/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(datetime.today().date()),"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(fecha))
+    os.rename("/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(datetime.today().date()),"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle_ONT".format(fecha))
 
 def reporte_rename(fecha):
     pass
@@ -79,8 +78,8 @@ def orquestador_tlk():
         logger.error(traceback.format_exc())
 
 def orquestador_zbx():
-    fecham = input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n")
-    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(fecham)
+    fecha = input("Ingrese la fecha a puseshar\n Formato: YYYY-MM-DD\n")
+    crudozabbix = "/var/lib/reportes-zabbix/Merged-Trends-{}.ndjson".format(fecha)
     tarea_semanal = int(input("Precione 1 para generar reporte semanal\n"))
     tarea_mensual = int(input("Precione 1 para generar reporte mensual\n"))
     try:
@@ -96,21 +95,21 @@ def orquestador_zbx():
             pusheo_crudos_diarios_ONT()
             #Ejecuto funciones sql diarias")
             flujos("dia")
-            crudo_rename(fecham)
+            crudo_rename(fecha)
         if checklunes(tarea_semanal) == 1:
             #Ejecuto funcione sql semanal")
             flujos("semana")
             #Saco reporte semanal")
             reportes_xlsx("PON","semana")
             reportes_xlsx("ONT","semana")
-            reporte_rename(fecham)
+            reporte_rename(fecha)
         if checkdia(tarea_mensual) == 1:
             #Ejecuto funcione sql mensual")
             flujos("mes")
             #Saco reporte mensual")
             reportes_xlsx("PON","mes")
             reportes_xlsx("ONT","mes")
-            reporte_rename(fecham)
+            reporte_rename(fecha)
     except Exception as e:
         logger.error(traceback.format_exc())
 
@@ -125,12 +124,4 @@ def menu():
         orquestador_zbx()
 
 
-#flujos("dia")
 menu()
-
-
-
-# with open("/var/lib/reportes-zabbix/crudos/Merged-Trends-" + str(date.today()) + ".pickle","rb") as archivo:
-#     lista_tuplas = pickle.load(archivo)
-#     for lista in lista_tuplas:
-#         print(lista)

@@ -69,7 +69,6 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                     #print (linea_parseada)
                     cod_telelink = linea_parseada[0][:10]                       # codigo TLK
                     central_valida = linea_nueva[0][11]
-                    if central_valida = "M":
                     if central_valida == "M":
                         linea_valida = True
                     else:

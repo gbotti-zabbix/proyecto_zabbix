@@ -8,4 +8,5 @@ for i in range(0,10000000):
         print(numero)
         archivo.write(str(numero))
         archivo.write("\n")
+        archivo.close()
         time.sleep(30)

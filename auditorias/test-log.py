@@ -1,8 +1,9 @@
 import random
 import time
 
-with open("/var/log/reportes_zabbix/test.log","a") as archivo:
-    for i in range(0,10000000):
+
+for i in range(0,10000000):
+    with open("/var/log/reportes_zabbix/test.log","a") as archivo:
         numero = random.randrange(200,1000)
         print(numero)
         archivo.write(str(numero))

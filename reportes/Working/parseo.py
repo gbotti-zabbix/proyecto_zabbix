@@ -56,7 +56,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
         dic_nodo[x[0]]=[x[1],x[2]] 
 
     #print (dic_nodo)
-    linea_valida=False
+    linea_valida=0
     contador=0 # contador de lines de archivo
     with open(archivo_origen,'r') as archivo:
         with open(archivo_destino,"w", newline="") as archivo2:
@@ -70,9 +70,9 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                     cod_telelink = linea_parseada[0][:10]                       # codigo TLK
                     central_valida = linea_parseada[0][11]
                     if central_valida == "M":
-                        linea_valida = True
+                        linea_valida = 1
                     else:
-                        linea_valida = False
+                        linea_valida = 0
                     nro_equipo = linea_parseada[1]                              # nro de equipo TLK completo    
                     if linea_parseada[1][0:2] in dic_nodo: 
                         tipo_equipo = dic_nodo[linea_parseada[1][0:2]][0]
@@ -120,7 +120,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                         indicador_RBS = 0
                     
                     indice_unico = nombre_gestion +  "_" + str(int(slot)) + "/" + str(int (puerto))
-                    if linea_valida :
+                    if linea_valida == 1:
                         linea_nueva= [indice_unico,cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
                          #print (linea_nueva)
                         wr.writerow(linea_nueva)

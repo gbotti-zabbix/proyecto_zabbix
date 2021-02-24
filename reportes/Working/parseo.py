@@ -68,7 +68,7 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                     linea_parseada = linea.split (";")                          #divido linea a linea por punto y coma
                     #print (linea_parseada)
                     cod_telelink = linea_parseada[0][:10]                       # codigo TLK
-                    central_valida = linea_parseada[0][11]
+                    central_valida = str(linea_parseada[0][10])
                     if central_valida == "M":
                         linea_valida = 1
                     else:
@@ -120,9 +120,9 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
                         indicador_RBS = 0
                     
                     indice_unico = nombre_gestion +  "_" + str(int(slot)) + "/" + str(int (puerto))
-                    if linea_valida == 1:
+                    if (linea_valida == 1):
                         linea_nueva= [indice_unico,cod_telelink,nro_equipo,tipo_equipo,nombre_gestion,nro_nodo,slot,puerto, ont, estado, desc_estado,fibra_primaria,par_fibra, indicador_empresarial, indicador_voz, indicador_datos, indicador_RBS] 
-                         #print (linea_nueva)
+                        #print (linea_nueva)
                         wr.writerow(linea_nueva)
                     
                 contador_salto = contador_salto + 1 #solo elimina la primera linea
@@ -367,6 +367,7 @@ def parseo_pon(opcion):
     #Logeo Ingresos
     logger.info("Finalizo el Parseo de PON")
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
+
 
 
 

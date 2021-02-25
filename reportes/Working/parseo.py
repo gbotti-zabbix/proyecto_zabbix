@@ -12,11 +12,46 @@ import sys
 from datetime import datetime, date
 from conector import conector
 from direcciones import crudozabbix,archivo_pickle_ONT,archivo_pickle_PON, modelos_nodos
+""" Script que parsea crudos de Zabbix y Telelink
 
+Toma archivos ndjson desde Zabbix y csv desde telelink/gestion, los parsea en un formato util para cargarlo a la base de datos
+y los guarda en archivos pickle para zabbix y csv para Telelink.
+
+Importar pickle y json es esencial para parsear Zabbix.
+
+Si se queire cambiar el nombre de los crudos a buscar o el nombre con el que se guardaran los crudos
+se debe editar las variables/funciones importadas desde direcciones.
+
+Tambien se importa modelos_nodos para procesar los vendors de distinta forma, de necesitar diferenciar
+nuevos modelos, editar esta variable en direcciones.
+
+Contiene las funciones:
+    * FileCheck - Chequea que el archivo crudo a parsear exista.
+    * f_parsear_inventario - Parsea el archivo crudo de TLK para pushearlo a la BD. Puertos PON.
+    * f_parseo_inventario_RBS - Parsea el archivo crudo de gestion para pushearlo a la BD. RBS en ONT. 
+    * sacar_grupo -  Revisa a que el valor a parsear corresponda a un nodo deseado.
+    * regex_puerto -  Extrae el numero de puerto en el formato deseado, a partir de una string.
+    * regex_etiqueta -  Extrae la etiqueta de puerto en el formato deseado, a partir de una string.
+    * sacar_direccion -  Traduce Bit Sent/Recieved a TX o RX segun corresponda.
+    * metodo - Parametro utilizado por los orquestadores, define crudozabbix dependiendo el parametro en
+    formato string que se le pase
+    * parseo_ont - Parsea el archivo crudo de Merged-Trends para pushearlo a la BD. Vuelva los datos en un .pickle.
+    Solo en ONTs.
+    * parseo_pon - Parsea el archivo crudo de Merged-Trends para pushearlo a la BD. Vuelva los datos en un .pickle.
+    Solo puertos PON/Uplink.
+"""
 #>>>>funcion chequeo existencia archvio<<<<<<<<<<<#
 def FileCheck(fn):
-    """
-    Funcion que perminte chquear la existencia de un archivo, devuelve 1 si existe, loqueo error si no existe.
+    """ Chequea la existencia de un archivo
+
+    Se pasa un directorio en formato string y chequea que exista. 
+    Logea un error si no lo encuentra.
+
+    :param fn: Directorio a chequear.
+    :type fn: str
+
+    :returns: Returna 0 o 1 dependiendo si lo encontro o no respectivamente.
+    :rtype: int
     """
     try:
         open(fn, "r")
@@ -212,6 +247,19 @@ def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
 
 #Extraigo grupo de nodos
 def sacar_grupo(grupos):
+    """ Chequea pertenencia de nodo a grupo deseado
+
+    Recive una lista de Grupos Zabbix vinculadas al nodo, chequea si es alguno de los grupos
+    esperados y devuelve el grupo como tipo.
+
+    Es esperado que devuelva el modelo del nodo que corresponde al grupo vinculado al nodo en Zabbix.
+
+    :param grupos: Grupos vinculados al nodo en Zabbix.
+    :type grupos: list
+
+    :returns: Modelo del nodo.
+    :rtype: str
+    """
     for tipo in modelos_nodos:
         if tipo in grupos:
             return tipo 
@@ -219,6 +267,20 @@ def sacar_grupo(grupos):
 
 #Regex para extraer nodo/slot/puerto a partir del nombre de la interfaz
 def regex_puerto(nombre,tipo):
+    """ Extrae puerto en un formato especifico a partir de string
+
+    A partir de una string extrae el numero de puerto en formato PLACA/PUERTO para PON/Uplink y
+    PLACA/PUERTO/ONT para las ONT.
+
+    :param nombre: String a buscar puerto
+    :type nombre: str
+
+    :param tipo: Definir si se quiere obtener puerto para PON/Uplink o ONT. Recibe "PON"/"ONT".
+    :type tipo: str
+
+    :returns: Puerto en formato PLACA/PUERTO para PON/Uplink, PLACA/PUERTO/ONT para ONT.
+    :rtype: str
+    """
     Puerto = ""
     if tipo == "PON":
         match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
@@ -231,6 +293,19 @@ def regex_puerto(nombre,tipo):
 
 #Regex para armado de etiqueta en ONT
 def regex_etiqueta(nombre):
+    """ Extrae etiqueta de gestion en un formato especifico a partir de string
+
+    A partir de una string extrae la etiqueta de gestion como fue ingresada a Zabbix. Este valor viene
+    en el name desde Zabbix solamente para ONT.
+
+    Por lo general la etiqueta es el numero del servicio del cliente y su nombre.
+
+    :param nombre: String a buscar la etiqueta
+    :type nombre: str
+
+    :returns: Etiqueta en formato gestion.
+    :rtype: str
+    """    
     Etiqueta = ""
     match_etiqueta = re.search("(?<=([0-9]) : ).*",nombre)
     if match_etiqueta:
@@ -240,6 +315,19 @@ def regex_etiqueta(nombre):
 
 #Regex para formatear direccion
 def sacar_direccion(nombre):
+    """ Extrae direccion en formato TX/RX a partir de string
+
+    A partir de una string extrae direccion del trafico del puerto. Este valor viene
+    en la misma string donde se saca el puerto y etiqueta.
+
+    Se traduce Bits Sents como TX y Bits Received como RX.
+
+    :param nombre: String a buscar la direccion.
+    :type nombre: str
+
+    :returns: Direccion TX/RX.
+    :rtype: str
+    """
     Direccion =  ""
     match_tx = re.search("Bits sent",nombre)
     match_rx = re.search("Bits received",nombre)
@@ -251,6 +339,21 @@ def sacar_direccion(nombre):
 
 #define si es una carga manual o automatica de crudos
 def metodo(opcion):
+    """ Define crudozabbix
+
+    A partir de una string define si ejectuar la funcion curdozabbix() traida desde
+    direcciones o utliza la pasada desde el orquestador_manual.
+
+    "auto" ejecuta crudozabbix(). Para cambiar esta direccion debe editarse la funcion
+    importada desde direcciones.
+
+    :param opcion: String donde "auto" ejecuta crudozabbix() o expesifica la direccion
+    donde buscar el archivo crudo.
+    :type opcion: str
+
+    :returns: Direccion de archivo crudo.
+    :rtype: str
+    """
     if opcion == "auto":
         return crudozabbix()
     else:
@@ -259,7 +362,46 @@ def metodo(opcion):
 
 #Parseo de ONT
 def parseo_ont(opcion):
+    """ Parsea crudos de zabbix y crea .pickle para reportes ONT.
 
+    Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
+    hace append a una lista de tuplas formadas por Modelo de nodo, Nodo, Puerto, Direccion,
+    Etiqueta, Hora en la que se realizo la medida, Fecha en la que se realizo la medida, 
+    Promedio de la hora donde se realizo el pico, Pico, estas dos ultimas en Bps.
+
+    Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
+    del archivo crudo contenga ONT en la key applications. 
+    Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.
+
+    Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
+    a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
+    al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.
+
+    Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
+    para ONT traido desde direcciones.
+
+    Ademas se logean errores y el comienzo y finalizacion de la funcion.
+
+    Variables a cargar en las tuplas:
+    Tipo, Nodo, Nombre y Direccion son claves dentro de la lista de facil acceso.
+
+    Puerto debe llamar a regex_puerto usando la variable Nombre y la string "ONT" para generar dicha variable.
+
+    Etiqueta debe llamar a regex_etiqueta usando la key name para generar dicha variable.
+
+    Tiempo es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
+    unidades de tiempo.
+    
+    Promedio y pico son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.
+
+    Para comprender mejor este formateo, conviene revisar un archivo crudo NDJSON generado por zabbix.
+
+    :param opcion: String pasado a la llamada de metodo(). Define el crudozabbix
+    a utilizar (orquestador_manual o auto).
+    :type opcion: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     logger.info("Comienza el Parseo de ONTS")
     #Variables de contadores y escritura del pickle
     contador_carga = 0
@@ -308,7 +450,50 @@ def parseo_ont(opcion):
 
 #Parseo de Puertos PON
 def parseo_pon(opcion):
+    """ Parsea crudos de zabbix y crea .pickle para reportes PON/Uplink.
 
+    Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
+    hace append a una lista de tuplas formadas por Id Zabbix y TLK (utilziadas para agilizar 
+    consultas en la BD), Modelo de nodo, Nodo, Puerto, Direccion, Hora en la que se realizo la medida,
+    Fecha en la que se realizo la medida, Promedio de la hora donde se realizo el pico, 
+    Pico, estas dos ultimas en Bps.
+
+    Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
+    del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications. 
+    Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.
+
+    Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
+    a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
+    al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.
+
+    Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
+    PON traido desde direcciones.
+
+    Ademas se logean errores y el comienzo y finalizacion de la funcion.
+
+    Variables a cargar en las tuplas:
+    Tipo, Nodo y Nombre son claves dentro de la lista de facil acceso.
+
+    Puerto debe llamar a regex_puerto usando la variable Nombre y la string "ONT" para generar dicha variable.
+
+    Direccion debe llamar a sacar_direccion usando la variable Nombre para generar dicha variable.
+
+    Tiempo es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
+    unidades de tiempo.
+    
+    Promedio y pico son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.
+
+    id_zabbix y id_tlk son concatenacion de variables (Nodo/Puerto/Direccion) y guiones en formato string. Se utlizan como
+    inidices para consutlas en la BD.
+
+    Para comprender mejor este formateo, conviene revisar un archivo crudo NDJSON generado por zabbix.
+
+    :param opcion: String pasado a la llamada de metodo(). Define el crudozabbix
+    a utilizar (orquestador_manual o auto).
+    :type opcion: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     logger.info("Comienza el Parseo de Puertos PON")
     contador_carga = 0
     contador_error = 0
@@ -367,11 +552,5 @@ def parseo_pon(opcion):
     #Logeo Ingresos
     logger.info("Finalizo el Parseo de PON")
     logger.info("Datos puertos PON Parseados:{}. Lineas Descartadas {}".format(contador_carga,contador_error))
-
-
-
-
-
-
 
 

@@ -5,7 +5,28 @@ import logger
 import direcciones
 import pickle
 from consultas import sql_push_diarios_ONT, sql_push_diarios_PON, sql_truncate_cdiarios_PON, sql_truncate_cdiarios_ONT
+""" Pusheo de archivos parseados a la BD
 
+Toma los archivos generados por parseo y los inserta en la BD para su posterior 
+prosesamiento y generacion de reportes.
+
+Importar pickle es esencial para poder abrir los archivos parseados.
+
+Si se agregaran campos o se necesitara cambiar el funcionamiento de las consultas
+para el pusheos de crudos de zabbix, se debe editar la variables y funciones importadas
+desde consultas. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
+gestion, debemos modificar la funcion f_procesar_resumne_tlk_BD.
+
+Para cambiar nombres de archivos parseados deberian editarse las variables y funciones importadas
+desde direcciones.
+
+Contiene las funciones:
+    * f_cargar_inv_en_BD - Carga inventario TLK a la BD a partir del csv generado en el parseo de crudos.
+    * f_cargar_inv_RBS_en_BD - Carga inventario de RBS en ONT traido de gestion a la BD a partir del csv generado en el parseo de crudos.
+    * f_procesar_resumne_tlk_BD - Consultas utlizadas para las dos funciones anteriores.
+    * pusheo_crudos_diarios_PON - Carga puertos PON/Uplink a crudos_diarios en la BD a partir de archivo parseado .pickle.
+    * pusheo_crudos_diarios_ONT - Carga puertos ONT a crudos_diarios_ONT a partir de archivo parseado .pickle.
+"""
 
 def f_cargar_inv_en_BD (archivo_csv):
     """
@@ -42,6 +63,17 @@ def f_cargar_inv_RBS_en_BD (archivo_csv_RBS):
     conector(sql_cargar_RBS,"Load",comentario_sql)
 
 def f_procesar_resumne_tlk_BD():
+    """ Consultas para pusheo de TLK
+
+    Al llamar la funcion se ejecutan las consultas en orden, de forma parecida a 
+    lo definido en flujo_db, pero estas consultas solo afectan tablas relacionadas
+    con los inventarios de TLK y gestion (RBS en ONT).
+
+    Cada consulta va a compañada de un mensaje necesario a pasar a conector. Ademas
+    se logea el inicio y finalizacion de la tarea.
+
+    :returns: Esta funcion no tiene retornos.
+    """
     #-------- Borro todas las tablas-----#
     sql_borrar_t_id_nodo_slot_puerto = 'TRUNCATE t_id_nodo_slot_puerto;'
     comentario_id="Borrado t_id_nodo_slot_puerto"
@@ -111,7 +143,23 @@ def f_procesar_resumne_tlk_BD():
 #Pusheo zabbix
 
 def pusheo_crudos_diarios_PON():
+    """ Insert de archivo pickle a la BD (PON/Uplink).
 
+    Comienza logeando el inicio de la tarea, llamando a conector y pasando sql que truncan tablas
+    donde se insertaran los datos del dia.
+
+    Abre el archivo pickle marcado en direcciones, este archivo se "despiklea" en una lista de tuplas.
+
+    Para no sobrecargar la BD con inserts, se iteran 100 mil valores en la lista, se cargan a una nueva lista,
+    y esta utlima es la insertada en la BD en la tabla crudos_diarios. Para esto se llama conector
+    con el comando "many". La lista se limpia una ves insertado y se vuelven a cargar 100 mil valores mas.
+    
+    Al final se hace un ultimo insert para los valores que no llegan a iterar otro ciclo de 100 mil valores.
+
+    Tambien se logea la finalizacion de la tarea.
+
+    :returns: Esta funcion no tiene retornos.
+    """
     logger.info("Comienza pusheo de crudos diarios PON")
     conector(sql_truncate_cdiarios_PON,"Truncate","Truncando crudos diarios PON")
     #variables que uso mas adelante y consulta sql
@@ -141,7 +189,20 @@ def pusheo_crudos_diarios_PON():
 
 
 def pusheo_crudos_diarios_ONT():
+    """ Insert de archivo pickle a la BD (PON).
 
+    Comienza logeando el inicio de la tarea, llamando a conector y pasando sql que truncan tablas
+    donde se insertaran los datos del dia.
+
+    Abre el archivo pickle marcado en direcciones, este archivo se "despiklea" en una lista de tuplas.
+
+    Se llama a conector pasando la lista junto con el comando "many" para insertar los datos en
+    crudos_diarios_ONT. 
+
+    Por ultimo se logea la finalizacion de la tarea.
+
+    :returns: Esta funcion no tiene retornos.
+    """
     logger.info("Comienza pusheo de crudos diarios ONT")
     conector(sql_truncate_cdiarios_ONT,"Truncate","Truncando crudos diarios ONT")
     #carga el pickle

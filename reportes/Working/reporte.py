@@ -11,7 +11,18 @@ import os
 from direcciones import excel_PON_semanal, excel_PON_mensual, excel_ONT_semanal, excel_ONT_mensual, hojas_PON, hojas_ONT, c300_19p, puertos_uplink, puertos_uplink_h, puertos_uplink_19, puertos_uplink_omitidos_z, puertos_uplink_omitidos_z_19
 from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon_mensual
 from conector import conector
+""" Hace un select en la BD y crea los reportes .xlsx
 
+Contiene las funciones:
+    * crear_hojas - Crea las hojas para determinado workbook
+    * crear_encabezados - Crea encabezados correspondientes a cada hoja para determinado workbook
+    * apend_data_PON - Filtra e inserta la informacion correspondiente por hoja para determinado workbook
+    vinculado con el reporte PON.
+    * apend_data_ONT - Filtra e inserta la informacion correspondiente por hoja para determinado workbook
+    vinculado con el reporte ONT.
+    * reportes_xlsx - Crea el workbook y llama a las funciones correspondientes del reporte a genera.
+    Escribe el archivo con la info insertada con funciones append y crear.
+"""
 def crear_hojas(workbook,titulos):
     contador = 0
     for titulo in titulos:

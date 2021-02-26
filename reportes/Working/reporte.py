@@ -13,6 +13,18 @@ from consultas import sql_ont_semanal, sql_ont_mensual, sql_pon_semanal, sql_pon
 from conector import conector
 """ Hace un select en la BD y crea los reportes .xlsx
 
+Se hace un pull desde la BD para generar los reportes semanales y mensuales de PON y ONTs.
+
+Las funciones de crear generan y vinculan hojas y encabezados. Los apend_data cargan estos objetos
+con los datos a escribir por hoja ademas de realizar algunos filtros.
+
+Por ultimo reportes_xlsx hace las correspondientes llamadas a las funciones y escribe los datos
+en los archivos finales de reportes.
+
+Si se desea modificar encabezados o nombre de hojas, deben editarse las variables y funciones
+importadas desde direcciones. De la misma manera, si la informacion a extraer de la BD cambiara
+se deben editar las variables y funciones importadas desde consultas.
+
 Contiene las funciones:
     * crear_hojas - Crea las hojas para determinado workbook
     * crear_encabezados - Crea encabezados correspondientes a cada hoja para determinado workbook
@@ -24,6 +36,22 @@ Contiene las funciones:
     Escribe el archivo con la info insertada con funciones append y crear.
 """
 def crear_hojas(workbook,titulos):
+    """ Crea las hojas por workbook
+    
+    Se pasa una lista de objetos. El bucle recorre la lista bucando las claves referentes a los titulos de las
+    hojas. Con estas claves se crean las hojas dentro de la clase workbook.
+
+    Como workbook crea por defecto la primer hoja con nombre sheet, se usa un contador binario par editar esta
+    primer pagina.
+
+    :param workbook: Objeto creado a partir de workbook()
+    :type workbook: class
+
+    :titulos: Lista de objetos con encabezados y nombres de hojas.
+    :type titulos: list
+
+    :returns: Esta funcion no tiene retornos.
+    """
     contador = 0
     for titulo in titulos:
         if contador == 0:
@@ -34,12 +62,69 @@ def crear_hojas(workbook,titulos):
 
 
 def crear_encabezados(workbook,hojas):
+    """ Crea los encabezados cada hoja en el workbook
+    
+    Se pasa una lista de objetos. El bucle recorre la lista usando el nombre de hoja como key
+    para vincular y crear los encabezados. Tecnicamente, cada objeto trae nombre de hoja y encabezados,
+    la primera accede a una direccion en el objeto con la key nombre, luego le carga los encabezaddos
+    que vienen junto con ese nombre en la lista.
+
+    :param workbook: Objeto creado a partir de workbook()
+    :type workbook: class
+
+    :param hojas: Lista de objetos con encabezados y nombres de hojas.
+    :type hojas: list
+
+    :returns: Esta funcion no tiene retornos.
+    """
     for hoja in hojas:
         for key in hoja.encabezados:
             workbook[hoja.nombreHoja][key] = hoja.encabezados[key]
 
 
 def apend_data_PON(workbook,hojas,periodo):
+    """ Consulta la BD y escribe los datos PON en el objeto workbook
+
+    A partir del parametro periodo, decide que consulta hacer. "semana" hace un select
+    sobre reporte_semanal y "mes" sobre reporte_mensual.
+
+    El select trae todos los datos en listas de tuplas, se itera sobre esta separando
+    direcciones en viarables. 
+
+    Comapran tupla a tupla, la direccion del trafico y si el puerto esta entre los grupos desados
+    de puertos y si estan fuera de los no deseados. Esto filtra puertos de respaldo en el uplink,
+    y permite separar Subida y Bajada de Pon y Uplink. Ademas, los puertos de uplink no cuentan
+    con informacion de TLK.
+
+    Una ves realizados los filtros correspondientes, se hace "append" de la informacion de las tuplas en
+    el workbook, apuntando a la hoja correcta.
+
+    Tener en cuenta, para que la informacion escrita corresponda con los encabezados, deben pasarse
+    en el mismo orden que que fueron creados en el workbook. Ejemplo, si los encabezados se definen por
+    [hora,pico], los datos traidos de la BD deben ser escritos en esa hoja corresponiendo al orden
+    hora/pico. El orden de la variable lista_append define esto.
+
+    Variables desde listas:
+
+    tipo, nodo, puerto, direccion, fecha, y hora son strings.
+
+    prom_hora_pico, prom_picos_diarios, pico, promedio_hora son float.
+
+    wf, emp, rbs son int.
+
+    :param workbook: Objeto creado a partir de workbook()
+    :type workbook: class
+
+    :param hojas: Lista de objetos con encabezados y nombres de hojas.
+    :type hojas: list
+
+    :param periodo: Define que consulta se utilizara para la funcion.
+    "semana" consulta datos de reporte semanal. "mes" consulta datos
+    del reporte mensual.
+    :type periodo: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     if periodo == "semana":
         resultado = conector(sql_pon_semanal,"select","Select del reporte semanal de PON")
     elif periodo == "mes":
@@ -74,6 +159,44 @@ def apend_data_PON(workbook,hojas,periodo):
 
 
 def apend_data_ONT(workbook,hojas,periodo):
+        """ Consulta la BD y escribe los datos ONT en el objeto workbook
+
+    A partir del parametro periodo, decide que consulta hacer. "semana" hace un select
+    sobre reporte_semanal y "mes" sobre reporte_mensual.
+
+    El select trae todos los datos en listas de tuplas, se itera sobre esta separando
+    direcciones en viarables. 
+
+    Comapran tupla a tupla, la direccion del trafico. Esto permite separar Subida y Bajada
+    de las ONT.
+
+    Una ves realizados los filtros correspondientes, se hace "append" de la informacion de las tuplas en
+    el workbook, apuntando a la hoja correcta.
+
+    Tener en cuenta, para que la informacion escrita corresponda con los encabezados, deben pasarse
+    en el mismo orden que que fueron creados en el workbook. Ejemplo, si los encabezados se definen por
+    [hora,pico], los datos traidos de la BD deben ser escritos en esa hoja corresponiendo al orden
+    hora/pico. El orden de la variable lista_append define esto.
+
+    Variables desde listas:
+
+    tipo, nodo, puerto, etiqueta, direccion, fecha, y hora son strings.
+
+    prom_hora_pico, prom_picos_diarios, pico, promedio_hora son float.
+
+    :param workbook: Objeto creado a partir de workbook()
+    :type workbook: class
+
+    :param hojas: Lista de objetos con encabezados y nombres de hojas.
+    :type hojas: list
+
+    :param periodo: Define que consulta se utilizara para la funcion.
+    "semana" consulta datos de reporte semanal. "mes" consulta datos
+    del reporte mensual.
+    :type periodo: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     if periodo == "semana":
         resultado = conector(sql_ont_semanal,"select","Select del reporte semanal de ONT")
     elif periodo == "mes":
@@ -99,6 +222,40 @@ def apend_data_ONT(workbook,hojas,periodo):
 
 
 def reportes_xlsx(tipo,periodo):
+    """ Llamas de funciones y escritura de archivos reportes
+
+    Comienza creando una instancia de workbook(), este objeto es usado por
+    el constructor de .xlsx openpyxl.
+
+    El parametro tipo define si se ejecutaran funciones para crear el reporte
+    de ONTs o PON (incluyendo uplink eh informacion de TLK). El flujo de esta fucnion
+    es igual para ambos reportes.
+
+    Luego de logear el inicio de la tarea, se llaman a las funciones crear
+    las cuales definen los nombres y encabezados de paginas. Las funciones append
+    consultan datos especificos a la BD y los insertan el workbook.
+
+    Periodo definira si se debe hacer una consutla sobre reporte_mensual o 
+    reporte_semanal en la BD. Ademas marca el archivo de reporte que se debe crear
+    dependiendo si es un reporte de datos semanales o mensuales y la tecnologia que
+    este reflejara (PON/Uplink o ONT).
+
+    Una ves dentro del if de periodo, se escribe el archivo y luego se ponen permisos
+    775 para poder ser importados desde el servidor de ritaf, el cual mueve los .xlsx hacia
+    directorios en la red corporativa.
+    
+    Se logea la finalizacion del proceso.
+    
+    :param tipo: Define tareas a ejecutar. "ONT" genera reportes
+    de ONT. "PON" genera reportes de puertos PON/Uplink.
+    :type tipo: str
+
+    :param periodo: Periodo de consultas a realizar. "mes" genera
+    reportes mensuales. "semana" genera reportes semanales.
+    :type periodo: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     workbook = Workbook()
     if tipo == "ONT":
             logger.info("Comenzo a crearse el reporte {} de ONT".format(periodo))

@@ -3,7 +3,8 @@ from consultas import get_rbs_tlk, get_rbs
 from datetime import datetime
 from direcciones_auditorias import auditoria_ont
 
-"""
+""" Compara listado RBS en ONT TLK contra gestion.
+
 Compara el listado de RBS en ONT extraido de gestion contra RBS en ONT 
 del inventario de Telelink.
 

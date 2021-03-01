@@ -9,7 +9,7 @@ Compara el listado de RBS en ONT extraido de gestion contra RBS en ONT
 del inventario de Telelink.
 
 Escribe la diferencia total de puertos desde cada inventario, ademas de 
-la informacio de los puertos que no se encontraron.
+la informacion de los puertos que no se encontraron.
 
 Esta informacion se escribe para ambos listados con el formato:
 NOMBRE DE NODO-NUMERO DE NODO-PLACA/PUERTO/ONT. Ej: ATAHUALPA-03Z_16/2/1.

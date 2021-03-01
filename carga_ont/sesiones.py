@@ -6,7 +6,7 @@ import logger
 from requester import requester
 from getpass import getpass
 from api import usuario, contraseña
-""" Logeo y deslogeo contra la Zabbix API
+""" Logeo y deslogeo contra la Zabbix API con user fijo
 
 Importa usuario y contraseña de API.pyc para no tener en texto plano
 las credenciales de acceso.

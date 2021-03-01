@@ -19,7 +19,6 @@ Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:3
 Contiene la funcion auditar_ont.
 """
 
-
 # auditar ONT con RBS
 def auditar_ont():
     ''' Ejecuta las funciones que aditan ONT entre TLK-Gestion

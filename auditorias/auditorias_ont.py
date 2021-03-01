@@ -22,7 +22,7 @@ Contiene la funcion auditar_ont.
 
 # auditar ONT con RBS
 def auditar_ont():
-    ''' Ejecuta las funciones que aditan ONT entre TLK-Gestion
+    ''' Ejecuta las funciones que auditan ONT entre TLK-Gestion
 
     Comienza obteniendo las listas de radio bases en ONT desde gestion y TLK. Estas
     se cargan en las variables lista_g/tlk. Ademas se crean listas vacias donde se guardaran
@@ -38,7 +38,7 @@ def auditar_ont():
     contra nlista_tlk.
 
     Se logean mensajes de comienzo de las tareas, se escriben los totales de diferencias entre los listados.
-    Se recorren las listas de diferencias escribiendo en el archivo los valores uno a uno para ambias listas. Por ultimo
+    Se recorren las listas de diferencias escribiendo en el archivo los valores uno a uno para ambas listas. Por ultimo
     se logea la finalizacion de los procedimientos. 
 
     :returns: Esta funcion no tiene retornos.

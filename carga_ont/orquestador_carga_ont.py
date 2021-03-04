@@ -4,10 +4,33 @@ import sys
 
 from llamadas import get_rbs, ont_check, host_get, get_inter_id, get_app_id, get_oid, create_ont, get_name, get_zabbix_key, create_graph, get_name_auto
 from sesiones import autorizar, logout
+""" Creacion Manual/Automatica de ONT en Zabbix
 
+A partir del metodo con el que se llama a orquestador_carga_ont se chequea
+la existencia de ONTs en Zabbix, y se crean items  y graficas para monitorearlas.
+
+Gran parte del proceso se hace con funciones importadas de llamadas, estas pueden
+utilizar la Zabbix API para devolver valroes utiles.
+
+Parte del proceso conlleva utiilizar datos guardados en api.pyc. Decidimos utilizar un
+archivo compilado para que no sea leibles por IDEs informacion de usuarios pertinentes
+a nuestro despliegue de zabbix.
+
+Contiene la funcion orquestador_carga_ont.
+"""
 #METODO MANUAL O AUTOMATICO (manual es ingreso a mano)
 
-def orquestador_carga_ont(metodo):  
+def orquestador_carga_ont(metodo):
+    """ Creacion Manual/Automatica de ONT en Zabbix
+
+
+
+    :param metodo: Define si se ejecuta el proceso "manual" o "auto" para la creacion
+    de ONTs en Zabbix.
+    :type metodo: str
+
+    :returns: Esta funcion no tiene retornos.
+    """
     if metodo == "manual":
         try:
             logger.info("Comienza la carga manual de ONTs")
@@ -86,15 +109,6 @@ def orquestador_carga_ont(metodo):
                     faltante = faltante + 1
                     pass
                 oid = get_oid("zte",puerto)
-                #GET NAME VIEJO CON OID
-                '''
-                try:
-                    nombre = get_name(ip,oid["oid_etiqueta"],puerto,"Radio Base")
-                except IndexError as ee:
-                    print("No se pudo generar nombre para {}".format(rbs))
-                    faltante = faltante + 1
-                    pass
-                '''
                 etiqueta = rbs[1]
                 nombre = get_name("Radio Base",puerto,etiqueta)
                 zkey = get_zabbix_key(puerto)
@@ -134,6 +148,10 @@ def orquestador_carga_ont(metodo):
         
 
 #Menu
+""" Menu para llamar a orquestador_carga_ont() con variables de sistema al ejectutar
+orquestador_carga_ont.py. "auto" ejecuta la carga automatica de ONTs a Zabbix, "manual"
+despliega inputs para crear una ONT a mano.
+"""
 if sys.argv[1] == "auto":
     orquestador_carga_ont("auto")
 elif sys.argv[1] == "manual":

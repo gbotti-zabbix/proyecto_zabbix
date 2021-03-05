@@ -152,7 +152,7 @@ def get_inter_id(hostid,auth):
     """ Obtiene interface ID type 2 a partir de Host ID
 
     Llamando a a la Zabbix API con hostinterface.get, usando el Host ID,
-    devuelve un interface ID de la interface SNMP registrada  en zabbix para ese nodo. 
+    devuelve un interface ID e IP de la interface SNMP registrada en zabbix para ese nodo. 
     Si no tiene interafaces SNMP o el nodo no existe en zabbix se logea un error.
 
     :param hostid: Host id identificador del nodo.
@@ -162,9 +162,9 @@ def get_inter_id(hostid,auth):
     :type auth: str
 
     :returns: Si se encuentra una interface type 2 con el host id
-    pasado, devuelve el Interface ID en formato str. Si no encuentra el nodo
+    pasado, devuelve el Interface ID e IP en formato dic. Si no encuentra el nodo
     solo logea.
-    :rtype: str
+    :rtype: dic
     """
     interfaceid = {
         "jsonrpc": "2.0",

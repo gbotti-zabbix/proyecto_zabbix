@@ -23,6 +23,87 @@ Contiene la funcion orquestador_carga_ont.
 def orquestador_carga_ont(metodo):
     """ Creacion Manual/Automatica de ONT en Zabbix
 
+    En resumen, para crear una ONT se necesita un Item RX, otro TX y una grafica que agrupe los dos.
+    Para crear uno de estos items necesitamos obtener los siguentes valores:
+    - nombre: Surge a partir de un formato que agrupa un tag ("Radio Base"/"ONT"), puerto y etiqueta de gestion.
+    - zkey: Key del item en zabbix, existe para RX y TX, se genera concatenando una string base a el puerto.
+    - hostid: Se obtiene a partir del nombre del nodo en Zabbix.
+    - inter_id: Numero que identifica la interfaz SNMP dentro del nodo en Zabbix.
+    - oid: Direccion SNMP a la que Zabbix consultara la nodo el trafico de la ONT. Se genera a partir de cruces
+    de puerto con datos fijos proporcionados por el vendor.
+    - appid: Numero que identifica la APP ONT dentro del nodo. Esto es un tag que facilita el filtro de items
+    dentro del propio zabbix.
+    - llave: API Key para hacer las consultas a la api de zabbix. Se genera desde un usario con privilegios en la
+    api.
+    
+    Para crear las graficas de estos items requerimos:
+    - nombreg: Es la misma variable que nombre, pero sin referirse a una direccion de trafico especifica(la grafica
+    muestra ambas direcciones).
+    - itemid_1 y 2: ID de los item creados en Zabbix. Debemos tener un ID que corresponde al item creado para cada
+    direccion.
+    - llave: API Key para hacer las consultas a la api de zabbix. Se genera desde un usario con privilegios en la
+    api.
+
+    Estos valores o la comparacion de la existencia de las ONT aveces requieren datos intermedios a recolectar desde
+    zabbix, debajo se explica en detalle el proceso seguido por esta funcion.
+
+    Dependiendo del metodo con el que se llame a la funcion, se ejectuan los siguentes
+    procedimientos:
+
+        * Auto: Se logea comienzo de la tarea, ademas se crean variables y listas utilizadas
+        para la comparacion de ONT a crear en Zabbix.
+
+        Se carga la llamada de autorizar() en llave, esta contiene la Zabbix API Key utilizada
+        mas adelante en las llamdas a la API. lista_rbs contendra todas las rbs de gestion al
+        momento de ejecutar el script, para esto utiliza get_rbs(). La variable contador_break
+        se deja definida pero no esta en uso.
+
+        Comienza a iterarse sobre lista_rbs y se asigan las variables nodo y puerto (SLOT/PUERTO/ONT).
+        Si la str al final de nodo no es Z, se descarta la ONT, se logea el descarte y crece el contador
+        descartes. 
+        
+        De pasar el filtro, hostid obtiene dicho ID llamando a host_get() con el nombre del nodo y la API Key.
+        Host ID identifica el nodo en zabbix. inter_id obtiene el Interface ID llamando a get_inter_id con el
+        host id obtenido anteriormente y la API Key. Interface ID identifica la interfaz SNMP dentro del nodo.
+        Interface_id tambien trae la IP del nodo en gestion (la utilizada en la interfaz SNMP en zabbix). Esta
+        ultima se carga en la variable IP. Se levanta una exepcion si inter_id no trae la key ip, esto significa
+        que o faltan datos en zabbix, o algo fallo en la consulta a la API.
+
+        oid llama a get_oid pasando vendor y puerto para obtener un dic con las OID necesarias para monitorear la ONT.
+        Etiqueta simplemente es un valor ya presente en la consulta del registro de gestion con get_rbs().
+        Nombre contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama get_name() con
+        un tag identificador "Radio Base", puerto y etiqueta. zkey llama a get_zabbix_key() con puerto para obtener un dic
+        con las Key RX y TX que utilizara cada item de la ONT.
+
+        comparador es una variable de str concatenadas, utiliaza en un if posterior para chequear que no hay ONT repetidas en
+        el listado de gestion. appid llama a get_app_id() con el host id obtenido y la API key, esto trae el Application ID
+        correspondiente a la APP ONT configurada en el nodo con la mencionada Host ID. El App ID es una forma facil de
+        identificar que tipo de item es la ONT dentro de zabbix (diferenciar puertos pon de ont). 
+        
+        Luego de comparar si hay rbs repetidas se chequea si la ont ya existe en zabbix, para esto chequeo llama a la funcion
+        ont_check, donde "key_" elige de que forma se chequea (en este caso por Item Key), hostid es el nodo donde comprobar
+        la existencia de la Item Key (cada item key es unica por nodo), zkey["RX"] es la key a busca en el nodo y llave la 
+        API Key.
+
+        Si chequeo devuelve 0 se logea informacion de la ONT a cargar, se suma 1 a faltante (para contar cuantas
+        ont se ingresaron), y se crean los Item de RX y TX con las variables item_1/2. Estas variables llaman a create_ont()
+        con nombre,zkey,oid y la direccion del item como llave (Ej:["RX"]); hostid sera el nodo donde crear los item, 
+        inter_id["inter_id"] señala que los item pertenecen a la interfaz SNMP del nodo, por ultimo appid es la APP ONT del nodo
+        donde se estan creando los Items y llave la API Key.
+
+        nombreg es nombre pero sin la farte donde se señala direccion del item. Las graficas en zabbix al contener RX y TX, no
+        tienen una direccion especifica como nombre. La llamada a create_graph() creara las graficas para item_1/2 con nombreg
+        como nombre utilizando la AIP Key.
+
+        Si chequeo da 1, signifca que la ONT ya existe en Zabbix y no sera creada. Esta ONT se suma a la lista comparador para
+        poder logear un total de ONTs que no se crearon.
+
+        Por ultimo se logean ONT encontradas, repetidas, sin encontrar y descartadas, ademas de llamar a logout con la llave 
+        para dar de baja la API Key. De lo contrario se acumularian estas llaves cada ves que se ejecuta la maniobra.
+
+        * Manual: El flujo del procedimiento es igual al de auto, pero se agregan inputs y los chequeos son mas directos. Solo
+        se señalan diferencias importantes.
+
 
 
     :param metodo: Define si se ejecuta el proceso "manual" o "auto" para la creacion
@@ -93,7 +174,7 @@ def orquestador_carga_ont(metodo):
         for rbs in lista_rbs:
             nodo = rbs[0]
             puerto = str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
-            if rbs[0][-1] != "Z":
+            if nodo[-1] != "Z":
                 logger.info("Se descarto la ONT {} {}".format(nodo,puerto))
                 logger.info(rbs[0])
                 #print("Se descarto la ONT {} {}".format(nodo,puerto))

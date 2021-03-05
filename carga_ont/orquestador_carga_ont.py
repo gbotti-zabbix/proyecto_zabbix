@@ -104,7 +104,20 @@ def orquestador_carga_ont(metodo):
         * Manual: El flujo del procedimiento es igual al de auto, pero se agregan inputs y los chequeos son mas directos. Solo
         se señalan diferencias importantes.
 
+        opcion es un input para definir parte del tag del nombre del item a crear, 1 Escribe "ONT :", 2 escribe "Radio Base :".
+        Esto se define en la variable tipo, concatenada mas adelante al momento de crear el nombre del item. Para nodo tambien
+        se ejecuta un input pidiendo el nombre del nodo como se registra en gestion. Mismo caso para puerto donde se espera un
+        formato SLOT/PUERTO/ONT.
+        
+        opcion_e permite ingresar la etiqueta de gestion a mano, precionado 1. De precionar enter el sistema busca automaticamente
+        la etiqueta ejecutando un SNMP Walk desde Zabbix-Server. Si ya contamos con la etiqueta y podemos evitar este procedimiento,
+        mejor. A partir de esto nombre se crea con la etiqueta ingresada a mano o con la extraida con el Walk. Se levanta una exepcion
+        en caso de que no se pueda hacer el Walk al puerto ingresado o conteste un error, en este caso se da de baja la API key y se 
+        debe reinicar el procedimiento.
 
+        Se chequea la existencia de la ONT de la misma forma que el procedimiento automatico, y se realizan las mismas acciones de
+        creacion de Items y graficas con sus correspondientes logeos. Por ultimo hay una exepcion general de ocurrir un error en cualquier
+        parte del proceso.
 
     :param metodo: Define si se ejecuta el proceso "manual" o "auto" para la creacion
     de ONTs en Zabbix.

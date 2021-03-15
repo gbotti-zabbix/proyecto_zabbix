@@ -3,7 +3,7 @@ from consultas import get_rbs_tlk, get_rbs
 from datetime import datetime
 from direcciones_auditorias import auditoria_ont
 
-""" Compara listado RBS en ONT TLK contra gestion.
+""" ###Compara listado RBS en ONT TLK contra gestion.
 
 Compara el listado de RBS en ONT extraido de gestion contra RBS en ONT 
 del inventario de Telelink.
@@ -17,12 +17,11 @@ NOMBRE DE NODO-NUMERO DE NODO-PLACA/PUERTO/ONT. Ej: ATAHUALPA-03Z_16/2/1.
 Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:30.
 30 18 5 * * /usr/local/bin/python3.8 /etc/proyecto_zabbix/auditorias/auditorias_ont.py
 
-Contiene la funcion auditar_ont.
+Contiene la funcion **auditar_ont**.
 """
 
-# auditar ONT con RBS
 def auditar_ont():
-    """ Ejecuta las funciones que auditan ONT entre TLK-Gestion
+    """**Ejecuta las funciones que auditan ONT entre TLK-Gestion**
 
     Comienza obteniendo las listas de radio bases en ONT desde gestion y TLK. Estas
     se cargan en las variables lista_g/tlk. Ademas se crean listas vacias donde se guardaran
@@ -41,8 +40,9 @@ def auditar_ont():
     Se recorren las listas de diferencias escribiendo en el archivo los valores uno a uno para ambas listas. Por ultimo
     se logea la finalizacion de los procedimientos. 
 
-    :returns: Esta funcion no tiene retornos.
+    **returns**: Esta funcion no tiene retornos.
     """
+    #
     lista_g = get_rbs()
     lista_tlk = get_rbs_tlk()
     nlista_g = []

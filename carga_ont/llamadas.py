@@ -11,43 +11,11 @@ from requester import requester
 #IMPORTO EL CONECTOR Y LOGGER DE REFACTOR
 import sys
 sys.path.append("./reportes/Working")
-from conector import conector 
-""" Llamadas a la Zabbix API y otras funciones utiles la creacion de ONT en Zabbix.
+from conector import conector
 
-Funciones que llaman a la Zabbix API para obetener valores pertinentes a la creacion de 
-ONTS en el Zabbix y realizar comparaciones de ONT creadas. 
-Algunas funciones en este archivo no llaman a la API.
-
-Muchas son dependientes una de otras, para ver mejor como estan conectadas, 
-conviene estudiar orquestador_carga_ont.
-
-Contiene las funciones:
-    * get_rbs - Saca un listado de ONTs a comprobar si ya existen en Zabbix.
-    * ont_check - Cheque el listado de get_rbs contra Zabbix mediante la Zabbix API.
-    * host_get - Mediante la Zabbix API, obtiene Host ID desde nombre de nodo.
-    * get_inter_id - Mediante la Zabbix API, obtiene Interface ID de SNMP desde Host ID.
-    * get_app_id - Mediante la Zabbix API, obtiene Application ID de App ONT desde Host ID.
-    * get_oid - Con puerto y vendor, genera OIDs a utilizar en la creacion de los Item de ONT.
-    * dic_oid_zte - Devuelve valores pertinentes de la OID a partir de claves de diccionarios.
-    * get_name_auto - Genera nombre del Item a crear en Zabbix, utilziando SNMP Walk en Zabbix-Server.
-    * get_name - Genera nombre del Item a crear en Zabbix.
-    * get_zabbix_key - Genera la Key de los Item a crear en Zabbix. Estas deben ser unicas por nodo.
-    * create_ont - Mediante la Zabbix API, crea uno de los Item de la ONT (RX o TX). 
-    Se puede hacer a mano, pero esta pensada para utilizar la info obtenida por los get listados anteriormente.
-    * create_graph - Mediante la Zabbix API, crea la grafica de hasta dos Item. Pensada para usarse con los Item ID
-    generados por create_ont, pero tambien pueden pasarse los parametros a mano.
-"""
 
 #SACO LISTADO DE ONT A CHEKEAR
 def get_rbs():
-    """ SELECT de ONTs con RBS en gestion.
-
-    Selecciona nombre de nodo, etiqueta de gesition, slot/puerto/ont del inventario de gestion.
-    Devuelve el resultado en una lista de tuplas.
-
-    :returns: Lista de tuplas con resultados del select.
-    :rtype: list
-    """
     sql = "SELECT `nodo`,`etiqueta_ont`,`slot`,`puerto`,`ont` FROM `t_servicios_RBS`"
     rbs = conector(sql,"select","Consultando ONTS")
     return rbs
@@ -55,35 +23,6 @@ def get_rbs():
 #CHEQUEO SI UNA ONT EXISTE POR KEY O NOMBRE.
 #OPCION MARCA COMO BUSCAR (key_,name), HOST ID PARA ESPECIFICAR NODO DONDE SE BUSCA, PARAMETRO ES LO QUE BUSCAR (la key o nombre especifico)
 def ont_check(opcion,hostid,parametro,auth):
-    """ Chequea la existencia de una ONT en Zabbix
-
-    Cunsulta mediante la API de Zabbix utilizando item.get la existencia de una ONT.
-
-    Se puede utilizar la opcion key_ y bucar la ONT por las key de items unicos en zabbix, o
-    se puede utilizar el nombre del item.
-
-    Ejemplo de key: PONRX[zxAnPonOnuIfRxOctets.ONT2/1/15]
-
-    Ejemplo de nombre: Radio Base : 2/1/15 : P47129-27160341-ANTEL-RADIOBASE-CELULAR : RX
-
-    Si encuentra la ONT devuelve 1, sino 0.
-
-    :param opcion: Parametro a buscar, "key_" busca por llave de item. "name" busca
-    por nombre del item.
-    :type opcion: str
-
-    :param hostid: Host id identificador del nodo.
-    :type hostid: str
-
-    :param parametro: Dato a buscar. Dependiente de opcion.
-    :type parametro: str
-
-    :param auth: Key de Zabbix API.
-    :type auth: str
-
-    :returns: 1 si se encontro la ONT en zabbix, 0 si no se encontro.
-    :rtype: int
-    """
     ont_check = {
     "jsonrpc": "2.0",
     "method": "item.get",
@@ -109,23 +48,6 @@ def ont_check(opcion,hostid,parametro,auth):
 
 #SACAR UN HOST ID ESPECIFICO A PARTIR DEL NOMBRE 
 def host_get(nodo,auth):
-    """ Obtiene Host ID a partir de nombre de nodo
-
-    LLamando a la Zabbix API con host.get, a partir del nombre del nodo,
-    obtiene el Host ID de dicho nodo.
-
-    Ejemplo nombre de nodo: CORDON-04Z
-
-    :param nodo: Nombre de nodo a obtener Host ID.
-    :type nodo: str
-
-    :param auth: Key de Zabbix API.
-    :type auth: str
-
-    :returns: Si se encuentra nombre de nodo devuelve el Host ID en formato str.
-    Si no encuentra el nodo solo logea.
-    :rtype: str
-    """
     host_get = {
         "jsonrpc": "2.0",
         "method": "host.get",
@@ -149,23 +71,6 @@ def host_get(nodo,auth):
 
 #SACAR UN INTERFACE ID A PARTIR DE HOST ID. TAMBIEN DEVUELVE IP DE LA INTERFACE.
 def get_inter_id(hostid,auth):
-    """ Obtiene interface ID type 2 a partir de Host ID
-
-    Llamando a a la Zabbix API con hostinterface.get, usando el Host ID,
-    devuelve un interface ID e IP de la interface SNMP registrada en zabbix para ese nodo. 
-    Si no tiene interafaces SNMP o el nodo no existe en zabbix se logea un error.
-
-    :param hostid: Host id identificador del nodo.
-    :type hostid: str
-
-    :param auth: Key de Zabbix API.
-    :type auth: str
-
-    :returns: Si se encuentra una interface type 2 con el host id
-    pasado, devuelve el Interface ID e IP en formato dic. Si no encuentra el nodo
-    solo logea.
-    :rtype: dic
-    """
     interfaceid = {
         "jsonrpc": "2.0",
         "method": "hostinterface.get",
@@ -190,23 +95,6 @@ def get_inter_id(hostid,auth):
 
 #SACAR UN APP ID DE ONT A PARTIR DE HOST ID
 def get_app_id(hostid,auth):
-    """ Obtiene Application ID de ONT a partir de Host ID
-
-    Llamando a a la Zabbix API con application.get, usando el Host ID,
-    devuelve un Application ID de la app ONT registrada en zabbix para ese nodo.
-    Si no tiene app ONT o el nodo no existe en zabbix se logea un error.
-
-    :param hostid: Host id identificador del nodo.
-    :type hostid: str
-
-    :param auth: Key de Zabbix API.
-    :type auth: str
-
-    :returns: Si se encuentra una Application ONT con el host id
-    pasado, devuelve el Application ID en formato str. Si no encuentra el nodo
-    solo logea.
-    :rtype: str
-    """
     app_id = {
         "jsonrpc": "2.0",
         "method": "application.get",
@@ -229,26 +117,6 @@ def get_app_id(hostid,auth):
 
 #SACAR OID SEGUN VENDOR DE NODO, SLOT, PUERTO Y ONT
 def get_oid(tipo,puerto):
-    """ Genera OID a partir de Vendor y Puerto.
-
-    Recibe informacion de puerto en formato SLOT/PUERTO/ONT y nombre del vendor
-    del nodo (por ahora solo zte). Luego de parsear los datos y realizar un pequeño
-    filtro, une las variables base_ con una busqueda en la funcion dic_oid_zte, la cual
-    hace corresponder oids con puertos.
-
-    Retorna un dicccionario con todas las oids necesarias para que Zabbix monitoree de forma
-    efectiva una ONT.
-
-    :param tipo: Vendor del nodo a generar OID (por ahora solo "zte").
-    :type tipo: str
-
-    :param puerto: Numero de puerto en formato SLOT/PUERTO/PON.
-    :type puerto: str
-
-    :returns: Si se logra generar la OID devuelve diccionario con oid_rx RX, oid_tx y oid_etiqueta.
-    De ocurrir un error solo logea.
-    :rtype: dic
-    """
     if tipo == "zte":
         base_RX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.1.2852"
         base_TX = ".1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.44.2852"
@@ -276,20 +144,6 @@ def get_oid(tipo,puerto):
 
 #DEVUELVE OID A PARTIR DE CONCATENAR SLOT, PUERTO.
 def dic_oid_zte(clave):
-    """ Devuelve parte de las OID de ONT ZTE a partir de SLOT/PUERTO
-
-    Recive clave de diccionario conteniendo SLOT/PUERTO (sin el /), si esta
-    clave se encuentra en dic, se devuelve el valor correspondiente a dicha clave.
-    Este valor es parte de la OID que get_oid intenta generar. 
-
-    :param clave: Puerto PON en formato SLOT/PUERTO
-    :type clave: str
-
-    :returns: Si SLOT/PUERTO coincide en el dic, devuelve gragmento de OID
-    necesario para get_oid.
-    :rtype: str
-    """
-
     dic = {"21":"78721",
     "22":"78722",
     "23":"78723",
@@ -424,38 +278,6 @@ def dic_oid_zte(clave):
 #CODIGO ORIGINAL, USA OID Y HACE SNMP WALK
 
 def get_name_auto(ip,oid,puerto,tipo):
-    """ Genera nombre de ONT para Zabbix de forma automatica.
-
-    Hace un SNMP Walk a el puerto del nodo identificado por ip y oid
-    pasados a la funcion. Se hace  una coneccion ssh hacia el Zabbix_Server
-    y desde este se hace el SNMP Walk hacia el nodo en gestion.
-
-    El Walk se realiza con la oid_etiqueta generada por dic_oid_zte. Junto con la
-    etiqueta que responda el nodo, y los parametros puerto y tipo pasados en la llamada
-    de la funcion, se crean los nombres para los item RX y TX de la ONT a crear en zabbix.
-    La funcion devuelve un dic con estos valores.
-
-    Tipo puede ser "ONT o "Radio Base". El puerto tine formato SLOT/PUERTO/PON.
-
-    Las variables contraseña y usario utilizadas para la conexion ssh se mantienen en api.pyc
-    para que no sean leibles directamente desde el IDE.
-
-    :param ip: IP de nodo a consultar por SNMP.
-    :type ip: str
-
-    :param oid: Oid etiqueta correspondiente al puerto a consultar por SNMP.
-    :type oid: str
-
-    :param puerto: Puerto PON en formato SLOT/PUERTO/ONT
-    :type puerto: str
-
-    :param tipo: Escrbie en la etiqueta si es "Radio Base" o "ONT".
-    :type tipo: str
-
-    :returns: Si la consulta SNMP es correcta, devuelve dic de nombres RX y TX para
-    nombrar ONTS en zabbix
-    :rtype: dic
-    """
     #LA IP LA SACO DESDE get inter_id
     etiqueta = os.popen("sshpass -p {} ssh {}@10.0.0.101 'snmpwalk -v 2c -c private {} {}'".format(contraseña_sv,usuario_sv,ip,oid)).read()
     etiqueta = etiqueta.split("\"")
@@ -464,91 +286,17 @@ def get_name_auto(ip,oid,puerto,tipo):
     return {"RX":RX,"TX":TX}
 
 def get_name(tipo,puerto,etiqueta):
-    """ Genera nombre de ONT para Zabbix
-
-    A partir de los string tipo ("Radio Base, "ONT"), puerto en foramto
-    SLOT/PUERTO/ONT y etiqueta, genera y retorna el dic con los nombres 
-    utilziados para la creacion de los Item RX y TX de ONT en Zabbix. 
-
-    :param tipo: Escrbie en la etiqueta si es "Radio Base" o "ONT".
-    :type tipo: str
-
-    :param puerto: Puerto PON en formato SLOT/PUERTO/ONT
-    :type puerto: str
-
-    :param etiqueta: Etiqueta del puerto en gestion. 
-    Ej: P47129-27160341-ANTEL-RADIOBASE-CELULAR.
-    :type etiqueta: str
-
-    :returns: Devuelve dic de nombres RX y TX para nombrar ONTS en zabbix.
-    :rtype: dic
-    """
     RX = "{} : {} : {} : RX".format(tipo,puerto,etiqueta)
     TX = "{} : {} : {} : TX".format(tipo,puerto,etiqueta)
     return {"RX":RX,"TX":TX}
 
 def get_zabbix_key(puerto):
-    """ Genera las key para crear Items en Zabbix
-
-    Une en un str la variable puerto (SLOT/PUERTO/ONT), pasada en la llamada de la funcion,
-    con las str hardcodeadas en las variables RX y TX.
-
-    Devuelve un dic de key RX y TX.
-
-    :param puerto: Puerto PON en formato SLOT/PUERTO/ONT
-    :type puerto: str
-
-    :returns: Devuelve dic de keys RX y TX para crear ONTS en zabbix.
-    :rtype: dic
-    """
     TX = "PONTX[zxAnPonOnuIfTxOctets.ONT{}]".format(puerto)
     RX = "PONRX[zxAnPonOnuIfRxOctets.ONT{}]".format(puerto)
     return {"RX":RX,"TX":TX}
 
 #CREO ONT A PARTIR DE DATOS OBTENIDOS POR LAS DEMAS FUCNIONES. LA CONVINACION DE LLAVE/HOSTID DEBE SER UNICA
 def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
-    """ Crea un Item (RX o TX) de una ONT en Zabbix
-    
-    A partir de los parametros pasados en la llamda de la funcion, se crea un Item correspondiente a una ONT
-    en un nodo especifico, utililizando la Zabbix API con item.create.
-
-    Estos parametros deberian generarse con las funciones get_ que se encuentran mas arriba en el script
-    (host_get, get_inter_id, get_app_id, get_app_id, get_oid, get_name, get_zabbix_key).
-    De todas formas esta funcion se puede llamar pasando los parametros completamente a mano.
-
-    Retorna Item ID si la creacion fue exitosa.
-
-    La item Key (llave) asignada al Item, debe ser unica en el nodo.
-
-    :param nombre: Nombre del Item a crear en Zabbix. Formato igual al generado por get_name().
-    :type nombre: str
-
-    :param llave: Key del Item a crear en Zabbix. Formato igual al generado por get_zabbix_key().
-    :type llave: str
-
-    :param hostid: Host ID del nodo donde se creara el Item de ONT. Se puede obtenero con host_get().
-    :type hostid: str
-
-    :param interfaceid: Interface ID type 2 (SNMP) del nodo donde se creara el item de ONT. Se puede
-    obtener con get_inter_id().
-    :type interfaceid: str
-
-    :param oid: Oid del Item a crear en Zabbix. Se puede obtener con get_oid().
-    :type oid: str
-
-    :param appid: Application ID de la app ONT, del nodo donde se creara el Item en Zabbix.
-    Se puede obtener con get_app_id().
-    :type appid: str
-
-    :param auth: Zabbix API Key.
-    :type auth: str
-
-    :returns: Si la ONT se crea correctamente, devuelve un str con el Item ID del item recien creado.
-    Si la API retorna un error, la funcion retorna un 0 y logea el error informado por JSON desde la API.
-    Si hay un error durante la creacion del Item por alguna interrupcion, se logea que hubo un error pero
-    no se producen retornos.
-    :rtype: str/int.
-    """
     create_ont = {
         "jsonrpc": "2.0",
         "method": "item.create",
@@ -597,35 +345,6 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             #print("Algo salio mal al crear la ONT: {}".format(nombre))
 
 def create_graph(nombre,itemid_1,itemid_2,llave):
-    """ Crea graficas para ciertos Item ID
-
-    Genera las graficas de los item creados por create_ont, de todas formas se pueden
-    pasar los parametros de forma manual si se desea crear una grafica nueva.
-    Utiliza la Zabbix API con graph.create.
-
-    Solo puede crear graficas de hasta 2 item.
-
-    Logea creacion de graficas y errores. Retorna int para error especifico.
-
-    :param nombre: Nombre de la grafica a crear en Zabbix.
-    Formato igual al generado por get_name() sin direccion (RX/TX).
-    :type nombre: str
-
-    :param itemid_1: Item ID de una de las direcciones a graficar (RX o TX).
-    :type itemid_1: str
-
-    :param itemid_2: Item ID de una de las direcciones a graficar (RX o TX).
-    :type itemid_2: str
-
-    :param llave: Zabbix API Key.
-    :type llave: str
-
-    :returns: Si la grafica de la ONT se crea correctamente, logea la creacion de la grafica con el Graph ID sin retornos.
-    Si la API retorna un error, la funcion retorna un 0 y logea el error informado por JSON desde la API.
-    Si hay un error durante la creacion de la grafica por alguna interrupcion, se logea que hubo un error pero
-    no se producen retornos.
-    :rtype: int.
-    """
     create_graph = {
         "jsonrpc": "2.0",
         "method": "graph.create",

@@ -65,9 +65,17 @@ def FileCheck(fn):
 #>>>>>>funcion parsear inventario telelink<<<<<<<<<<<<<<<#
 def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
     """ Funcion para parsear el inventario de Telelink, recibe 3 nombres arhivos
-        archivo_origen: recibe el path y nombre del archivo a parsear
-        archivo_destino: es el nombre del arhivo con que se graban los datos paresados
-        arhivo_old: luego de parsear el arhivo lo dejo con otro nombre.
+        : param archivo_origen: recibe el path y nombre del archivo a parsear
+        : type archivo_origen: str
+
+        : param archivo_origen: archivo_destino: es el nombre del arhivo con que se graban los datos paresados
+        : type archivo_origen: str
+
+        
+        : param archivo_origen: arhivo_old: luego de parsear el arhivo lo dejo con otro nombre.
+        : type archivo_origen: str
+
+        
     """
     logger.info ("\n--Se comenzo parseo arhivo--")
     #-- Cargo diccionarios para trabajar con nombres ----
@@ -180,9 +188,19 @@ def f_parsear_inventario (archivo_origen,archivo_destino,archivo_old):
 
 
 def f_parseo_inventario_RBS(archivo_origen,archivo_destino,archivo_old):
-    """Función que recibe el archivo de Radbio Bases DSC y luego lo parsea,
-       Recibe el nombre arhivo origen a paresar, el nombre archivo destino
-        parseado y como renombrar el archivo original
+    """
+        Función que recibe el archivo de Radbio Bases DSC y luego lo parsea,
+        se transfiere de Ritaf todas las semanas.
+        
+        :param archivo_origen: nombre con direccion absoluta del archivo origen de Radio Bases DSC
+        :type archivo_origen: str 
+
+        :param archivo_destino: nombre con direccion absoluta del archivo destino, como será guardado los datos parseados.
+        :type archivo_origen: str  
+        
+        :param archivo_old: nombre con direccion absoluta del archivo con el que será renombrado el archivo origen luego de parsear
+        :type archivo_origen: str  
+
     """
     logger.info ("\n--Se comenzo parseo arhivo RBS --")
     #-- Cargo diccionarios para trabajar con nombres ----

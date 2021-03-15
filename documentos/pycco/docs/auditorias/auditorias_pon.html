@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>auditorias_pon.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>auditorias_pon.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Compara puertos PON monitoreados en ZBX contra TLK.</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">direcciones_auditorias</span> <span class="kn">import</span> <span class="n">auditoria_pon</span><span class="p">,</span> <span class="n">puertos_uplink</span><span class="p">,</span> <span class="n">puertos_uplink_h</span><span class="p">,</span> <span class="n">c300_19p</span><span class="p">,</span> <span class="n">puertos_uplink_19</span>
+<span class="kn">from</span> <span class="nn">consultas</span> <span class="kn">import</span> <span class="n">get_puertos_pon_tlk</span><span class="p">,</span> <span class="n">get_puertos_pon_zbx</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Compara los puertos PON monitorados por Zabbix contra puertos PON en el
+inventario de Telelink.</p>
+<p>Escribe la diferencia total de puertos desde cada inventario, ademas de 
+la informacion de los puertos que no se encontraron.</p>
+<p>Esta informacion se escribe para ambos listados con el formato:
+FECHA(YYYY/MM/DD) : Zabbix/TLK : NOMBRE DE NODO-NUMERO DE NODO_PLACA/PUERTO PON.<br />
+<strong>Ej</strong>: 2021/2/18 : Zabbix : P-MOLINO-26Z_7/7.</p>
+<p>Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:35.<br />
+<strong>35 18 5 * * /usr/local/bin/python3.8 /etc/proyecto_zabbix/auditorias/auditorias_pon.py</strong></p>
+<p>Contiene la funcion <strong>auditar_pon</strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>Ejecuta las funciones que auditan puertos PON entre Zabbix-TLK</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">auditar_pon</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Comienza obteniendo las listas de puertos PON monitoreados por Zabbix y registrados en TLK.
+Estas se cargan en las variables <em>lista_zbx/tlk</em>. Ademas se crean <em>listas vacias</em> donde se guardaran
+diferencias. Tambien se carga la <em>fecha y hora</em> de ejecucion de la funcion.</p>
+<p>Se recorren ambas listas y se hace append de sus valores a las variables con nombre <em>nlista</em>.
+Se debe hacer este procedimiento porque los datos a comparar se guardan en diferentes formatos
+para TLK y Zabbix. Ademas sobre zabbix se filtran los puertos de Uplink, dado que estos no cuentan
+con informacion en TLK.</p>
+<p>Se itera sobre las <em>nuevas listas</em> chequeando si cada valor existe en la lista a contrastar. Por ejemplo
+se itera sobre <em>nlista_zbx</em>, para cada valor iterado es comprueba si existe en la lista <em>nlista_tlk</em>. Si no existe,
+se hace un append de ese valor a la lista <em>diferenciazbx</em>. Para la lista <em>nlista_tlk</em> se hace lo mismo pero comparando
+contra <em>nlista_zbx</em>.</p>
+<p>Se logean mensajes de comienzo de las tareas, se escriben los totales de diferencias entre los listados.
+Se recorren las listas de diferencias escribiendo en el archivo los valores uno a uno para ambas listas. 
+Por ultimo se logea la finalizacion de los procedimientos. </p>
+<p><strong>returns</strong>: Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Carga de consultas</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">fecha</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">lista_zbx</span> <span class="o">=</span> <span class="n">get_puertos_pon_zbx</span><span class="p">()</span>
+    <span class="n">lista_tlk</span> <span class="o">=</span> <span class="n">get_puertos_pon_tlk</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong><em>Crea listas utiles</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">nlista_zbx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nlista_tlk</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diferenciatk</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diferenciazbx</span> <span class="o">=</span> <span class="p">[]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong><em>Formatea listado de Zabbix y carga en nueva lista</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">lista_zbx</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">puertos_uplink</span><span class="p">)</span> <span class="ow">or</span> <span class="p">((</span><span class="n">puerto</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;M&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">puertos_uplink_h</span><span class="p">))</span> <span class="ow">or</span> <span class="p">((</span><span class="n">puerto</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">c300_19p</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">puertos_uplink_19</span><span class="p">)):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nlista_zbx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">puerto</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong><em>Formatea listado de TLK y carga en nueva lista</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">lista_tlk</span><span class="p">:</span>
+        <span class="n">nlista_tlk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong><em>Compara Zabbix contra TLK</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">nlista_zbx</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">nlista_tlk</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diferenciazbx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong><em>Compara TLK contra Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">nlista_tlk</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">nlista_zbx</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diferenciatk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong><em>Logea los resultados</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">auditoria_pon</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Comienza auditoria PON. Fecha </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;####Chequeo Zabbix contra TLK.####&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">diferenciazbx</span><span class="p">:</span>
+            <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : Zabbix : &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">day</span><span class="p">))</span> <span class="o">+</span> <span class="n">puerto</span><span class="p">)</span>
+            <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;####Chequeo TLK contra Zabbix.####&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">diferenciatk</span><span class="p">:</span>
+            <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : TLK : &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fecha</span><span class="o">.</span><span class="n">day</span><span class="p">))</span> <span class="o">+</span> <span class="n">puerto</span><span class="p">)</span>
+            <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> puertos PON en TLK no se encontraron el listado de Zabbix.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">diferenciatk</span><span class="p">)))</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> puertos PON en Zabbix no se encontraron el listado de TLK.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">diferenciazbx</span><span class="p">)))</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Finalizo auditoria PON. Fecha </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong><em>Llamada a la funcion</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">auditar_pon</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

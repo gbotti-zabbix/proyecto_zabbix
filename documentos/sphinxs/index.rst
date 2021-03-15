@@ -10,7 +10,9 @@ Welcome to Automatismos Zabbix OyM/ACAF's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   auditorias
+   carga_ont
+   reportes
 
 Indices and tables
 ==================

@@ -23,7 +23,7 @@ Contiene las funciones:
 """
 
 def get_rbs():
-    """SELECT de ONTs con RBS en gestion
+    """**SELECT de ONTs con RBS en gestion**
 
     Selecciona nombre de nodo, etiqueta de gesition, slot/puerto/ont del inventario de gestion.
     Devuelve el resultado en una lista de tuplas.
@@ -36,7 +36,7 @@ def get_rbs():
     return rbs
 
 def get_rbs_tlk():
-    """SELECT de ONTs con RBS en TLK.
+    """**SELECT de ONTs con RBS en TLK.**
 
     Selecciona nombre de nodo/slot/puerto y numero de ONT del inventario de TLK.
     Devuelve el resultado en una lista de tuplas.
@@ -49,7 +49,7 @@ def get_rbs_tlk():
     return rbs
 
 def get_puertos_pon_tlk():
-    """SELECT de puertos PON en TLK.
+    """**SELECT de puertos PON en TLK.**
 
     Selecciona nombre de nodo/slot/puerto PON del inventario de TLK.
     Devuelve el resultado en una lista de tuplas.
@@ -62,7 +62,7 @@ def get_puertos_pon_tlk():
     return rbs
 
 def get_puertos_pon_zbx():
-    """SELECT de puertos PON monitoreados por Zabbix.
+    """**SELECT de puertos PON monitoreados por Zabbix.**
 
     Selecciona nombre de nodo y /slot/puerto PON monitoreados por Zabbix. Solo se 
     hace el selecto sobre la direccion RX debido a que todo puerto tiene ambas direcciones

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>direcciones_auditorias.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>direcciones_auditorias.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Direcciones de archivos o datos hardcodeados utilizados para los scripts de auditorias.</p>
+<p>El archivo cuenta con direcciones de directorios donde guardar achivos especificos y
+algunos datos utilizados para filtros de puertos y/o nodos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p><strong>Archivos de Auditoria</strong><br />
+Directorios donde se guardan archivos de auditorias por tecnologia.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">auditoria_ont</span> <span class="o">=</span> <span class="s2">&quot;/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt&quot;</span>
+
+<span class="n">auditoria_pon</span> <span class="o">=</span> <span class="s2">&quot;/var/lib/reportes-zabbix/auditorias/auditoria_pon.txt&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>Filtros de puertos uplink y nodos de 19 pulgadas</strong><br />
+Datos para filtros en las comparaciones de puertos</p>
+<p><strong>c300_19p</strong>: Lista de nodos C300 de 19 pulgadas.</p>
+<p>Las variables <em>puertos_uplik</em> definen los numeros de los puertos mencioandos por vendor o formato
+(H por Huawei, 19 por C300 de 19 pulgadas).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">c300_19p</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;G-AZNAREZ-01Z&quot;</span><span class="p">,</span> <span class="s2">&quot;MARISCALA-01Z&quot;</span><span class="p">,</span> <span class="s2">&quot;A-ARENA-01Z&quot;</span><span class="p">]</span>
+
+<span class="n">puertos_uplink</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;21/1&quot;</span><span class="p">,</span><span class="s2">&quot;22/1&quot;</span><span class="p">,</span><span class="s2">&quot;21/2&quot;</span><span class="p">,</span><span class="s2">&quot;21/3&quot;</span><span class="p">,</span><span class="s2">&quot;21/4&quot;</span><span class="p">,</span><span class="s2">&quot;22/2&quot;</span><span class="p">,</span><span class="s2">&quot;22/3&quot;</span><span class="p">,</span><span class="s2">&quot;22/4&quot;</span><span class="p">]</span>
+
+<span class="n">puertos_uplink_h</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;9/0&quot;</span><span class="p">,</span><span class="s2">&quot;10/0&quot;</span><span class="p">]</span>
+
+<span class="n">puertos_uplink_19</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;19/1&quot;</span><span class="p">,</span><span class="s2">&quot;20/1&quot;</span><span class="p">,</span><span class="s2">&quot;19/2&quot;</span><span class="p">,</span><span class="s2">&quot;19/3&quot;</span><span class="p">,</span><span class="s2">&quot;19/4&quot;</span><span class="p">,</span><span class="s2">&quot;20/2&quot;</span><span class="p">,</span><span class="s2">&quot;20/3&quot;</span><span class="p">,</span><span class="s2">&quot;20/4&quot;</span><span class="p">]</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

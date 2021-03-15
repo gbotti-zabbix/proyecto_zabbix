@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>consultas.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>consultas.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>IMPORTO EL CONECTOR Y LOGGER DE REFACTOR</p>
+<h3>Contiene todas las consultas que son necesarias para comaprar inventarios a auditar</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;./reportes/Working&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Las funciones llaman a conector() junto con un mensaje especifico y la consulta SELECT.</p>
+<p>Todas las variables de este archivo deberian funcionar con el modulo conector. Este modulo es el 
+mismo utilizado para los reportes PON y ONT. Por esto es enecesario el append inicial del directorio 
+reportes/Working al sys path.</p>
+<p>Si se quiere apuntar a otra BD cambiar host_DB, user_DB, password_DB y database_DB en direcciones 
+(o importar variables sesde otro modulo).</p>
+<p>Contiene las funciones:</p>
+<ul>
+<li><strong>get_rbs</strong>: Trae todas las radiobases en ONT registradas en gestion.</li>
+<li><strong>get_rbs_tlk</strong>: Trae todas las radiobases en ONT registradas en Telelink.</li>
+<li><strong>get_puertos_pon_tlk</strong>: Trae todos los puertos PON registrados en Telelink.</li>
+<li><strong>get_puertos_pon_zbx</strong>: Trae todos los puertos PON y Uplink monitoreados por zabbix.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>SELECT de ONTs con RBS en gestion</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_rbs</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Selecciona nombre de nodo, etiqueta de gesition, slot/puerto/ont del inventario de gestion.
+Devuelve el resultado en una lista de tuplas.</p>
+<ul>
+<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
+<li><strong>rtype</strong>: list</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT `nodo`,`etiqueta_ont`,`slot`,`puerto`,`ont` FROM `t_servicios_RBS`&quot;</span>
+    <span class="n">rbs</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Consultando ONTS&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbs</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong>SELECT de ONTs con RBS en TLK.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_rbs_tlk</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Selecciona nombre de nodo/slot/puerto y numero de ONT del inventario de TLK.
+Devuelve el resultado en una lista de tuplas.</p>
+<ul>
+<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
+<li><strong>rtype</strong>: list</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `id_tlk`, `nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk` &gt; 0&quot;</span>
+    <span class="n">rbs</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Consultando ONTS de TLK&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbs</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong>SELECT de puertos PON en TLK.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_puertos_pon_tlk</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Selecciona nombre de nodo/slot/puerto PON del inventario de TLK.
+Devuelve el resultado en una lista de tuplas.</p>
+<ul>
+<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
+<li><strong>rtype</strong>: list</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `id_tlk` FROM `t_resumen_servicios_tlk`&quot;</span>
+    <span class="n">rbs</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Consultando Puertos PON TLK&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbs</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong>SELECT de puertos PON monitoreados por Zabbix.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_puertos_pon_zbx</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Selecciona nombre de nodo y /slot/puerto PON monitoreados por Zabbix. Solo se 
+hace el selecto sobre la direccion RX debido a que todo puerto tiene ambas direcciones
+y al compararlo contra TLK esto no tiene importancia.</p>
+<p>Devuelve el resultado en una lista de tuplas.</p>
+<ul>
+<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
+<li><strong>rtype</strong>: list</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `nodo`, `puerto`FROM `reporte_semanal` WHERE `direccion` = &#39;RX&#39;&quot;</span>
+    <span class="n">rbs</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Consultando Puertos PON Zabbix&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbs</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

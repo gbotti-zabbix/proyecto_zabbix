@@ -24,17 +24,17 @@ def auditar_ont():
     """**Ejecuta las funciones que auditan ONT entre TLK-Gestion**
 
     Comienza obteniendo las listas de radio bases en ONT desde gestion y TLK. Estas
-    se cargan en las variables lista_g/tlk. Ademas se crean listas vacias donde se guardaran
+    se cargan en las variables *lista_g/tlk*. Ademas se crean *listas vacias* donde se guardaran
     diferencias. 
 
-    Se recorren ambas listas y se hace append de sus valores a las variables con nombre nlista.
+    Se recorren ambas listas y se hace append de sus valores a las variables con nombre *nlista*.
     Se debe hacer este procedimiento porque los datos a comparar se guardan en diferentes formatos
     para TLK y gestion.
 
-    Se itera sobre las nuevas listas chequeando si cada valor existe en la lista a contrastar. Por ejemplo
-    se itera sobre nlista_tlk, para cada valor iterado es comprueba si existe en la lista nlista_g. Si no existe,
-    se hace un append de ese valor a la lista diferenciatlk. Para la lista nlista_g se hace lo mismo pero comparando
-    contra nlista_tlk.
+    Se itera sobre las *nuevas listas* chequeando si cada valor existe en la lista a contrastar. Por ejemplo
+    se itera sobre *nlista_tlk*, para cada valor iterado es comprueba si existe en la lista *nlista_g*. Si no existe,
+    se hace un append de ese valor a la lista *diferenciatlk*. Para la *lista nlista_g* se hace lo mismo pero comparando
+    contra *nlista_tlk*.
 
     Se logean mensajes de comienzo de las tareas, se escriben los totales de diferencias entre los listados.
     Se recorren las listas de diferencias escribiendo en el archivo los valores uno a uno para ambas listas. Por ultimo
@@ -42,29 +42,36 @@ def auditar_ont():
 
     **returns**: Esta funcion no tiene retornos.
     """
-    #
+
+    #***Carga de consultas***
     lista_g = get_rbs()
     lista_tlk = get_rbs_tlk()
+    #***Crea listas utiles***
     nlista_g = []
     nlista_tlk = []
     diferenciatlk = []
     diferenciag = []
+    #***Formatea listado de Gestion y carga en nueva lista***
     for rbs in lista_g:
         dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
         nlista_g.append(dato)
+    #***Formatea listado de TLK y carga en nueva lista**
     for rbs in lista_tlk:
         dato = rbs[0] + "/" + str(rbs[1])
         nlista_tlk.append(dato)
+    #***Compara TLK contra Gestion***
     for rbs in nlista_tlk:
         if rbs in nlista_g:
             pass
         else:
             diferenciatlk.append(rbs)
+    #***Compara Gestion contra TLK***
     for rbs in nlista_g:
         if rbs in nlista_tlk:
             pass
         else:
             diferenciag.append(rbs)
+    #***Logea los resultados***
     with open(auditoria_ont,"a") as archivo:
         archivo.write("Comienza auditoria ONTs. Fecha {}".format(datetime.now()))
         archivo.write("\n")
@@ -89,7 +96,5 @@ def auditar_ont():
         archivo.write("\n")
         archivo.write("\n")
 
-
+#***Llamada a la funcion***
 auditar_ont()
-
-# auditar perfiles configurados

@@ -1,21 +1,22 @@
-""" Direcciones de archivos o datos hardcodeados utilizados para los scripts de auditorias.
+"""Direcciones de archivos o datos hardcodeados utilizados para los scripts de auditorias.
 
 El archivo cuenta con direcciones de directorios donde guardar achivos especificos y
 algunos datos utilizados para filtros de puertos y/o nodos.
 """
 
-#Archivos de Auditoria
-""" Directorios donde se guardan archivos de auditorias por tecnologia
+#**Archivos de Auditoria**  
+""" Directorios donde se guardan archivos de auditorias por tecnologia.
 """
 auditoria_ont = "/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt"
 
 auditoria_pon = "/var/lib/reportes-zabbix/auditorias/auditoria_pon.txt"
 
-#Filtro de puertos uplink y nodos de 19 pulgadas
+#**Filtros de puertos uplink y nodos de 19 pulgadas**  
 """ Datos para filtros en las comparaciones de puertos
-:c300_19p: Lista de nodos C300 de 19 pulgadas.
 
-Los puertos_uplik definen los numeros de los puertos mencioandos por vendor o formato
+**c300_19p**: Lista de nodos C300 de 19 pulgadas.
+
+Las variables *puertos_uplik* definen los numeros de los puertos mencioandos por vendor o formato
 (H por Huawei, 19 por C300 de 19 pulgadas).
 """
 

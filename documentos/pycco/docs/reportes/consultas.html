@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>consultas.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>consultas.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Contiene todas las consultas que son necesarias para cargar los crudos y generar los reportes</h3>
+<p>La gran mayoria son strings con la consulta especifica. Para los flujos creamos objetos llamados <em>consultas</em>.
+El constructor de estos objetos usa la query, que tipo de query es y el mensaje a pasar a <em>conector</em>.</p>
+<p>Todas las variables de este archivo deberian funcionar con el modulo <em>conector</em>.</p>
+<p>Si se quiere apuntar a otra BD cambiar <em>host_DB</em>, <em>user_DB</em>, <em>password_DB</em> y <em>database_DB</em> en <em>direcciones</em> (o importar variables sesde otro modulo).</p>
+<p>Contiene la clase <strong>consultas</strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h1>pusheo zabbix</h1>
+<p><strong><em>Consultas pertinentes al ingreso diario de crudos desde zabbix hacia la BD.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Los <em>sql_truncate</em> borran los datos del dia anterior mientras los <em>sql_push</em> insertan
+los datos parseados del dia de PON y ONT.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">sql_truncate_cdiarios_PON</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE crudos_diarios;&#39;</span>
+<span class="n">sql_truncate_cdiarios_ONT</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE crudos_diarios_ont;&#39;</span>
+<span class="n">sql_push_diarios_ONT</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO `crudos_diarios_ont` (`tipo`,`nodo`, `puerto`, `direccion`, `etiqueta`, `hora`, `fecha`, `promedio`, `pico`) VALUES (</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span>
+<span class="n">sql_push_diarios_PON</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO `crudos_diarios` (`id_zabbix`,`id_tlk`,`tipo`,`nodo`, `puerto`, `direccion`, `hora`, `fecha`, `promedio`, `pico`) VALUES (</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <h1>flujo DB</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Clase que define una cosulta en el formato esperado por el modulo conector.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">consultas</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Solo cuenta con un <strong>constructor</strong>.</p>
+<p><strong>param query:</strong> Query sql a ejecutar, por lo general es una viarable con la query como string.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">query</span><span class="p">,</span><span class="n">tipo</span><span class="p">,</span><span class="n">mensaje</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong>type query:</strong> str  </p>
+<p><strong>param tipo:</strong> Parametros de conector a pasar, &ldquo;many&rdquo;, &ldquo;select&rdquo; o vacio. Many conlleva pasar una lista como * <em>arg</em>.<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>param mensaje:</strong> Mensaje a logear por conector.<br />
+<strong>type mensaje:</strong> str</p>
+<p><strong>returns:</strong> esta clase no tiene retornos.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tipo</span> <span class="o">=</span> <span class="n">tipo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mensaje</span> <span class="o">=</span> <span class="n">mensaje</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <h2>Consultas</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h3>consultas diarias</h3>
+<p><strong><em>Consultas para sacar maximos del dia.</em></strong></p>
+<p>Los <em>insert_picos_diarios</em> insertan en tablas, por cada puerto, el pico maximo del dia junto con otros datos.
+Esto se hace para tablas utilizadas para reportes mensuales y semanales, por PON y ONT.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h4>PON</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_picos_diarios_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_semanal (id_zabbix, id_tlk, tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.id_zabbix, t1.id_tlk, t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.pico desc) as rn from crudos_diarios t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_mensual (id_zabbix, id_tlk, tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.id_zabbix, t1.id_tlk, t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.pico desc) as rn from crudos_diarios t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_hora_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_promedio_semanal (id_zabbix, fecha, promedio) select t1.id_zabbix, t1.fecha, t1.promedio from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.promedio desc) as rn from crudos_diarios t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_hora_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_promedio_mensual (id_zabbix, fecha, promedio) select t1.id_zabbix, t1.fecha, t1.promedio from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.promedio desc) as rn from crudos_diarios t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_promedio_mensual&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <h4>ONT</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_picos_diarios_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_semanal_ont (tipo, nodo, puerto, etiqueta, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.etiqueta, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from crudos_diarios_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_mensual_ont (tipo, nodo, puerto, etiqueta, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.etiqueta, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from crudos_diarios_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_hora_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_promedio_semanal_ont (tipo, nodo, puerto, direccion, fecha, promedio) select t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.fecha, t1.promedio from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.promedio desc) as rn from crudos_diarios_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_promedio_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_diarios_hora_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_diarios_promedio_mensual_ont (tipo, nodo, puerto, direccion, fecha, promedio) select t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.fecha, t1.promedio from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.promedio desc) as rn from crudos_diarios_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_diarios_promedio_mensual_ont&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <h3>consultas semanales</h3>
+<p><strong><em>Consultas para sacar maximos de la semana.</em></strong></p>
+<p>Los <em>insert_picos_semanal</em> insertan en tablas, por cada puerto, el pico maximo del la semana junto con otros datos.<br />
+Los <em>insert_promedio</em> insertan en tablas, por cada puerto, el promedio de los picos maximos de toda la semana tomando el valor maximo por dia.<br />
+Los <em>insert_promedio_hora</em> hacen algo parecido a <em>insert_promedio</em>, pero en ves de usar los picos, usan los valores de horas promediadas mas altos por dia
+de toda la semana.<br />
+Los <em>insert_reporte</em> insertan todos los datos que seran mostrados en el reporte semanal.<br />
+Los <em>insert_respaldo</em> copian 1 a 1 la tabla de reportes para generar un respaldo.<br />
+Esto se hace para tablas utilizadas para reportes semanales, por PON y ONT.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <h4>PON</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_promedio_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_semanal(id_zabbix,promedio_semana) select id_zabbix, avg(pico) as promedio_semana from picos_diarios_semanal group by id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_semanal (id_zabbix, id_tlk ,tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.id_zabbix, t1.id_tlk, t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.pico desc) as rn from picos_diarios_semanal t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_promedio_hora_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_picos_promedio_semanal (id_zabbix,promedio_picos_promedio_semana) select id_zabbix, avg(promedio) as promedio_picos_promedio_semana from picos_diarios_promedio_semanal group by id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_picos_promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_reporte_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediosemana,pico,promedio_picos_promedios,wf,datos,emp,rbs) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio, promedio.promedio_semana, pico.pico, p_promedio.promedio_picos_promedio_semana, tlk.WF, tlk.Datos, tlk.Empresariales, tlk.RBS FROM picos_semanal pico LEFT JOIN promedio_semanal promedio ON pico.id_zabbix = promedio.id_zabbix LEFT JOIN promedio_picos_promedio_semanal p_promedio on pico.id_zabbix = p_promedio.id_zabbix LEFT JOIN t_resumen_servicios_tlk tlk ON pico.id_tlk = tlk.id_tlk GROUP BY pico.id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en reporte_semanal&quot;</span><span class="p">)</span>
+<span class="n">insert_respaldo_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into respaldo_reporte_semanal(tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediosemana,pico,promedio_picos_promedios,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediosemana,pico,promedio_picos_promedios,wf,datos,emp,rbs FROM reporte_semanal;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en respaldo_reporte_semanal&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <h4>ONT</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_promedio_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_semanal_ont(tipo,nodo,puerto,direccion,promedio_semana) select tipo,nodo, puerto, direccion, avg(pico) as promedio_semana from picos_diarios_semanal_ont group by tipo, nodo, puerto, direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_semanal_ont (tipo, nodo, puerto, etiqueta, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.etiqueta, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from picos_diarios_semanal_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_promedio_hora_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_picos_promedio_semanal_ont(tipo,nodo,puerto,direccion,promedio_picos_promedio_semana) select tipo,nodo, puerto, direccion, avg(promedio) as promedio_picos_promedio_semana from picos_diarios_promedio_semanal_ont group by tipo, nodo, puerto, direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_picos_promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_reporte_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into reporte_semanal_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediosemana,pico,promedio_picos_promedios) select pico.tipo,pico.nodo,pico.puerto,pico.etiqueta,pico.direccion,pico.hora,pico.fecha,pico.promedio, promedio.promedio_semana, pico.pico, p_promedio.promedio_picos_promedio_semana FROM promedio_semanal_ont promedio, picos_semanal_ont pico, promedio_picos_promedio_semanal_ont p_promedio WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion and pico.tipo = p_promedio.tipo and pico.nodo = p_promedio.nodo and pico.puerto = p_promedio.puerto and pico.direccion = p_promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en reporte_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_respaldo_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into respaldo_reporte_semanal_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediosemana,pico,promedio_picos_promedios) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediosemana,pico, promedio_picos_promedios FROM reporte_semanal_ont;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en respaldo_reporte_semanal_ont&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <h3>consultas mensuales</h3>
+<p><strong><em>Consultas para sacar maximos del mes.</em></strong></p>
+<p>Los <em>insert_picos_mensual</em> insertan en tablas, por cada puerto, el pico maximo del mes junto con otros datos.<br />
+Los <em>insert_promedio</em> insertan en tablas, por cada puerto, el promedio de los picos maximos de todo el mes tomando el valor maximo por dia.<br />
+Los <em>insert_promedio_hora</em> hacen algo parecido a <em>insert_promedio</em>, pero en ves de usar los picos, usan los valores de horas promediadas mas altos por dia
+de todo el mes.<br />
+Los <em>insert_reporte</em> insertan todos los datos que seran mostrados en el reporte mensual.
+Los <em>insert_respaldo</em> copian 1 a 1 la tabla de reportes para generar un respaldo.<br />
+Esto se hace para tablas utilizadas para reportes mensuales, por PON y ONT.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <h4>PON</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_promedio_mensual_pon</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_mensual(id_zabbix,promedio_mes) select id_zabbix, avg(pico) as promedio_mes from picos_diarios_mensual group by id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_mensual_pon</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_mensual (id_zabbix, id_tlk ,tipo, nodo, puerto, direccion, hora, fecha, promedio, pico) select t1.id_zabbix, t1.id_tlk, t1.tipo, t1.nodo, t1.puerto, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.id_zabbix order by t2.pico desc) as rn from picos_diarios_mensual t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_promedio_hora_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_picos_promedio_mensual (id_zabbix,promedio_picos_promedio_mes) select id_zabbix, avg(promedio) as promedio_picos_promedio_mes from picos_diarios_promedio_mensual group by id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_picos_promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_reporte_mensual_pon</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediomes,pico,promedio_picos_promedios,wf,datos,emp,rbs) select pico.tipo, pico.nodo,pico.puerto,pico.direccion,pico.hora,pico.fecha,pico.promedio, promedio.promedio_mes, pico.pico, p_promedio.promedio_picos_promedio_mes, tlk.WF, tlk.Datos, tlk.Empresariales, tlk.RBS FROM picos_mensual pico LEFT JOIN promedio_mensual promedio ON pico.id_zabbix = promedio.id_zabbix LEFT JOIN promedio_picos_promedio_mensual p_promedio on pico.id_zabbix = p_promedio.id_zabbix LEFT JOIN t_resumen_servicios_tlk tlk ON pico.id_tlk = tlk.id_tlk GROUP BY pico.id_zabbix;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en reporte_mensual&quot;</span><span class="p">)</span>
+<span class="n">insert_respaldo_mensual_pon</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into respaldo_reporte_mensual(tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediomes,pico,promedio_picos_promedios,wf,datos,emp,rbs) select tipo,nodo,puerto,direccion,hora,fecha,promediohora,promediomes,pico,promedio_picos_promedios,wf,datos,emp,rbs FROM reporte_mensual;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en respaldo_reporte_mensual&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <h4>ONT</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">insert_promedio_mensual_ont</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_mensual_ont(tipo,nodo,puerto,direccion,promedio_mes) select tipo,nodo, puerto, direccion, avg(pico) as promedio_mes from picos_diarios_mensual_ont group by tipo, nodo, puerto, direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_picos_mensual_ont</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into picos_mensual_ont (tipo, nodo, puerto, etiqueta, direccion, hora, fecha, promedio, pico) select t1.tipo, t1.nodo, t1.puerto, t1.etiqueta, t1.direccion, t1.hora, t1.fecha, t1.promedio, t1.pico from ( select t2.*, row_number() over (partition by t2.tipo, t2.nodo, t2.puerto, t2.direccion order by t2.pico desc) as rn from picos_diarios_mensual_ont t2) t1 where t1.rn =1;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en picos_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_promedio_hora_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into promedio_picos_promedio_mensual_ont(tipo,nodo,puerto,direccion,promedio_picos_promedio_mes) select tipo,nodo, puerto, direccion, avg(promedio) as promedio_picos_promedio_mes from picos_diarios_promedio_mensual_ont group by tipo, nodo, puerto, direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en promedio_picos_promedio_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_reporte_mensual_ont</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediomes,pico,promedio_picos_promedios) select pico.tipo,pico.nodo,pico.puerto,pico.etiqueta,pico.direccion,pico.hora,pico.fecha,pico.promedio, promedio.promedio_mes, pico.pico, p_promedio.promedio_picos_promedio_mes FROM promedio_mensual_ont promedio, picos_mensual_ont pico, promedio_picos_promedio_mensual_ont p_promedio WHERE pico.tipo = promedio.tipo and pico.nodo = promedio.nodo and pico.puerto = promedio.puerto and pico.direccion = promedio.direccion and pico.tipo = p_promedio.tipo and pico.nodo = p_promedio.nodo and pico.puerto = p_promedio.puerto and pico.direccion = p_promedio.direccion GROUP BY pico.tipo, pico.nodo, pico.puerto, pico.direccion;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en reporte_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">insert_respaldo_mensual_ont</span> <span class="o">=</span>  <span class="n">consultas</span><span class="p">(</span><span class="s2">&quot;insert into respaldo_reporte_mensual_ont(tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediomes,pico,promedio_picos_promedios) select tipo,nodo,puerto,etiqueta,direccion,hora,fecha,promediohora,promediomes,pico, promedio_picos_promedios FROM reporte_mensual_ont;&quot;</span><span class="p">,</span><span class="s2">&quot;Flujo&quot;</span><span class="p">,</span><span class="s2">&quot;Insertando datos en respaldo_reporte_mensual_ont&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h2>Truncates</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <h3>Truncates semanales</h3>
+<p><strong><em>Truncates de necesarios para generar el reporte semanal.</em></strong></p>
+<p>Para cada tabla de la seccion de consultas mensuales, existe un <em>truncate</em>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <h4>PON</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">truncate_picos_diarios_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_semanal&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_diarios_promedio_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_promedio_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_semanal&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_picos_promedio_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_picos_promedio_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_picos_promedio_semanal&quot;</span><span class="p">)</span>
+<span class="n">truncate_reporte_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE reporte_semanal;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en reporte_semanal&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <h4>ONT</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">truncate_picos_diarios_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_diarios_promedio_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_promedio_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_promedio_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_picos_promedio_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_picos_promedio_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_picos_promedio_semanal_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_reporte_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE reporte_semanal_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en reporte_semanal_ont&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <h3>Truncates mensuales</h3>
+<p><strong><em>Truncates de necesarios para generar el reporte mensual</em></strong></p>
+<p>Para cada tabla de la seccion de consultas mensuales, existe un <em>truncate</em>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <h4>PON</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">truncate_picos_diarios_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_mensual&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_diarios_promedio_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_promedio_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_mensual&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_picos_promedio_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_picos_promedio_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_picos_promedio_mensual&quot;</span><span class="p">)</span>
+<span class="n">truncate_reporte_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE reporte_mensual;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en reporte_mensual&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <h4>ONT</h4>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">truncate_picos_diarios_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_diarios_promedio_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_diarios_promedio_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_diarios_promedio_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_picos_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE picos_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en picos_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_promedio_picos_promedio_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE promedio_picos_promedio_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en promedio_picos_promedio_mensual_ont&quot;</span><span class="p">)</span>
+<span class="n">truncate_reporte_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;TRUNCATE reporte_mensual_ont;&#39;</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando datos en reporte_mensual_ont&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <h2>Deletes-Respaldos</h2>
+<p><strong><em>Deletes utilizados para borra datos respaldados viejos.</em></strong></p>
+<p>Para todas las tablas donde guardamos los respaldos de las tablas finales de reportes, 
+se pasa un delete que borra los datos con mas de 60 o 180 dias dependiendo si son reportes 
+mensuales o semanales.  </p>
+<p>Esto se hace tanto para reportes de ONT como PON.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <h3>Deletes semanales</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">delete_respaldo_reporte_semanal_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;delete from respaldo_reporte_semanal where fecha &lt; now() - interval 60 DAY;&#39;</span><span class="p">,</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="s2">&quot;Delete sobre respaldo_reporte_semanal con mas de 60 dias&quot;</span><span class="p">)</span>
+<span class="n">delete_respaldo_reporte_semanal_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;delete from respaldo_reporte_semanal_ont where fecha &lt; now() - interval 60 DAY;&#39;</span><span class="p">,</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="s2">&quot;Delete sobre respaldo_reporte_semanal_ont con mas de 60 dias&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <h3>Deletes Mensuales</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">delete_respaldo_reporte_mensual_pon</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;delete from respaldo_reporte_mensual where fecha &lt; now() - interval 180 DAY;&#39;</span><span class="p">,</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="s2">&quot;Delete sobre respaldo_reporte_mensual con mas de 180 dias&quot;</span><span class="p">)</span>
+<span class="n">delete_respaldo_reporte_mensual_ont</span> <span class="o">=</span> <span class="n">consultas</span><span class="p">(</span><span class="s1">&#39;delete from respaldo_reporte_mensual_ont where fecha &lt; now() - interval 180 DAY;&#39;</span><span class="p">,</span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="s2">&quot;Delete sobre respaldo_reporte_mensual_ont con mas de 180 dias&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <h1>Flujos</h1>
+<p><strong><em>Declaracion de los bojetos consultas para coordinar la operacion de las consutlas en la BD.</em></strong></p>
+<p>Se agrupan los objetos en un orden definido por su correspondencia a reportes semanales o mensuales de ONT y PON.<br />
+El orden esta marcado sobre que tablas debene borrarse o popularse primero, y cual de esta accion se antepone a la otra.<br />
+Al momento de usarse estas listas de objetos, deben recorresrse desde el primer valor (0) al ultimo (-1).  </p>
+<p>Como ejemplo, al llamarse a <em>flujo_semanal</em>, deberia poder generarse todos los datos necesarios para el reporte semanal,
+menos los pusheos de crudos, realizados al principio de este archivo.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <h3>Diario</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">flujo_diario</span> <span class="o">=</span> <span class="p">[</span><span class="n">insert_picos_diarios_semanal_pon</span><span class="p">,</span><span class="n">insert_picos_diarios_hora_semanal_pon</span><span class="p">,</span><span class="n">insert_picos_diarios_mensual_pon</span><span class="p">,</span><span class="n">insert_picos_diarios_hora_mensual_pon</span><span class="p">,</span><span class="n">insert_picos_diarios_semanal_ont</span><span class="p">,</span><span class="n">insert_picos_diarios_hora_semanal_ont</span><span class="p">,</span><span class="n">insert_picos_diarios_mensual_ont</span><span class="p">,</span><span class="n">insert_picos_diarios_hora_mensual_ont</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <h3>Semanales</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">flujo_semanal_pon</span> <span class="o">=</span> <span class="p">[</span><span class="n">truncate_promedio_semanal_pon</span><span class="p">,</span><span class="n">truncate_picos_semanal_pon</span><span class="p">,</span><span class="n">truncate_promedio_picos_promedio_semanal_pon</span><span class="p">,</span><span class="n">truncate_reporte_semanal_pon</span><span class="p">,</span><span class="n">insert_promedio_semanal_pon</span><span class="p">,</span><span class="n">insert_picos_semanal_pon</span><span class="p">,</span><span class="n">insert_promedio_hora_semanal_pon</span><span class="p">,</span><span class="n">insert_reporte_semanal_pon</span><span class="p">,</span><span class="n">insert_respaldo_semanal_pon</span><span class="p">,</span><span class="n">truncate_picos_diarios_semanal_pon</span><span class="p">,</span><span class="n">truncate_picos_diarios_promedio_semanal_pon</span><span class="p">]</span>
+<span class="n">flujo_semanal_ont</span> <span class="o">=</span> <span class="p">[</span><span class="n">truncate_promedio_semanal_ont</span><span class="p">,</span><span class="n">truncate_picos_semanal_ont</span><span class="p">,</span><span class="n">truncate_promedio_picos_promedio_semanal_ont</span><span class="p">,</span><span class="n">truncate_reporte_semanal_ont</span><span class="p">,</span><span class="n">insert_promedio_semanal_ont</span><span class="p">,</span><span class="n">insert_picos_semanal_ont</span><span class="p">,</span><span class="n">insert_promedio_hora_semanal_ont</span><span class="p">,</span><span class="n">insert_reporte_semanal_ont</span><span class="p">,</span><span class="n">insert_respaldo_semanal_ont</span><span class="p">,</span><span class="n">truncate_picos_diarios_semanal_ont</span><span class="p">,</span><span class="n">truncate_picos_diarios_promedio_semanal_ont</span><span class="p">]</span>
+<span class="n">flujo_semanal</span> <span class="o">=</span> <span class="p">[</span><span class="n">flujo_semanal_pon</span><span class="p">,</span><span class="n">flujo_semanal_ont</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <h3>Mensuales</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">flujo_mensual_pon</span> <span class="o">=</span> <span class="p">[</span><span class="n">truncate_promedio_mensual_pon</span><span class="p">,</span><span class="n">truncate_picos_mensual_pon</span><span class="p">,</span><span class="n">truncate_promedio_picos_promedio_mensual_pon</span><span class="p">,</span><span class="n">truncate_reporte_mensual_pon</span><span class="p">,</span><span class="n">insert_promedio_mensual_pon</span><span class="p">,</span><span class="n">insert_picos_mensual_pon</span><span class="p">,</span><span class="n">insert_promedio_hora_mensual_pon</span><span class="p">,</span><span class="n">insert_reporte_mensual_pon</span><span class="p">,</span><span class="n">insert_respaldo_mensual_pon</span><span class="p">,</span><span class="n">truncate_picos_diarios_mensual_pon</span><span class="p">,</span><span class="n">truncate_picos_diarios_promedio_mensual_pon</span><span class="p">]</span>
+<span class="n">flujo_mensual_ont</span> <span class="o">=</span> <span class="p">[</span><span class="n">truncate_promedio_mensual_ont</span><span class="p">,</span><span class="n">truncate_picos_mensual_ont</span><span class="p">,</span><span class="n">truncate_promedio_picos_promedio_mensual_ont</span><span class="p">,</span><span class="n">truncate_reporte_mensual_ont</span><span class="p">,</span><span class="n">insert_promedio_mensual_ont</span><span class="p">,</span><span class="n">insert_picos_mensual_ont</span><span class="p">,</span><span class="n">insert_promedio_hora_mensual_ont</span><span class="p">,</span><span class="n">insert_reporte_mensual_ont</span><span class="p">,</span><span class="n">insert_respaldo_mensual_ont</span><span class="p">,</span><span class="n">truncate_picos_diarios_mensual_ont</span><span class="p">,</span><span class="n">truncate_picos_diarios_promedio_mensual_ont</span><span class="p">]</span>
+<span class="n">flujo_mensual</span> <span class="o">=</span> <span class="p">[</span><span class="n">flujo_mensual_pon</span><span class="p">,</span><span class="n">flujo_mensual_ont</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <h3>delete respaldos</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">flujo_delete_respaldos_semanales</span> <span class="o">=</span> <span class="p">[</span><span class="n">delete_respaldo_reporte_semanal_pon</span><span class="p">,</span><span class="n">delete_respaldo_reporte_semanal_ont</span><span class="p">]</span>
+<span class="n">flujo_delete_respaldos_mensuales</span> <span class="o">=</span> <span class="p">[</span><span class="n">delete_respaldo_reporte_mensual_pon</span><span class="p">,</span><span class="n">delete_respaldo_reporte_mensual_ont</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <h1>Reporte Zabbix</h1>
+<p><strong><em>Select pertinentes a la creacion del xlsx de los reportes</em></strong></p>
+<p>Consultas que realiza el modulo reporte para traer los datos a foramtear en los archivos .xlsx.  </p>
+<p>Estas son pertinentes a reportes mensuales y semanalas de ONTs y PON.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">sql_ont_semanal</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM reporte_semanal_ont order by pico DESC&quot;</span>
+<span class="n">sql_ont_mensual</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM reporte_mensual_ont order by pico DESC&quot;</span>
+<span class="n">sql_pon_semanal</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM reporte_semanal order by pico DESC&quot;</span>
+<span class="n">sql_pon_mensual</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM reporte_mensual order by pico DESC&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <h1>Auditoria</h1>
+<p><strong><em>Selects utilizados para auditar fechas de datos cargados.</em></strong></p>
+<p>Se extraen fechas de los crudos diarios de PON y ONT para auditar cargas mas recientes.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">auditoria_ont</span> <span class="o">=</span> <span class="s2">&quot;SELECT `fecha` FROM `crudos_diarios_ont` WHERE `fecha` = &#39;</span><span class="si">{}</span><span class="s2">&#39; limit 1;&quot;</span>
+<span class="n">auditoria_pon</span> <span class="o">=</span> <span class="s2">&quot;SELECT `fecha` FROM `crudos_diarios` WHERE `fecha` = &#39;</span><span class="si">{}</span><span class="s2">&#39; limit 1;&quot;</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

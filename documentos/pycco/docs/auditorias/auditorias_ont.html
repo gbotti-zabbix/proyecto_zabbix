@@ -79,107 +79,29 @@ se logea la finalizacion de los procedimientos. </p>
 <p><strong>returns</strong>: Esta funcion no tiene retornos.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-4'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
-      </div>
-      <p><strong><em>Carga de consultas</em></strong></p>
-    </div>
-    <div class='code'>
       <div class="highlight"><pre>    <span class="n">lista_g</span> <span class="o">=</span> <span class="n">get_rbs</span><span class="p">()</span>
-    <span class="n">lista_tlk</span> <span class="o">=</span> <span class="n">get_rbs_tlk</span><span class="p">()</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-5'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
-      </div>
-      <p><strong><em>Crea listas utiles</em></strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="n">nlista_g</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lista_tlk</span> <span class="o">=</span> <span class="n">get_rbs_tlk</span><span class="p">()</span>
+    <span class="n">nlista_g</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">nlista_tlk</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">diferenciatlk</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">diferenciag</span> <span class="o">=</span> <span class="p">[]</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-6'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
-      </div>
-      <p><strong><em>Formatea listado de Gestion y carga en nueva lista</em></strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">lista_g</span><span class="p">:</span>
+    <span class="n">diferenciag</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">lista_g</span><span class="p">:</span>
         <span class="n">dato</span> <span class="o">=</span> <span class="n">rbs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-        <span class="n">nlista_g</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dato</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-7'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
-      </div>
-      <p><strong>*Formatea listado de TLK y carga en nueva lista</strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">lista_tlk</span><span class="p">:</span>
+        <span class="n">nlista_g</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dato</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">lista_tlk</span><span class="p">:</span>
         <span class="n">dato</span> <span class="o">=</span> <span class="n">rbs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">nlista_tlk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dato</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-8'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
-      </div>
-      <p><strong><em>Compara TLK contra Gestion</em></strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_tlk</span><span class="p">:</span>
+        <span class="n">nlista_tlk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dato</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_tlk</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_g</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">diferenciatlk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rbs</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-9'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
-      </div>
-      <p><strong><em>Compara Gestion contra TLK</em></strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_g</span><span class="p">:</span>
+            <span class="n">diferenciatlk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rbs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_g</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">nlista_tlk</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">diferenciag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rbs</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-10'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
-      </div>
-      <p><strong><em>Logea los resultados</em></strong></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">auditoria_ont</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+            <span class="n">diferenciag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rbs</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">auditoria_ont</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
         <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Comienza auditoria ONTs. Fecha </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
         <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -205,10 +127,10 @@ se logea la finalizacion de los procedimientos. </p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-4'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-4'>#</a>
       </div>
       <p><strong><em>Llamada a la funcion</em></strong></p>
     </div>

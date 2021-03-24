@@ -44,37 +44,30 @@ def auditar_pon():
     **returns**: Esta funcion no tiene retornos.
     """
     
-    #***Carga de consultas***
     fecha = datetime.now()
     lista_zbx = get_puertos_pon_zbx()
     lista_tlk = get_puertos_pon_tlk()
-    #***Crea listas utiles***
     nlista_zbx = []
     nlista_tlk = []
     diferenciatk = []
     diferenciazbx = []
-    #***Formatea listado de Zabbix y carga en nueva lista***
     for puerto in lista_zbx:
         if (puerto[1] in puertos_uplink) or ((puerto[0][-1:] == "M") and (puerto[1] in puertos_uplink_h)) or ((puerto[0] in c300_19p) and (puerto[1] in puertos_uplink_19)):
             pass
         else:
             nlista_zbx.append(puerto[0]+"_"+puerto[1])
-    #***Formatea listado de TLK y carga en nueva lista***
     for puerto in lista_tlk:
         nlista_tlk.append(puerto[0])
-    #***Compara Zabbix contra TLK***
     for puerto in nlista_zbx:
         if puerto in nlista_tlk:
             pass
         else:
             diferenciazbx.append(puerto)
-    #***Compara TLK contra Zabbix***
     for puerto in nlista_tlk:
         if puerto in nlista_zbx:
             pass
         else:
             diferenciatk.append(puerto)
-    #***Logea los resultados***
     with open(auditoria_pon,"a") as archivo:
         archivo.write("Comienza auditoria PON. Fecha {}".format(datetime.now()))
         archivo.write("\n")

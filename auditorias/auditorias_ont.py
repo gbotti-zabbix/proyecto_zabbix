@@ -43,35 +43,28 @@ def auditar_ont():
     **returns**: Esta funcion no tiene retornos.
     """
 
-    #***Carga de consultas***
     lista_g = get_rbs()
     lista_tlk = get_rbs_tlk()
-    #***Crea listas utiles***
     nlista_g = []
     nlista_tlk = []
     diferenciatlk = []
     diferenciag = []
-    #***Formatea listado de Gestion y carga en nueva lista***
     for rbs in lista_g:
         dato = rbs[0] + "_" + str(rbs[2]) + "/" + str(rbs[3]) + "/" + str(rbs[4])
         nlista_g.append(dato)
-    #***Formatea listado de TLK y carga en nueva lista**
     for rbs in lista_tlk:
         dato = rbs[0] + "/" + str(rbs[1])
         nlista_tlk.append(dato)
-    #***Compara TLK contra Gestion***
     for rbs in nlista_tlk:
         if rbs in nlista_g:
             pass
         else:
             diferenciatlk.append(rbs)
-    #***Compara Gestion contra TLK***
     for rbs in nlista_g:
         if rbs in nlista_tlk:
             pass
         else:
             diferenciag.append(rbs)
-    #***Logea los resultados***
     with open(auditoria_ont,"a") as archivo:
         archivo.write("Comienza auditoria ONTs. Fecha {}".format(datetime.now()))
         archivo.write("\n")

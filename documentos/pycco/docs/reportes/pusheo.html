@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>pusheo.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>pusheo.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Pusheo de archivos parseados a la BD</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span>
+<span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">direcciones</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">consultas</span> <span class="kn">import</span> <span class="n">sql_push_diarios_ONT</span><span class="p">,</span> <span class="n">sql_push_diarios_PON</span><span class="p">,</span> <span class="n">sql_truncate_cdiarios_PON</span><span class="p">,</span> <span class="n">sql_truncate_cdiarios_ONT</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Toma los archivos generados por parseo y los inserta en la BD para su posterior 
+prosesamiento y generacion de reportes.</p>
+<p>Importar pickle es esencial para poder abrir los archivos parseados.</p>
+<p>Si se agregaran campos o se necesitara cambiar el funcionamiento de las consultas
+para el pusheos de crudos de zabbix, se debe editar la variables y funciones importadas
+desde <em>consultas</em>. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
+gestion, debemos modificar la funcion <em>f_procesar_resumne_tlk_BD</em>.</p>
+<p>Para cambiar nombres de archivos parseados deberian editarse las variables y funciones importadas
+desde <em>direcciones</em>.</p>
+<p>Contiene las funciones:<br />
+<strong>f_cargar_inv_en_BD</strong> - Carga inventario TLK a la BD a partir del csv generado en el parseo de crudos.<br />
+<strong>f_cargar_inv_RBS_en_BD</strong> - Carga inventario de RBS en ONT traido de gestion a la BD a partir del csv generado en el parseo de crudos.<br />
+<strong>f_procesar_resumne_tlk_BD</strong> - Consultas utlizadas para las dos funciones anteriores.<br />
+<strong>pusheo_crudos_diarios_PON</strong> - Carga puertos PON/Uplink a crudos_diarios en la BD a partir de archivo parseado .pickle.<br />
+<strong>pusheo_crudos_diarios_ONT</strong> - Carga puertos ONT a <em>crudos_diarios_ONT</em> a partir de archivo parseado .pickle.  </p>
+<h2>Pusheo TLK/Gestion</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong><em>Carga el archivo de inventario parseado en csv a la BD</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">f_cargar_inv_en_BD</span> <span class="p">(</span><span class="n">archivo_csv</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Recibe la direccion del archivo parseado, borra la tabla <em>t_reporte_puertos_telelink</em> y
+carga el archivo.</p>
+<p><strong>param archivo_csv:</strong> Direcciónd el archivo parseado.<br />
+<strong>type archivo_csv:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_reporte_puertos_telelink;&#39;</span>
+    <span class="n">comentario_sql</span><span class="o">=</span> <span class="s2">&quot;Borrar tabla t_reporte_puertos_telelink &quot;</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_sql</span><span class="p">)</span>
+    <span class="n">sql_cargar_PLN</span> <span class="o">=</span> <span class="s2">&quot;LOAD DATA INFILE </span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="o">+</span><span class="n">archivo_csv</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2"> INTO TABLE t_reporte_puertos_telelink FIELDS TERMINATED BY </span><span class="se">\&#39;</span><span class="s2">,</span><span class="se">\&#39;</span><span class="s2"> ENCLOSED BY </span><span class="se">\&#39;\&quot;\&#39;</span><span class="s2"> LINES TERMINATED BY </span><span class="se">\&#39;\\</span><span class="s2">r</span><span class="se">\\</span><span class="s2">n</span><span class="se">\&#39;</span><span class="s2"> ;&quot;</span>
+    <span class="n">comentario_sql</span> <span class="o">=</span> <span class="s2">&quot;Cargar reporte telelink CSV paresado&quot;</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_cargar_PLN</span><span class="p">,</span><span class="s2">&quot;Load&quot;</span><span class="p">,</span><span class="n">comentario_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong><em>Carga el archivo de inventario de Radio BASES parseado en csv a la BD</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">f_cargar_inv_RBS_en_BD</span> <span class="p">(</span><span class="n">archivo_csv_RBS</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Recibe la dirección del archivo parseado, borra la tabla <em>t_servicios_RBS</em> y
+carga el archivo.</p>
+<p><strong>param archivo_csv_RBS:</strong> Dirección del archivo parseado.<br />
+<strong>type archivo_csv_RBS:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_servicios_RBS;&#39;</span>
+    <span class="n">comentario_sql</span><span class="o">=</span> <span class="s2">&quot;Borrar tabla t_servicios_RBS &quot;</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_sql</span><span class="p">)</span>
+    <span class="n">sql_cargar_RBS</span><span class="o">=</span> <span class="s2">&quot;LOAD DATA LOCAL INFILE </span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="o">+</span><span class="n">archivo_csv_RBS</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2"> INTO TABLE t_servicios_RBS FIELDS TERMINATED BY </span><span class="se">\&#39;</span><span class="s2">,</span><span class="se">\&#39;</span><span class="s2"> ENCLOSED BY </span><span class="se">\&#39;\&quot;\&#39;</span><span class="s2"> LINES TERMINATED BY </span><span class="se">\&#39;\\</span><span class="s2">r</span><span class="se">\\</span><span class="s2">n</span><span class="se">\&#39;</span><span class="s2"> ;&quot;</span>
+    <span class="n">comentario_sql</span> <span class="o">=</span> <span class="s2">&quot;Cargar reporte RBS paresado&quot;</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_cargar_RBS</span><span class="p">,</span><span class="s2">&quot;Load&quot;</span><span class="p">,</span><span class="n">comentario_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong><em>Borrado y carga en BD de tablas pertinentes a inventarios TLK/Gestion</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">f_procesar_resumne_tlk_BD</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Consultas sql que borran y cargan los archivos parseados por <em>f_cargar_inv_en_BD</em> y
+<em>f_cargar_inv_RBS_en_BD</em>.</p>
+<p>Al llamar la funcion se ejecutan las consultas en orden, de forma parecida a 
+lo definido en <em>flujo_db</em>, pero estas consultas solo afectan tablas relacionadas
+con los inventarios de TLK y gestion (RBS en ONT).</p>
+<p>Cada consulta va a compañada de un mensaje necesario a pasar a conector. Ademas
+se logea el inicio y finalizacion de la tarea.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong>Borro todas las tablas</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql_borrar_t_id_nodo_slot_puerto</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_id_nodo_slot_puerto;&#39;</span>
+    <span class="n">comentario_id</span><span class="o">=</span><span class="s2">&quot;Borrado t_id_nodo_slot_puerto&quot;</span>
+
+    <span class="n">sql_borrar_t_wf_x_puerto</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_wf_x_puerto;&#39;</span>
+    <span class="n">comentario_wf</span><span class="o">=</span><span class="s2">&quot;Borrado t_wf_puerto&quot;</span>
+
+    <span class="n">sql_borrar_t_datos_x_puerto</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_datos_x_puerto;&#39;</span>
+    <span class="n">comentario_datos</span><span class="o">=</span><span class="s2">&quot;Borrado t_datos_puerto&quot;</span>
+
+    <span class="n">sql_borrar_t_empresariales_x_puerto</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_empresariales_x_puerto;&#39;</span>
+    <span class="n">comentario_empresariales</span><span class="o">=</span><span class="s2">&quot;Borrado t_empresariales_puerto&quot;</span>
+
+    <span class="n">sql_borrar_t_rbs_x_puerto</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_rbs_x_puerto;&#39;</span>
+    <span class="n">comentario_rbs</span><span class="o">=</span><span class="s2">&quot;Borrado t_rbs_puerto&quot;</span>
+
+    <span class="n">sql_borrar_t_resumen_servicios_tlk</span> <span class="o">=</span> <span class="s1">&#39;TRUNCATE t_resumen_servicios_tlk ;&#39;</span>
+    <span class="n">comentario_resumen</span><span class="o">=</span><span class="s2">&quot;Borrado t_resumen&quot;</span>
+
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_id_nodo_slot_puerto</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_id</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_wf_x_puerto</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_wf</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_datos_x_puerto</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_datos</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_empresariales_x_puerto</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_empresariales</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_rbs_x_puerto</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span><span class="n">comentario_rbs</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_borrar_t_resumen_servicios_tlk</span><span class="p">,</span><span class="s2">&quot;Truncar&quot;</span><span class="p">,</span> <span class="n">comentario_resumen</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong>Cargo t_id_nodo_slot_puerto</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;insert into  t_id_nodo_slot_puerto ( id_tlk, nombre_gestion, slot_nodo, puerto_nodo ) SELECT id_tlk, nombre_gestion, slot_nodo, puerto_nodo from  t_reporte_puertos_telelink GROUP by id_tlk;&quot;</span>
+    <span class="n">desc_sql</span><span class="o">=</span><span class="s2">&quot;Carga tabla t_id_nodo_slot_puerto&quot;</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong>Cargo tabla cantidad ONT por puerto</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;insert into t_wf_x_puerto (id_tlk,wf_x_puerto) SELECT t.id_tlk, count(t.estado_ont_tlk) as wf FROM `t_reporte_puertos_telelink` t WHERE t.estado_ont_tlk = 20  GROUP by t.id_tlk;&quot;</span>
+    <span class="n">desc_sql</span> <span class="o">=</span><span class="s2">&quot;Carga cantidad wf por puerto&quot;</span>
+    <span class="n">conector</span> <span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p><strong>Cargo tabla cantidad servicios de datos por puerto</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;insert into t_datos_x_puerto (id_tlk,datos_x_puerto) SELECT t.id_tlk, count(t.estado_ont_tlk) as wf FROM t_reporte_puertos_telelink t WHERE t.estado_ont_tlk = 20 and t.datos_ont_tlk=1 GROUP by t.id_tlk;&quot;</span>
+    <span class="n">desc_sql</span> <span class="o">=</span><span class="s2">&quot;Carga cantidad servicios de datos por puerto&quot;</span>
+    <span class="n">conector</span> <span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p><strong>Cargo tabla cantidad servicios de empresariales por puerto</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;insert into t_empresariales_x_puerto (id_tlk,empresariales_x_puerto) SELECT t.id_tlk, count(t.estado_ont_tlk) as wf FROM t_reporte_puertos_telelink t WHERE t.estado_ont_tlk = 20 and t.empresarial_ont_tlk=1 GROUP by t.id_tlk;&quot;</span>
+    <span class="n">desc_sql</span> <span class="o">=</span><span class="s2">&quot;Carga cantidad servicios empresariales por puerto&quot;</span>
+    <span class="n">conector</span> <span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p><strong>Cargo tabla cantidad servicios de rbs por puerto</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;insert into t_rbs_x_puerto (id_tlk,rbs_x_puerto) SELECT t.id_tlk, count(t.estado_ont_tlk) as wf FROM t_reporte_puertos_telelink t WHERE t.estado_ont_tlk = 20 and t.rbs_ont_tlk=1 GROUP by t.id_tlk;&quot;</span>
+    <span class="n">desc_sql</span> <span class="o">=</span><span class="s2">&quot;Carga cantidad radiobases por puerto&quot;</span>
+    <span class="n">conector</span> <span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p><strong>Cargo la tabla resuemen de servicios por puerto</strong></p>
+<h2>Pusheo Zabbix</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO t_resumen_servicios_tlk (id_tlk,WF,Datos,Empresariales, RBS) SELECT t_id_nodo_slot_puerto.id_tlk,IFNULL (t_wf_x_puerto.wf_x_puerto,0) AS WF , IFNULL (t_datos_x_puerto.datos_x_puerto ,0 ) AS DATOS,IFNULL (t_empresariales_x_puerto.empresariales_x_puerto ,0 ) AS EMPRESARIALES,IFNULL (t_rbs_x_puerto.rbs_x_puerto ,0 ) AS RBS FROM t_id_nodo_slot_puerto LEFT JOIN t_wf_x_puerto on t_wf_x_puerto.id_tlk = t_id_nodo_slot_puerto.id_tlk LEFT JOIN t_datos_x_puerto on t_datos_x_puerto.id_tlk = t_id_nodo_slot_puerto.id_tlk LEFT JOIN t_empresariales_x_puerto on t_empresariales_x_puerto.id_tlk = t_id_nodo_slot_puerto.id_tlk LEFT JOIN t_rbs_x_puerto on t_rbs_x_puerto.id_tlk = t_id_nodo_slot_puerto.id_tlk;&quot;</span> 
+    <span class="n">desc_sql</span> <span class="o">=</span><span class="s2">&quot;llenado tabla resuemen servicios por it_tlk&quot;</span>
+    <span class="n">conector</span> <span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="n">desc_sql</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Se termino de cargar BD &#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p><strong><em>Insert de archivo pickle a la BD (PON/Uplink).</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">pusheo_crudos_diarios_PON</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector</em> y pasando sql que truncan tablas
+donde se insertaran los datos del dia.</p>
+<p>Abre el archivo pickle marcado en <em>direcciones</em>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
+<p>Para no sobrecargar la BD con inserts, se iteran 100 mil valores en la lista, se cargan a una nueva lista,
+y esta utlima es la insertada en la BD en la tabla <em>crudos_diarios</em>. Para esto se llama <em>conector</em>
+con el comando &ldquo;many&rdquo;. La lista se limpia una ves insertado y se vuelven a cargar 100 mil valores mas.</p>
+<p>Al final se hace un ultimo insert para los valores que no llegan a iterar otro ciclo de 100 mil valores.</p>
+<p>Tambien se logea la finalizacion de la tarea.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza pusheo de crudos diarios PON&quot;</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_truncate_cdiarios_PON</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando crudos diarios PON&quot;</span><span class="p">)</span>
+    <span class="n">contador_insert</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lista_final</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">contador_final</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="n">direcciones</span><span class="o">.</span><span class="n">archivo_pickle_PON</span><span class="p">(),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">lista</span><span class="p">:</span>
+        <span class="n">lista_tuplas</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">lista</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dato</span> <span class="ow">in</span> <span class="n">lista_tuplas</span><span class="p">:</span>
+        <span class="n">lista_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dato</span><span class="p">)</span>
+        <span class="n">contador_insert</span> <span class="o">=</span> <span class="n">contador_insert</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">contador_insert</span> <span class="o">==</span> <span class="mi">100000</span><span class="p">:</span>
+            <span class="n">conector</span><span class="p">(</span><span class="n">sql_push_diarios_PON</span><span class="p">,</span> <span class="s2">&quot;many&quot;</span><span class="p">,</span> <span class="s2">&quot;Insert de crudos diarios PON.&quot;</span><span class="p">,</span> <span class="n">lista_final</span><span class="p">)</span>
+            <span class="n">contador_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contador_insert</span><span class="p">)</span>
+            <span class="n">contador_insert</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">lista_final</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_push_diarios_PON</span><span class="p">,</span> <span class="s2">&quot;many&quot;</span><span class="p">,</span> <span class="s2">&quot;Insert de crudos diarios PON.&quot;</span><span class="p">,</span> <span class="n">lista_final</span><span class="p">)</span>
+    <span class="n">contador_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contador_insert</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo pusheo de crudos diarios PON. Se ingresaron </span><span class="si">{}</span><span class="s2"> columnas&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">contador_final</span><span class="p">)))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p><strong><em>Insert de archivo pickle a la BD (PON).</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">pusheo_crudos_diarios_ONT</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector</em> y pasando sql que truncan tablas
+donde se insertaran los datos del dia.</p>
+<p>Abre el archivo pickle marcado en <em>direcciones</em>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
+<p>Se llama a <em>conector</em> pasando la lista junto con el comando &ldquo;many&rdquo; para insertar los datos en
+<em>crudos_diarios_ONT</em>. </p>
+<p>Por ultimo se logea la finalizacion de la tarea.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza pusheo de crudos diarios ONT&quot;</span><span class="p">)</span>
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_truncate_cdiarios_ONT</span><span class="p">,</span><span class="s2">&quot;Truncate&quot;</span><span class="p">,</span><span class="s2">&quot;Truncando crudos diarios ONT&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="n">direcciones</span><span class="o">.</span><span class="n">archivo_pickle_ONT</span><span class="p">(),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">lista</span><span class="p">:</span>
+        <span class="n">lista_tuplas</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">lista</span><span class="p">)</span>
+
+    <span class="n">conector</span><span class="p">(</span><span class="n">sql_push_diarios_ONT</span><span class="p">,</span> <span class="s2">&quot;many&quot;</span><span class="p">,</span> <span class="s2">&quot;Insert de crudos diarios ONT&quot;</span><span class="p">,</span> <span class="n">lista_tuplas</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo pusheo de crudos diarios ONT&quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

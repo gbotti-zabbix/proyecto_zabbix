@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>reporte.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>reporte.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Hace un select en la BD y crea los reportes .xlsx</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">Workbook</span>
+<span class="kn">from</span> <span class="nn">openpyxl.styles</span> <span class="kn">import</span> <span class="n">NamedStyle</span><span class="p">,</span> <span class="n">Font</span><span class="p">,</span> <span class="n">Border</span><span class="p">,</span> <span class="n">Alignment</span><span class="p">,</span> <span class="n">Side</span>
+<span class="kn">import</span> <span class="nn">mysql.connector</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">excel_PON_semanal</span><span class="p">,</span> <span class="n">excel_PON_mensual</span><span class="p">,</span> <span class="n">excel_ONT_semanal</span><span class="p">,</span> <span class="n">excel_ONT_mensual</span><span class="p">,</span> <span class="n">hojas_PON</span><span class="p">,</span> <span class="n">hojas_ONT</span><span class="p">,</span> <span class="n">c300_19p</span><span class="p">,</span> <span class="n">puertos_uplink</span><span class="p">,</span> <span class="n">puertos_uplink_h</span><span class="p">,</span> <span class="n">puertos_uplink_19</span><span class="p">,</span> <span class="n">puertos_uplink_omitidos_z</span><span class="p">,</span> <span class="n">puertos_uplink_omitidos_z_19</span>
+<span class="kn">from</span> <span class="nn">consultas</span> <span class="kn">import</span> <span class="n">sql_ont_semanal</span><span class="p">,</span> <span class="n">sql_ont_mensual</span><span class="p">,</span> <span class="n">sql_pon_semanal</span><span class="p">,</span> <span class="n">sql_pon_mensual</span>
+<span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Se hace un pull desde la BD para generar los reportes semanales y mensuales de PON y ONTs.</p>
+<p>Las funciones de crear generan y vinculan hojas y encabezados. Los <em>apend_data</em> cargan estos objetos
+con los datos a escribir por hoja ademas de realizar algunos filtros.</p>
+<p>Por ultimo <em>reportes_xlsx</em> hace las correspondientes llamadas a las funciones y escribe los datos
+en los archivos finales de reportes.</p>
+<p>Si se desea modificar encabezados o nombre de hojas, deben editarse las variables y funciones
+importadas desde <em>direcciones</em>. De la misma manera, si la informacion a extraer de la BD cambiara
+se deben editar las variables y funciones importadas desde consultas.</p>
+<p>Contiene las funciones:
+   <strong>crear_hojas</strong> - Crea las hojas para determinado workbook.<br />
+<strong>crear_encabezados</strong> - Crea encabezados correspondientes a cada hoja para determinado workbook.<br />
+<strong>apend_data_PON</strong> - Filtra e inserta la informacion correspondiente por hoja para determinado workbook
+   vinculado con el reporte PON.<br />
+<strong>apend_data_ONT</strong> - Filtra e inserta la informacion correspondiente por hoja para determinado workbook
+   vinculado con el reporte ONT.<br />
+<strong>reportes_xlsx</strong> - Crea el workbook y llama a las funciones correspondientes del reporte a genera.<br />
+   Escribe el archivo con la info insertada con funciones append y crear.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Crea las hojas por workbook</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">crear_hojas</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">titulos</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Se pasa una lista de objetos. El bucle recorre la lista bucando las claves referentes a los titulos de las
+hojas. Con estas claves se crean las hojas dentro de la clase <em>workbook</em>.</p>
+<p>Como <em>workbook</em> crea por defecto la primer hoja con nombre sheet, se usa un contador binario par editar esta
+primer pagina.</p>
+<p><strong>param workbook:</strong> Objeto creado a partir de <em>workbook()</em><br />
+<strong>type workbook:</strong> class</p>
+<p><strong>titulos:</strong> Lista de objetos con encabezados y nombres de hojas.<br />
+<strong>type titulos:</strong> list</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">contador</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">titulo</span> <span class="ow">in</span> <span class="n">titulos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contador</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Sheet&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">titulo</span><span class="o">.</span><span class="n">nombreHoja</span>
+            <span class="n">contador</span> <span class="o">=</span> <span class="n">contador</span> <span class="o">+</span> <span class="mi">1</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">workbook</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="n">titulo</span><span class="o">.</span><span class="n">nombreHoja</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Crea los encabezados cada hoja en el workbook</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">crear_encabezados</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Se pasa una lista de objetos. El bucle recorre la lista usando el nombre de hoja como <em>key</em>
+para vincular y crear los encabezados. Tecnicamente, cada objeto trae nombre de hoja y encabezados,
+la primera accede a una direccion en el objeto con la <em>key nombre</em>, luego le carga los encabezaddos
+que vienen junto con ese nombre en la lista.</p>
+<p><strong>param workbook:</strong> Objeto creado a partir de <em>workbook()</em>.<br />
+<strong>type workbook:</strong> class</p>
+<p><strong>param hojas:</strong> Lista de objetos con encabezados y nombres de hojas.<br />
+<strong>type hojas:</strong> list</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">hoja</span> <span class="ow">in</span> <span class="n">hojas</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hoja</span><span class="o">.</span><span class="n">encabezados</span><span class="p">:</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="n">hoja</span><span class="o">.</span><span class="n">nombreHoja</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">hoja</span><span class="o">.</span><span class="n">encabezados</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong><em>Consulta la BD y escribe los datos PON en el objeto workbook</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">apend_data_PON</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas</span><span class="p">,</span><span class="n">periodo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>A partir del parametro <em>periodo</em>, decide que consulta hacer. &ldquo;semana&rdquo; hace un select
+sobre <em>reporte_semanal</em> y &ldquo;mes&rdquo; sobre <em>reporte_mensual</em>.</p>
+<p>El select trae todos los datos en listas de tuplas, se itera sobre esta separando
+direcciones en viarables. </p>
+<p>Comapran tupla a tupla, la direccion del trafico y si el puerto esta entre los grupos desados
+de puertos y si estan fuera de los no deseados. Esto filtra puertos de respaldo en el uplink,
+y permite separar Subida y Bajada de Pon y Uplink. Ademas, los puertos de uplink no cuentan
+con informacion de TLK.</p>
+<p>Una ves realizados los filtros correspondientes, se hace &ldquo;append&rdquo; de la informacion de las tuplas en
+el <em>workbook</em>, apuntando a la hoja correcta.</p>
+<p>Tener en cuenta, para que la informacion escrita corresponda con los encabezados, deben pasarse
+en el mismo orden que que fueron creados en el <em>workbook</em>. Ejemplo, si los encabezados se definen por
+<strong>[hora,pico]</strong>, los datos traidos de la BD deben ser escritos en esa hoja corresponiendo al orden
+<strong>hora/pico</strong>. El orden de la variable <em>lista_append</em> define esto.</p>
+<p>Variables desde listas:</p>
+<p><em>tipo, nodo, puerto, direccion, fecha</em>, y <em>hora</em> son strings.</p>
+<p><em>prom_hora_pico, prom_picos_diarios, pico, promedio_hora</em> son float.</p>
+<p><em>wf, emp, rbs</em> son int.</p>
+<p><strong>param workbook:</strong> Objeto creado a partir de <em>workbook()</em>.<br />
+<strong>type workbook:</strong> class</p>
+<p><strong>param hojas:</strong> Lista de objetos con encabezados y nombres de hojas.<br />
+<strong>type hojas:</strong> list</p>
+<p><strong>param periodo:</strong> Define que consulta se utilizara para la funcion.
+&ldquo;semana&rdquo; consulta datos de reporte semanal. &ldquo;mes&rdquo; consulta datos
+del reporte mensual.<br />
+<strong>type periodo:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;semana&quot;</span><span class="p">:</span>
+        <span class="n">resultado</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql_pon_semanal</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Select del reporte semanal de PON&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;mes&quot;</span><span class="p">:</span>
+        <span class="n">resultado</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql_pon_mensual</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Select del reporte mensual de PON&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dato</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nodo</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">puerto</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">direccion</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">hora</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">fecha</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">prom_hora_pico</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">prom_picos_diarios</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">pico</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">promedio_hora</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">wf</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="n">datos</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+        <span class="n">emp</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+        <span class="n">rbs</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;MA5800&quot;</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink_h</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">nodo</span> <span class="ow">in</span> <span class="n">c300_19p</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink_19</span><span class="p">):</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Bajada Uplink&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;MA5800&quot;</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink_h</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">nodo</span> <span class="ow">in</span> <span class="n">c300_19p</span> <span class="ow">and</span> <span class="n">puerto</span> <span class="ow">in</span> <span class="n">puertos_uplink_19</span><span class="p">):</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Subida Uplink&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">((</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodo</span> <span class="ow">in</span> <span class="n">c300_19p</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">puertos_uplink_omitidos_z_19</span><span class="p">))</span> <span class="ow">or</span> <span class="p">((</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodo</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c300_19p</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">puertos_uplink_omitidos_z</span><span class="p">)):</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">2500</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">,</span><span class="n">wf</span><span class="p">,</span><span class="n">datos</span><span class="p">,</span><span class="n">emp</span><span class="p">,</span><span class="n">rbs</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Bajada PON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">((</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodo</span> <span class="ow">in</span> <span class="n">c300_19p</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">puertos_uplink_omitidos_z_19</span><span class="p">))</span> <span class="ow">or</span> <span class="p">((</span><span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nodo</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c300_19p</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">puerto</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">puertos_uplink_omitidos_z</span><span class="p">)):</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">1250</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">,</span><span class="n">wf</span><span class="p">,</span><span class="n">datos</span><span class="p">,</span><span class="n">emp</span><span class="p">,</span><span class="n">rbs</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Subida PON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong><em>Consulta la BD y escribe los datos ONT en el objeto workbook</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">apend_data_ONT</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas</span><span class="p">,</span><span class="n">periodo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>A partir del parametro <em>periodo</em>, decide que consulta hacer. &ldquo;semana&rdquo; hace un select
+sobre <em>reporte_semanal</em> y &ldquo;mes&rdquo; sobre <em>reporte_mensual</em>.</p>
+<p>El select trae todos los datos en listas de tuplas, se itera sobre esta separando
+direcciones en viarables. </p>
+<p>Comapran tupla a tupla, la direccion del trafico. Esto permite separar Subida y Bajada
+de las ONT.</p>
+<p>Una ves realizados los filtros correspondientes, se hace &ldquo;append&rdquo; de la informacion de las tuplas en
+el <em>workbook</em>, apuntando a la hoja correcta.</p>
+<p>Tener en cuenta, para que la informacion escrita corresponda con los encabezados, deben pasarse
+en el mismo orden que que fueron creados en el workbook. Ejemplo, si los encabezados se definen por
+<strong>[hora,pico]</strong>, los datos traidos de la BD deben ser escritos en esa hoja corresponiendo al orden
+<strong>hora/pico</strong>. El orden de la variable <em>lista_append</em> define esto.</p>
+<p>Variables desde listas:</p>
+<p><em>tipo, nodo, puerto, etiqueta, direccion, fecha,</em> y <em>hora</em> son strings.</p>
+<p><em>prom_hora_pico, prom_picos_diarios, pico, promedio_hora</em> son float.</p>
+<p><strong>param workbook:</strong> Objeto creado a partir de <em>workbook()</em>.<br />
+<strong>type workbook:</strong> class</p>
+<p><strong>param hojas:</strong> Lista de objetos con encabezados y nombres de hojas.<br />
+<strong>type hojas:</strong> list</p>
+<p><strong>param periodo:</strong> Define que consulta se utilizara para la funcion.
+&ldquo;semana&rdquo; consulta datos de reporte semanal. &ldquo;mes&rdquo; consulta datos
+del reporte mensual.<br />
+<strong>type periodo:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    
+    <span class="k">if</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;semana&quot;</span><span class="p">:</span>
+        <span class="n">resultado</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql_ont_semanal</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Select del reporte semanal de ONT&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;mes&quot;</span><span class="p">:</span>
+        <span class="n">resultado</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql_ont_mensual</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Select del reporte mensual de ONT&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dato</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nodo</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">puerto</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">direccion</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">hora</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">fecha</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">prom_hora_pico</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">prom_picos_diarios</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">pico</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">promedio_hora</span> <span class="o">=</span> <span class="n">dato</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span><span class="p">:</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Subida ONT&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span><span class="p">:</span>
+            <span class="n">lista_append</span> <span class="o">=</span> <span class="p">[</span><span class="n">tipo</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">,</span><span class="n">hora</span><span class="p">,</span><span class="n">fecha</span><span class="p">,</span><span class="n">pico</span><span class="p">,(</span><span class="n">pico</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">,</span><span class="n">prom_hora_pico</span><span class="p">,</span><span class="n">prom_picos_diarios</span><span class="p">,</span><span class="n">promedio_hora</span><span class="p">]</span>
+            <span class="n">workbook</span><span class="p">[</span><span class="s2">&quot;Bajada ONT&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lista_append</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong><em>Llamas de funciones y escritura de archivos reportes</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">reportes_xlsx</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">periodo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Comienza creando una instancia de <em>workbook()</em>, este objeto es usado por
+el constructor de .xlsx openpyxl.</p>
+<p>El parametro <em>tipo</em> define si se ejecutaran funciones para crear el reporte
+de ONTs o PON (incluyendo uplink eh informacion de TLK). El flujo de esta funcion
+es igual para ambos reportes.</p>
+<p>Luego de logear el inicio de la tarea, se llaman a las funciones <em>crear</em>
+las cuales definen los nombres y encabezados de paginas. Las funciones <em>append</em>
+consultan datos especificos a la BD y los insertan el <em>workbook</em>.</p>
+<p><em>Periodo</em> definira si se debe hacer una consutla sobre <em>reporte_mensual</em> o 
+<em>reporte_semanal</em> en la BD. Ademas marca el archivo de reporte que se debe crear
+dependiendo si es un reporte de datos semanales o mensuales y la tecnologia que
+este reflejara (PON/Uplink o ONT).</p>
+<p>Una ves dentro del if de <em>periodo</em>, se escribe el archivo y luego se ponen permisos
+775 para poder ser importados desde el servidor de ritaf, el cual mueve los .xlsx hacia
+directorios en la red corporativa.</p>
+<p>Se logea la finalizacion del proceso.</p>
+<p><strong>param tipo:</strong> Define tareas a ejecutar. &ldquo;ONT&rdquo; genera reportes
+de ONT. &ldquo;PON&rdquo; genera reportes de puertos PON/Uplink.<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>param periodo:</strong> Periodo de consultas a realizar. &ldquo;mes&rdquo; genera
+reportes mensuales. &ldquo;semana&rdquo; genera reportes semanales.<br />
+<strong>type periodo:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">workbook</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;ONT&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comenzo a crearse el reporte </span><span class="si">{}</span><span class="s2"> de ONT&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">periodo</span><span class="p">))</span>
+            <span class="n">crear_hojas</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_ONT</span><span class="p">)</span>
+            <span class="n">crear_encabezados</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_ONT</span><span class="p">)</span>
+            <span class="n">apend_data_ONT</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_ONT</span><span class="p">,</span><span class="n">periodo</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;mes&quot;</span><span class="p">:</span>
+                <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">excel_ONT_mensual</span><span class="p">())</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">excel_ONT_mensual</span><span class="p">(),</span><span class="mo">0o755</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;semana&quot;</span><span class="p">:</span>
+                <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">excel_ONT_semanal</span><span class="p">())</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">excel_ONT_semanal</span><span class="p">(),</span><span class="mo">0o755</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se culmino la creacion del reporte </span><span class="si">{}</span><span class="s2"> de ONT&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">periodo</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;PON&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comenzo a crearse el reporte </span><span class="si">{}</span><span class="s2"> de PON&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">periodo</span><span class="p">))</span>
+            <span class="n">crear_hojas</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_PON</span><span class="p">)</span>
+            <span class="n">crear_encabezados</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_PON</span><span class="p">)</span>
+            <span class="n">apend_data_PON</span><span class="p">(</span><span class="n">workbook</span><span class="p">,</span><span class="n">hojas_PON</span><span class="p">,</span><span class="n">periodo</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;mes&quot;</span><span class="p">:</span>
+                <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">excel_PON_mensual</span><span class="p">())</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">excel_PON_mensual</span><span class="p">(),</span><span class="mo">0o755</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;semana&quot;</span><span class="p">:</span>
+                <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">excel_PON_semanal</span><span class="p">())</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">excel_PON_semanal</span><span class="p">(),</span><span class="mo">0o755</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se culmino la creacion del reporte </span><span class="si">{}</span><span class="s2"> de PON&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">periodo</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

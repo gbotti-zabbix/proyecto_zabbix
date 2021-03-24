@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>parseo.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>parseo.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Script que parsea crudos de Zabbix y Telelink</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span>
+<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">crudozabbix</span><span class="p">,</span><span class="n">archivo_pickle_ONT</span><span class="p">,</span><span class="n">archivo_pickle_PON</span><span class="p">,</span> <span class="n">modelos_nodos</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Toma archivos ndjson desde Zabbix y csv desde telelink/gestion, los parsea en un formato util para cargarlo a la base de datos
+y los guarda en archivos pickle para zabbix y csv para Telelink.</p>
+<p>Importar <strong>pickle</strong> y <strong>json</strong> es esencial para parsear Zabbix.</p>
+<p>Si se queire cambiar el nombre de los crudos a buscar o el nombre con el que se guardaran los crudos
+se debe editar las variables/funciones importadas desde direcciones.</p>
+<p>Tambien se importa <em>modelos_nodos</em> para procesar los vendors de distinta forma, de necesitar diferenciar
+nuevos modelos, editar esta variable en direcciones.</p>
+<p>Contiene las funciones:
+   <strong>FileCheck</strong> - Chequea que el archivo crudo a parsear exista.<br />
+<strong>f_parsear_inventario</strong> - Parsea el archivo crudo de TLK para pushearlo a la BD. Puertos PON.<br />
+<strong>f_parseo_inventario_RBS</strong> - Parsea el archivo crudo de gestion para pushearlo a la BD. RBS en ONT.<br />
+<strong>sacar_grupo</strong> -  Revisa a que el valor a parsear corresponda a un nodo deseado.<br />
+<strong>regex_puerto</strong> -  Extrae el numero de puerto en el formato deseado, a partir de una string.<br />
+<strong>regex_etiqueta</strong> -  Extrae la etiqueta de puerto en el formato deseado, a partir de una string.<br />
+<strong>sacar_direccion</strong> -  Traduce Bit Sent/Recieved a TX o RX segun corresponda.<br />
+<strong>metodo</strong> - Parametro utilizado por los orquestadores, define crudozabbix dependiendo el parametro en
+   formato string que se le pase.<br />
+<strong>parseo_ont</strong> - Parsea el archivo crudo de Merged-Trends para pushearlo a la BD. Vuelva los datos en un .pickle.
+   Solo en ONTs.<br />
+<strong>parseo_pon</strong> - Parsea el archivo crudo de Merged-Trends para pushearlo a la BD. Vuelva los datos en un .pickle.
+   Solo puertos PON/Uplink.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Chequea la existencia de un archivo</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">FileCheck</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Se pasa un directorio en formato string y chequea que exista. 
+Logea un error si no lo encuentra.</p>
+<p><strong>param fn:</strong> Directorio a chequear.<br />
+<strong>type fn:</strong> str</p>
+<p><strong>returns:</strong> Returna 0 o 1 dependiendo si lo encontro o no respectivamente.
+<strong>rtype:</strong> int</p>
+<h2>Parseo TLK/Gestion</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error 23: Archivo no Existe: </span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong><em>Funcion para parsear el inventario de Telelink, recibe 3 nombres arhivos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">f_parsear_inventario</span> <span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span><span class="n">archivo_destino</span><span class="p">,</span><span class="n">archivo_old</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong>param archivo_origen:</strong> recibe el path y nombre del archivo a parsear.<br />
+<strong>type archivo_origen:</strong> str</p>
+<p><strong>param archivo_origen:</strong> archivo_destino: es el nombre del arhivo con que se graban los datos paresados.<br />
+<strong>type archivo_origen:</strong> str</p>
+<p><strong>param archivo_origen:</strong> arhivo_old: luego de parsear el arhivo lo dejo con otro nombre.<br />
+<strong>type archivo_origen:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--Se comenzo parseo arhivo--&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong>Debo cargar diccionario de TLK-NOMBRE GESTION</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT cod_tlk,nom_gestion FROM t_tlk_nombregestion;&quot;</span>
+    <span class="n">comentario</span><span class="o">=</span><span class="s2">&quot;Traer nombre gestion&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong>Cargo diccionarios para trabajar con nombres.</strong> </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">dic_gestion</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">resultado</span><span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="n">comentario</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">dic_gestion</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong><em>Debo cargar equivelente - (TIPO NODO)&lt;&ndash;&gt;</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT nro_tlk,modelo,letra_gestion from t_diccionario_nodos_tlk;&quot;</span>
+    <span class="n">comentario</span><span class="o">=</span><span class="s2">&quot;Traer tipos nodos&quot;</span>
+    <span class="n">dic_nodo</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">resultado</span><span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="n">comentario</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">dic_nodo</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> 
+
+    <span class="n">linea_valida</span><span class="o">=</span><span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong>contador de lines de archivo</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">contador</span><span class="o">=</span><span class="mi">0</span> 
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_destino</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo2</span><span class="p">:</span>
+            <span class="n">wr</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">archivo2</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_ALL</span><span class="p">)</span>
+            <span class="n">archivo</span> <span class="o">=</span> <span class="n">archivo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong>contador solo para saltar primera línea.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">contador_salto</span><span class="o">=</span><span class="mi">1</span> 
+            <span class="k">for</span> <span class="n">linea</span> <span class="ow">in</span> <span class="n">archivo</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">contador_salto</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p><strong>divido linea a linea por punto y coma</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">linea_parseada</span> <span class="o">=</span> <span class="n">linea</span><span class="o">.</span><span class="n">split</span> <span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p><strong>codigo TLK</strong>                       </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">cod_telelink</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>                       
+                    <span class="n">central_valida</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">linea_parseada</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">10</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">central_valida</span> <span class="o">==</span> <span class="s2">&quot;M&quot;</span><span class="p">:</span>
+                        <span class="n">linea_valida</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">linea_valida</span> <span class="o">=</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p><strong>nro de equipo TLK completo.</strong>    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">nro_equipo</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dic_nodo</span><span class="p">:</span> 
+                        <span class="n">tipo_equipo</span> <span class="o">=</span> <span class="n">dic_nodo</span><span class="p">[</span><span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">letra_nodo</span> <span class="o">=</span> <span class="n">dic_nodo</span><span class="p">[</span><span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span> 
+                        <span class="n">tipo_equipo</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span>
+                        <span class="n">letra_nodo</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de nodo</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">nro_nodo</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">cod_telelink</span> <span class="ow">in</span> <span class="n">dic_gestion</span><span class="p">:</span>
+                        <span class="n">nombre_gestion</span><span class="o">=</span> <span class="n">dic_gestion</span><span class="p">[</span><span class="n">cod_telelink</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="n">nro_nodo</span><span class="o">+</span> <span class="n">letra_nodo</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">nombre_gestion</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de slot.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">slot</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de puerto.</strong>                               </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">puerto</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">7</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de ont.</strong>                                </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">ont</span> <span class="o">=</span>   <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>                             
+                    <span class="n">estado</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">desc_estado</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">fibra_primaria</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="n">linea_parseada</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span>  <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+                        <span class="n">par_fibra</span><span class="o">=</span> <span class="s2">&quot;Null&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">par_fibra</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">linea_parseada</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p><strong>Se cheque empresarial, si el campo es I, si tiene VozF, Datos o RBS.</strong>
+<strong>Chequeo si hay empresarial.</strong>    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="k">if</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;I&quot;</span><span class="p">:</span>
+                        <span class="n">indicador_empresarial</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">indicador_empresarial</span> <span class="o">=</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p><strong>Chequeo si hay VozF</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="k">if</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;S&quot;</span><span class="p">:</span>
+                        <span class="n">indicador_voz</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">indicador_voz</span> <span class="o">=</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p><strong>Chequeo si hay Datos</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="k">if</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;S&quot;</span><span class="p">:</span>
+                        <span class="n">indicador_datos</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">indicador_datos</span> <span class="o">=</span>  <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p><strong>Chequeo si hay RBS</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="k">if</span>  <span class="s2">&quot;MRBS&quot;</span> <span class="ow">in</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">18</span><span class="p">]:</span>
+                        <span class="n">indicador_RBS</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">indicador_RBS</span> <span class="o">=</span> <span class="mi">0</span>
+                    
+                    <span class="n">indice_unico</span> <span class="o">=</span> <span class="n">nombre_gestion</span> <span class="o">+</span>  <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">slot</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span> <span class="p">(</span><span class="n">puerto</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">linea_valida</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">linea_nueva</span><span class="o">=</span> <span class="p">[</span><span class="n">indice_unico</span><span class="p">,</span><span class="n">cod_telelink</span><span class="p">,</span><span class="n">nro_equipo</span><span class="p">,</span><span class="n">tipo_equipo</span><span class="p">,</span><span class="n">nombre_gestion</span><span class="p">,</span><span class="n">nro_nodo</span><span class="p">,</span><span class="n">slot</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span> <span class="n">ont</span><span class="p">,</span> <span class="n">estado</span><span class="p">,</span> <span class="n">desc_estado</span><span class="p">,</span><span class="n">fibra_primaria</span><span class="p">,</span><span class="n">par_fibra</span><span class="p">,</span> <span class="n">indicador_empresarial</span><span class="p">,</span> <span class="n">indicador_voz</span><span class="p">,</span> <span class="n">indicador_datos</span><span class="p">,</span> <span class="n">indicador_RBS</span><span class="p">]</span> 
+                        <span class="n">wr</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">linea_nueva</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p><strong>solo elimina la primera linea</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="n">contador_salto</span> <span class="o">=</span> <span class="n">contador_salto</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">contador</span> <span class="o">=</span> <span class="n">contador</span><span class="o">+</span><span class="mi">1</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;función f_parsear_inventario ejecutada </span><span class="si">{</span><span class="n">archivo_destino</span><span class="si">}</span><span class="s1"> con </span><span class="si">{</span><span class="n">contador</span><span class="si">}</span><span class="s1"> lineas&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">FileCheck</span><span class="p">(</span><span class="n">archivo_old</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archivo_old</span><span class="p">)</span>
+
+
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span> <span class="n">archivo_old</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;Se terminó el parseo del arhivo: </span><span class="si">{</span><span class="n">archivo_origen</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Se renombro el arhivo </span><span class="si">{</span><span class="n">archivo_origen</span><span class="si">}</span><span class="s1"> en el arhivo </span><span class="si">{</span><span class="n">archivo_old</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p><strong><em>Función que recibe el archivo de Radbio Bases DSC y luego lo parsea</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">f_parseo_inventario_RBS</span><span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span><span class="n">archivo_destino</span><span class="p">,</span><span class="n">archivo_old</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <pre><code>
+</code></pre>
+<p>El archivo se transfiere de Ritaf todas las semanas.</p>
+<p><strong>param archivo_origen:</strong> nombre con direccion absoluta del archivo origen de Radio Bases DSC.<br />
+<strong>type archivo_origen:</strong> str </p>
+<p><strong>param archivo_destino:</strong> nombre con direccion absoluta del archivo destino, como será guardado los datos parseados.<br />
+<strong>type archivo_origen:</strong> str  </p>
+<p><strong>param archivo_old:</strong> nombre con direccion absoluta del archivo con el que será renombrado el archivo origen luego de parsear.<br />
+<strong>type archivo_origen:</strong> str  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--Se comenzo parseo arhivo RBS --&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p><strong>Debo cargar diccionario de TLK-NOMBRE GESTION.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT cod_tlk,nom_gestion FROM t_tlk_nombregestion;&quot;</span>
+    <span class="n">comentario</span><span class="o">=</span><span class="s2">&quot;Traer nombre gestion&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p><strong>Cargo diccionarios para trabajar con nombres.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">dic_gestion</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">resultado</span><span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="n">comentario</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">dic_gestion</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p><strong>Debo cargar equivelente - (TIPO NODO)&lt;&ndash;&gt;</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT nro_tlk,modelo,letra_gestion from t_diccionario_nodos_tlk;&quot;</span>
+    <span class="n">comentario</span><span class="o">=</span><span class="s2">&quot;Traer tipos nodos&quot;</span>
+    <span class="n">dic_nodo</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">resultado</span><span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="n">comentario</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resultado</span><span class="p">:</span>
+        <span class="n">dic_nodo</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p><strong>Contador de lines de archivo.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">contador</span><span class="o">=</span><span class="mi">0</span> 
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_destino</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo2</span><span class="p">:</span>
+            <span class="n">wr</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">archivo2</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_ALL</span><span class="p">)</span>
+            <span class="n">archivo</span> <span class="o">=</span> <span class="n">archivo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p><strong>Contador solo para saltar primera línea.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">contador_salto</span><span class="o">=</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">linea</span> <span class="ow">in</span> <span class="n">archivo</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">contador_salto</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p><strong>Divido linea a linea por punto y coma.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">linea_parseada</span> <span class="o">=</span> <span class="n">linea</span><span class="o">.</span><span class="n">split</span> <span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p><strong>Creación campos para la BD</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">servicio</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">nro_equipo</span><span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de slot.</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">slot</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de puerto.</strong>               </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">puerto</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">7</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <p><strong>Extraigo del numero equipo el nuermo de ontslot.</strong>                          </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                    <span class="n">ont</span> <span class="o">=</span>   <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">9</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+                    <span class="n">estado_ont</span><span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                    <span class="n">fecha_inicio_estado</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+                    <span class="n">dias_desde_ultimo_estado</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+                    <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+                    <span class="n">nodo</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+                    <span class="n">nodo_slot_puerto_ont</span> <span class="o">=</span> <span class="n">linea_parseada</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="n">slot</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">puerto</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">ont</span>
+                    <span class="n">linea_nueva</span><span class="o">=</span><span class="p">[</span><span class="n">nodo_slot_puerto_ont</span><span class="p">,</span><span class="n">servicio</span><span class="p">,</span><span class="n">nro_equipo</span><span class="p">,</span><span class="n">estado_ont</span><span class="p">,</span> <span class="n">fecha_inicio_estado</span><span class="p">,</span><span class="n">dias_desde_ultimo_estado</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">,</span><span class="n">nodo</span><span class="p">,</span> <span class="n">slot</span><span class="p">,</span> <span class="n">puerto</span><span class="p">,</span> <span class="n">ont</span> <span class="p">]</span>
+                    <span class="n">wr</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">linea_nueva</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <p><strong>Solo elimina la primera linea.</strong></p>
+<h2>Parseo de Inventario Zabbix</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="n">contador_salto</span> <span class="o">=</span> <span class="n">contador_salto</span> <span class="o">+</span> <span class="mi">1</span> 
+                <span class="n">contador</span> <span class="o">=</span> <span class="n">contador</span><span class="o">+</span><span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">FileCheck</span><span class="p">(</span><span class="n">archivo_old</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archivo_old</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">archivo_origen</span><span class="p">,</span> <span class="n">archivo_old</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;Se terminó el parseo del arhivo: </span><span class="si">{</span><span class="n">archivo_origen</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Se renombro el arhivo </span><span class="si">{</span><span class="n">archivo_origen</span><span class="si">}</span><span class="s1"> en el arhivo </span><span class="si">{</span><span class="n">archivo_old</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <p><strong><em>Chequea pertenencia de nodo a grupo deseado</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">sacar_grupo</span><span class="p">(</span><span class="n">grupos</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <p>Recive una lista de Grupos Zabbix vinculadas al nodo, chequea si es alguno de los grupos
+esperados y devuelve el grupo como tipo.</p>
+<p>Es esperado que devuelva el modelo del nodo que corresponde al grupo vinculado al nodo en Zabbix.</p>
+<p><strong>param grupos:</strong> Grupos vinculados al nodo en Zabbix.<br />
+<strong>type grupos:</strong> list</p>
+<p><strong>returns:</strong> Modelo del nodo.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">for</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="n">modelos_nodos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="n">grupos</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tipo</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      <p><strong><em>Extrae puerto en un formato especifico a partir de string</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">regex_puerto</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">tipo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      <p>A partir de una string extrae el numero de puerto en formato <strong>PLACA/PUERTO</strong> para PON/Uplink y
+<strong>PLACA/PUERTO/ONT</strong> para las ONT.</p>
+<p><strong>param nombre:</strong> String a buscar puerto.<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>param tipo:</strong> Definir si se quiere obtener puerto para PON/Uplink o ONT. Recibe &ldquo;PON&rdquo;/&rdquo;ONT&rdquo;.<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>returns:</strong> Puerto en formato <strong>PLACA/PUERTO</strong> para PON/Uplink, <strong>PLACA/PUERTO/ONT</strong> para ONT.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;PON&quot;</span><span class="p">:</span>
+        <span class="n">match_puerto</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;ONT&quot;</span><span class="p">:</span>
+        <span class="n">match_puerto</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{1,2})&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match_puerto</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="n">match_puerto</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Puerto</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      <p><strong>Extrae etiqueta de gestion en un formato especifico a partir de string</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">regex_etiqueta</span><span class="p">(</span><span class="n">nombre</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>A partir de una string extrae la etiqueta de gestion como fue ingresada a Zabbix. Este valor viene
+en el name desde Zabbix solamente para ONT.</p>
+<p>Por lo general la etiqueta es el numero del servicio del cliente y su nombre.</p>
+<p><strong>param nombre:</strong> String a buscar la etiqueta.<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>returns:</strong> Etiqueta en formato gestion.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">Etiqueta</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">match_etiqueta</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;(?&lt;=([0-9]) : ).*&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match_etiqueta</span><span class="p">:</span>
+        <span class="n">Etiqueta</span> <span class="o">=</span> <span class="n">match_etiqueta</span><span class="o">.</span><span class="n">group</span><span class="p">()[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Etiqueta</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <p><strong><em>Extrae direccion en formato TX/RX a partir de string</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">sacar_direccion</span><span class="p">(</span><span class="n">nombre</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <p>A partir de una string extrae direccion del trafico del puerto. Este valor viene
+en la misma string donde se saca el puerto y etiqueta.</p>
+<p>Se traduce Bits Sents como TX y Bits Received como RX.</p>
+<p><strong>param nombre:</strong> String a buscar la direccion.<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>returns:</strong> Direccion TX/RX.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">Direccion</span> <span class="o">=</span>  <span class="s2">&quot;&quot;</span>
+    <span class="n">match_tx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;Bits sent&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="n">match_rx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;Bits received&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match_tx</span><span class="p">:</span>
+        <span class="n">Direccion</span> <span class="o">=</span> <span class="s2">&quot;TX&quot;</span>
+    <span class="k">elif</span> <span class="n">match_rx</span><span class="p">:</span>
+        <span class="n">Direccion</span> <span class="o">=</span> <span class="s2">&quot;RX&quot;</span>
+    <span class="k">return</span> <span class="n">Direccion</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      <p><strong><em>Define crudozabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">metodo</span><span class="p">(</span><span class="n">opcion</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      <p>A partir de una string define si ejectuar la funcion <em>curdozabbix()</em> traida desde
+<em>direcciones</em> o utliza la pasada desde el <em>orquestador_manual</em>.</p>
+<p>&ldquo;auto&rdquo; ejecuta <em>crudozabbix()</em>. Para cambiar esta direccion debe editarse la funcion
+importada desde <em>direcciones</em>.</p>
+<p><strong>param opcion:</strong> String donde &ldquo;auto&rdquo; ejecuta <em>crudozabbix()</em> o expesifica la direccion
+donde buscar el archivo crudo.<br />
+<strong>type opcion:</strong> str</p>
+<p><strong>returns:</strong> Direccion de archivo crudo.
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">opcion</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">crudozabbix</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">crudoz</span> <span class="o">=</span> <span class="n">opcion</span>
+        <span class="k">return</span> <span class="n">crudoz</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      <p>Parseo de ONT
+<strong><em>Parsea crudos de zabbix y crea .pickle para reportes ONT.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">parseo_ont</span><span class="p">(</span><span class="n">opcion</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <p>Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
+hace append a una lista de tuplas formadas por Modelo de nodo, Nodo, Puerto, Direccion,
+Etiqueta, Hora en la que se realizo la medida, Fecha en la que se realizo la medida, 
+Promedio de la hora donde se realizo el pico, Pico, estas dos ultimas en Bps.</p>
+<p>Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
+del archivo crudo contenga ONT en la key applications. 
+Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.</p>
+<p>Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
+a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
+al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.</p>
+<p>Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
+para ONT traido desde <em>direcciones</em>.</p>
+<p>Ademas se logean errores y el comienzo y finalizacion de la funcion.</p>
+<p>Variables a cargar en las tuplas:
+<em>Tipo, Nodo, Nombre</em> y <em>Direccion</em> son claves dentro de la lista de facil acceso.</p>
+<p><em>Puerto</em> debe llamar a <em>regex_puerto</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
+<p><em>Etiqueta</em> debe llamar a <em>regex_etiqueta</em> usando la key name para generar dicha variable.</p>
+<p><em>Tiempo</em> es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
+unidades de tiempo.</p>
+<p><em>Promedio</em> y <em>pico</em> son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.</p>
+<p>Para comprender mejor este formateo, conviene revisar un archivo crudo NDJSON generado por zabbix.</p>
+<p><strong>param opcion:</strong> String pasado a la llamada de metodo(). Define el crudozabbix
+a utilizar (orquestador_manual o auto).<br />
+<strong>type opcion:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza el Parseo de ONTS&quot;</span><span class="p">)</span>
+    <span class="n">contador_carga</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">contador_error</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lista_tuplas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">crudoz</span> <span class="o">=</span> <span class="n">metodo</span><span class="p">(</span><span class="n">opcion</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">crudoz</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">crudo</span><span class="p">:</span>
+        <span class="n">crudo</span> <span class="o">=</span> <span class="n">crudo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">linea</span> <span class="ow">in</span> <span class="n">crudo</span><span class="p">:</span>
+            <span class="n">linea</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">linea</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;ONT&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Radio Base&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+                <span class="n">Tipo</span> <span class="o">=</span> <span class="n">sacar_grupo</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">])</span>
+                <span class="n">Nodo</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">]</span>
+                <span class="n">Nombre</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="n">Puerto</span> <span class="o">=</span> <span class="n">regex_puerto</span><span class="p">(</span><span class="n">Nombre</span><span class="p">,</span><span class="s2">&quot;ONT&quot;</span><span class="p">)</span>
+                <span class="n">Direccion</span> <span class="o">=</span> <span class="n">Nombre</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+                <span class="n">Etiqueta</span> <span class="o">=</span> <span class="n">regex_etiqueta</span><span class="p">(</span><span class="n">Nombre</span><span class="p">)</span>
+                <span class="n">Tiempo</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;clock&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">Promedio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
+                <span class="n">Pico</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">2500</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">2500</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">1250</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">1250</span><span class="p">):</span>
+                    <span class="n">tupla</span> <span class="o">=</span> <span class="p">(</span><span class="n">Tipo</span><span class="p">,</span> <span class="n">Nodo</span><span class="p">,</span><span class="n">Puerto</span><span class="p">,</span><span class="n">Direccion</span><span class="p">,</span> <span class="n">Etiqueta</span><span class="p">,</span> <span class="n">Tiempo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Tiempo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Promedio</span><span class="p">,</span><span class="n">Pico</span><span class="p">)</span>
+                    <span class="n">lista_tuplas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tupla</span><span class="p">)</span>
+                    <span class="n">contador_carga</span> <span class="o">=</span> <span class="n">contador_carga</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">contador_error</span> <span class="o">=</span> <span class="n">contador_error</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">contador_error</span> <span class="o">=</span> <span class="n">contador_error</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_pickle_ONT</span><span class="p">(),</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo_pickle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">lista_tuplas</span><span class="p">,</span><span class="n">archivo_pickle</span><span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo el Parseo de ONTS&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Datos de ONTs Parseados:</span><span class="si">{}</span><span class="s2">. Lineas Descartadas </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contador_carga</span><span class="p">,</span><span class="n">contador_error</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      <p><strong><em>Parsea crudos de zabbix y crea .pickle para reportes PON/Uplink.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">parseo_pon</span><span class="p">(</span><span class="n">opcion</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <p>Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
+hace append a una lista de tuplas formadas por Id Zabbix y TLK (utilziadas para agilizar 
+consultas en la BD), Modelo de nodo, Nodo, Puerto, Direccion, Hora en la que se realizo la medida,
+Fecha en la que se realizo la medida, Promedio de la hora donde se realizo el pico, 
+Pico, estas dos ultimas en Bps.</p>
+<p>Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
+del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications. 
+Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.</p>
+<p>Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
+a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
+al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.</p>
+<p>Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
+PON traido desde <em>direcciones</em>.</p>
+<p>Ademas se logean errores y el comienzo y finalizacion de la funcion.</p>
+<p>Variables a cargar en las tuplas:
+<em>Tipo, Nodo</em> y <em>Nombre</em> son claves dentro de la lista de facil acceso.</p>
+<p><em>Puerto</em> debe llamar a <em>regex_puerto</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
+<p><em>Direccion</em> debe llamar a <em>sacar_direccion</em> usando la variable <em>Nombre</em> para generar dicha variable.</p>
+<p><em>Tiempo</em> es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
+unidades de tiempo.</p>
+<p><em>Promedio</em> y <em>pico</em> son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.</p>
+<p><em>id_zabbix</em> y <em>id_tlk</em> son concatenacion de variables (<em>Nodo/Puerto/Direccion</em>) y guiones en formato string. Se utlizan como
+inidices para consutlas en la BD.</p>
+<p>Para comprender mejor este formateo, conviene revisar un archivo crudo NDJSON generado por zabbix.</p>
+<p><strong>param opcion:</strong> String pasado a la llamada de <em>metodo()</em>. Define el crudozabbix
+a utilizar (<em>orquestador_manual</em> o <em>auto</em>).<br />
+<strong>type opcion:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza el Parseo de Puertos PON&quot;</span><span class="p">)</span>
+    <span class="n">contador_carga</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">contador_error</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lista_tuplas</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">crudoz</span> <span class="o">=</span> <span class="n">metodo</span><span class="p">(</span><span class="n">opcion</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">crudoz</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">crudo</span><span class="p">:</span>
+            <span class="n">crudo</span> <span class="o">=</span> <span class="n">crudo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">linea</span> <span class="ow">in</span> <span class="n">crudo</span><span class="p">:</span>
+                <span class="n">linea</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">linea</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;C300&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;MA5800&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">]):</span>
+                    <span class="n">Tipo</span> <span class="o">=</span> <span class="n">sacar_grupo</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">])</span>
+                    <span class="n">Nodo</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">]</span>
+                    <span class="n">Nombre</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                    <span class="n">Puerto</span> <span class="o">=</span> <span class="n">regex_puerto</span><span class="p">(</span><span class="n">Nombre</span><span class="p">,</span><span class="s2">&quot;PON&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+                    <span class="n">Direccion</span> <span class="o">=</span> <span class="n">sacar_direccion</span><span class="p">(</span><span class="n">Nombre</span><span class="p">)</span>
+                    <span class="n">Tiempo</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;clock&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">Promedio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
+                    <span class="n">Pico</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
+                    <span class="n">id_zabbix</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Nodo</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Puerto</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Direccion</span><span class="p">)</span>
+                    <span class="n">id_tlk</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Nodo</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Puerto</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">2500</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">2500</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">1250</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">1250</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;21/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;22/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">):</span>
+                        <span class="n">tupla</span> <span class="o">=</span> <span class="p">(</span><span class="n">id_zabbix</span><span class="p">,</span> <span class="n">id_tlk</span><span class="p">,</span> <span class="n">Tipo</span><span class="p">,</span> <span class="n">Nodo</span><span class="p">,</span><span class="n">Puerto</span><span class="p">,</span><span class="n">Direccion</span><span class="p">,</span><span class="n">Tiempo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Tiempo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Promedio</span><span class="p">,</span><span class="n">Pico</span><span class="p">)</span>
+                        <span class="n">lista_tuplas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tupla</span><span class="p">)</span>
+                        <span class="n">contador_carga</span> <span class="o">=</span> <span class="n">contador_carga</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">contador_error</span> <span class="o">=</span> <span class="n">contador_error</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">contador_error</span> <span class="o">=</span> <span class="n">contador_error</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archivo_pickle_PON</span><span class="p">(),</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo_pickle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">lista_tuplas</span><span class="p">,</span><span class="n">archivo_pickle</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo el Parseo de PON&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Datos puertos PON Parseados:</span><span class="si">{}</span><span class="s2">. Lineas Descartadas </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contador_carga</span><span class="p">,</span><span class="n">contador_error</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

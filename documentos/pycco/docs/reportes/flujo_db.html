@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>flujo_db.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>flujo_db.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Recorre flujos y llama a conector</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">from</span> <span class="nn">consultas</span> <span class="kn">import</span> <span class="n">flujo_diario</span><span class="p">,</span> <span class="n">flujo_mensual</span><span class="p">,</span> <span class="n">flujo_semanal</span><span class="p">,</span> <span class="n">flujo_delete_respaldos_semanales</span><span class="p">,</span> <span class="n">flujo_delete_respaldos_mensuales</span>
+
+<span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Este script se encarga de pasar los flujos definidos en consultas a <em>conector</em>, para truncar,
+cargar o seleccionar los datos pertinentes a los reportes.</p>
+<p>De esta forma podemos dividir de forma comoda todas las acciones en la BD que se requieren para los reportes
+semanales, mensuales y por tecnologias de ONT, PON.</p>
+<p>Desde este modulo tambien se pasan los flujos encargados de borrar respaldos viejos.</p>
+<p>Para cambiar el orden en que se hacen las consultas, debe modificarse las variables importadas desde consultas.</p>
+<p>Contiene la funcion <strong>flujos</strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Recorre lista de flujos, las pasa a conector y logea el inicio/final de las tareas</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">flujos</span><span class="p">(</span><span class="n">periodo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>param periodo:</strong> Periodo del flujo que se desea recorrer. <em>dia</em> hace seleccion de picos/promedios picos diarios.
+<em>semana</em> ejecuta todos los flujos correspondiente al reporte semanal.
+<em>mes</em> ejecuta todos los flujos correspondiente al reporte mensual.<br />
+<strong>type:</strong> str</p>
+<p><strong>returns:</strong> esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Iteracion y ejecucion de flujo diario</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;dia&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza el flujo diario de la BD&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong><em>carga de datos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">consulta</span> <span class="ow">in</span> <span class="n">flujo_diario</span><span class="p">:</span>
+            <span class="n">conector</span><span class="p">(</span><span class="n">consulta</span><span class="o">.</span><span class="n">query</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">tipo</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">mensaje</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo el flujo diario de la BD&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong><em>Iteracion y ejecucion de flujo semanal</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;semana&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza el flujo semanal de la BD&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong><em>carga de datos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">lista</span> <span class="ow">in</span> <span class="n">flujo_semanal</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">consulta</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+                <span class="n">conector</span><span class="p">(</span><span class="n">consulta</span><span class="o">.</span><span class="n">query</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">tipo</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">mensaje</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong><em>limpeiza de respaldos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">consulta</span> <span class="ow">in</span> <span class="n">flujo_delete_respaldos_semanales</span><span class="p">:</span>
+            <span class="n">conector</span><span class="p">(</span><span class="n">consulta</span><span class="o">.</span><span class="n">query</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">tipo</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">mensaje</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo el flujo semanal de la BD&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong><em>Iteracion y ejecucion de flujo mensual</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">elif</span> <span class="n">periodo</span> <span class="o">==</span> <span class="s2">&quot;mes&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza el flujo mensual de la BD&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong><em>carga de datos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">lista</span> <span class="ow">in</span> <span class="n">flujo_mensual</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">consulta</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+                <span class="n">conector</span><span class="p">(</span><span class="n">consulta</span><span class="o">.</span><span class="n">query</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">tipo</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">mensaje</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong><em>limpieza de respaldos</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">for</span> <span class="n">consulta</span> <span class="ow">in</span> <span class="n">flujo_delete_respaldos_mensuales</span><span class="p">:</span>
+            <span class="n">conector</span><span class="p">(</span><span class="n">consulta</span><span class="o">.</span><span class="n">query</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">tipo</span><span class="p">,</span><span class="n">consulta</span><span class="o">.</span><span class="n">mensaje</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finalizo el flujo mensual de la BD&quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

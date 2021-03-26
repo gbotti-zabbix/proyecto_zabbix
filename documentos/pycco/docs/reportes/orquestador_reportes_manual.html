@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>orquestador_reportes_manual.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>orquestador_reportes_manual.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Parseo, pusheo, flujos en la BD y generacion de reportes PON/ONT de forma manual</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">pusheo</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">archivo_tlk</span><span class="p">,</span> <span class="n">archivo_tlk_dst</span><span class="p">,</span> <span class="n">archivo_tlk_viejo</span><span class="p">,</span> <span class="n">archivo_rbs_DCS</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_old</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pusheo</span> <span class="kn">import</span> <span class="n">f_cargar_inv_en_BD</span><span class="p">,</span><span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_PON</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">,</span> <span class="n">f_procesar_resumne_tlk_BD</span>
+<span class="kn">from</span> <span class="nn">parseo</span> <span class="kn">import</span> <span class="n">parseo_ont</span><span class="p">,</span> <span class="n">parseo_pon</span><span class="p">,</span> <span class="n">f_parsear_inventario</span><span class="p">,</span> <span class="n">f_parseo_inventario_RBS</span>
+<span class="kn">from</span> <span class="nn">flujo_db</span> <span class="kn">import</span> <span class="n">flujos</span>
+<span class="kn">from</span> <span class="nn">reporte</span> <span class="kn">import</span> <span class="n">reportes_xlsx</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Parte de la informacion ingresada en los inputs de las funciones para encontar 
+archivos crudos de fechas especificas, y desde estos gestionar su ingreso a la BD
+y/o generacion de reportes.</p>
+<p>Las funciones llamadas detectan crudos a parsear, los pushean a la BD y generan los flujos
+de consultas necesarioas para crear datos utiles para los reportes. Por ultimo crean los
+archivos finales de reportes consultando la BD.</p>
+<p>Se utilizan funciones que controlan dias y fechas para decidir que procedimientos ejecutar.</p>
+<p>El <em>orquestador_manual</em> solo tiene la funcion de coordinar los distintos eslabones de los reportes
+solo cuando hubo fallo con el <em>orquestador_automatico</em> o se pretende cargar crudos viejos a la BD.
+Las funcionalidades finas deben editarse en las funciones importadas y llamadas desde
+las funciones orquestador.</p>
+<p>Contiene las funciones:<br />
+<strong>checkFileExistance</strong> - Chequea que el archivo crudo a parsear exista.<br />
+<strong>checklunes</strong> - Chequea que sea lunes.<br />
+<strong>checkdia</strong> - Chequea que sea primero de mes.<br />
+<strong>crudo_rename</strong> - Renombra archivos .pickle a fechas correctas.<br />
+<strong>reporte_rename</strong> - Renombra archivos .xlsx a fechas correctas. / <strong>NO IMPLEMENTADO-VACIO</strong><br />
+<strong>orquestador_tlk</strong> -  Orquesta la llamada a las funciones encargadas<br />
+   de todo el proceso de parseo de curdos y pusheos a la BD para los crudos TLK.<br />
+<strong>orquestador_zbx</strong> - Orquesta la llamada a las funciones encargadas
+   de todo el proceso de generacion de reportes de PON y ONT. Parseo de curdos, pusheos, etc.<br />
+<strong>menu</strong> - Llama a funciones especificas a partir del input del usuario.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Chequea la existencia de un archivo</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checkFileExistance</span><span class="p">(</span><span class="n">filePath</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Recibe un directorio como string. Si encuentra el archivo devuelve
+True, de lo contrario devuelve False.</p>
+<p><strong>param filePath:</strong> Directorio en formato str a chequear.<br />
+<strong>type filePath:</strong> str</p>
+<p><strong>returns:</strong> True o Flase dependiendo si encontro el archivo o no.<br />
+<strong>rtpye:</strong> bool</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se encontro </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filePath</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Chequea si es Lunes a partir de int</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checklunes</span><span class="p">(</span><span class="n">tarea_semanal</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Por la necesidad de apadatar el orquestador autoamtico al manual
+esta funcion hace de puente en el chequeo del dia Lunes. Tecnicamente se
+obliga a la aplicacion funion a pasar un 1 si recibe un 1.</p>
+<p><strong>param tarea_semanal:</strong> Confirma que sea lunes.<br />
+<strong>type tarea_semanal:</strong> int</p>
+<p><strong>returns:</strong> 1 o 0 dependiendo si se le pasa un 1.<br />
+<strong>rtpye:</strong> int</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">tarea_semanal</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong><em>Chequea si es primero de mes a partir de int</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checkdia</span><span class="p">(</span><span class="n">tarea_mensual</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Por la necesidad de apadatar el orquestador autoamtico al manual
+esta funcion hace de puente en el chequeo del primer dia del mes. 
+Tecnicamente se obliga a la aplicacion funion a pasar un 1 si recibe un 1.</p>
+<p><strong>param tarea_semanal:</strong> Confirma que sea lunes.<br />
+<strong>type tarea_semanal:</strong> int</p>
+<p><strong>returns:</strong> 1 o 0 dependiendo si se le pasa un 1.
+<strong>rtpye:</strong> int</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">tarea_mensual</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong><em>Renombra crudos .pickle</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">crudo_rename</span><span class="p">(</span><span class="n">fecha</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>A partir de una fecha renombra los crudos generados por el orquestador manual.</p>
+<p>Debido a que reutiliza codigo del orquestador automatico, al quererse cargar crudos
+de fechas pasadas, genera pickles con la fecha al momento de llamar el <em>orquestador_manual</em>.
+Por ejemplo, esto genera que un crudo del 13/02/2021 genere un archivo .pickle con la fecha
+26/02/21 (hoy) en el nombre. No solo no es correcto el nombre, sino que superpone los archivos
+si se cargan varias fechas el mismo dia.</p>
+<p><strong>param fecha:</strong> Fecha con la que renombrar archivos .pickle.<br />
+<strong>type fecha:</strong> str.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;/var/lib/reportes-zabbix/crudos/Merged-Trends-</span><span class="si">{}</span><span class="s2">.pickle&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()),</span><span class="s2">&quot;/var/lib/reportes-zabbix/crudos/Merged-Trends-</span><span class="si">{}</span><span class="s2">.pickle&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fecha</span><span class="p">))</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;/var/lib/reportes-zabbix/crudos/Merged-Trends-</span><span class="si">{}</span><span class="s2">_ONT.pickle&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()),</span><span class="s2">&quot;/var/lib/reportes-zabbix/crudos/Merged-Trends-</span><span class="si">{}</span><span class="s2">.pickle_ONT&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fecha</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p><strong><em>NO SE HA IMPLEMENTADO ESTA FUNCION Y ESTA VACIA</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">reporte_rename</span><span class="p">(</span><span class="n">fecha</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p><strong><em>Gestiona/llama todas las funciones para pushear crudos TLK a la BD</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">orquestador_tlk</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Se chequea la existencia de archivos crudos de TLK con fecha de hoy
+al momento de llamar la funcion . De encontrar el archivo:</p>
+<p>Logea que encontro el archivo.</p>
+<p>Se llama al funcion <em>f_parsear_inventario</em> pasando los nombres de archivos a generar.</p>
+<p>Luego se carga el parseo diario a la BD con la funcion <em>f_cargar_inv_en_BD</em>.</p>
+<p>Por ultimo ejecuta las consultas en la BD que generan la informacion util para los
+reportes y se logea la finalizacion del proceso. De haber una expecion estas tambien
+son capturadas y logeadas.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p><strong>Existe archivo TLK</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_tlk</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p><strong>Llamo a parser inventario tlk</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario TLK encontrado: </span><span class="si">{</span><span class="n">archivo_tlk</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
+            <span class="n">f_parsear_inventario</span> <span class="p">(</span><span class="n">archivo_tlk</span><span class="p">,</span><span class="n">archivo_tlk_dst</span><span class="p">,</span><span class="n">archivo_tlk_viejo</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p><strong>Cargo inventario tlk parseado a la BD</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">f_cargar_inv_en_BD</span><span class="p">(</span><span class="n">archivo_tlk_dst</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p><strong>Proceso BD inventario tlk</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">f_procesar_resumne_tlk_BD</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p><strong>if fin existe archivo TLK</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p><strong>existe archivo RBS DSC</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p><strong>llamo a parser inventario RBS</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario RBS encontrado: </span><span class="si">{</span><span class="n">archivo_rbs_DCS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
+            <span class="n">f_parseo_inventario_RBS</span> <span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">,</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span><span class="n">archivo_rbs_DCS_old</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p><strong>Cargo inventario RBS parseado a la BD</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">(</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p><strong>Proceso BD inventario tl</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p><strong>if fin existe archivo TLK</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p><strong><em>Gestiona/llama todas las funciones para pushear crudos Zabbix a la BD</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">orquestador_zbx</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>Se chequea la existencia de archivos crudos de Zabbix (Merged-Tends) con 
+la fecha pasada ante el input fecha. De encontrar el archivo:</p>
+<p>Se llaman a las funciones de parseo tanto para ONT como PON con las direcciones
+de crudozabbix generadas en la variable crudozabbix. Una ves que finalizan se borra
+el archivo crudo (NDJSON), y se logea esto ultimo.</p>
+<p>Se pushean los crudos diarios de PON y ONT a la BD.</p>
+<p>Se llaman a los flujos de la BD que debene realizarse todos los dias.</p>
+<p>Se renombra los archivos .pickle generados por el parseo</p>
+<p>Si se paso un 1 en <em>tarea_semanal</em>, se ejecutan flujos de BD correspondientes
+a la semana y se crean los reportes .xlsx de ONT y PON.</p>
+<p>Si se paso un 1 en <em>tarea_mensual</em>, se ejecutan flujos de BD correspondientes
+al mes y se crean los reportes .xlsx de ONT y PON.</p>
+<p>Por ultimo se captura cualquier exepcion en el proceso y se logea.</p>
+<p><strong>param fecha:</strong> Fecha del archivo crudo a pushear en fomrato YYYY-MM-DD.<br />
+<strong>type fecha:</strong> input(str)</p>
+<p><strong>param tarea_semanal:</strong> Selecciona si se desea generar tareas y reportes semanales.<br />
+<strong>type tarea_semanal:</strong> input(int)</p>
+<p><strong>param tarea_mensual:</strong> Selecciona si se desea generar tareas y reportes mensuales.<br />
+<strong>type tarea_mensual:</strong> input(int)</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">fecha</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese la fecha a puseshar</span><span class="se">\n</span><span class="s2"> Formato: YYYY-MM-DD</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">crudozabbix</span> <span class="o">=</span> <span class="s2">&quot;/var/lib/reportes-zabbix/Merged-Trends-</span><span class="si">{}</span><span class="s2">.ndjson&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fecha</span><span class="p">)</span>
+    <span class="n">tarea_semanal</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Precione 1 para generar reporte semanal</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">tarea_mensual</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Precione 1 para generar reporte mensual</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">):</span>
+            <span class="n">parseo_ont</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">)</span>
+            <span class="n">parseo_pon</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se borro archivo crudozabbix&quot;</span><span class="p">)</span>
+            <span class="n">pusheo_crudos_diarios_PON</span><span class="p">()</span>
+            <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">()</span>
+            <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;dia&quot;</span><span class="p">)</span>
+            <span class="n">crudo_rename</span><span class="p">(</span><span class="n">fecha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checklunes</span><span class="p">(</span><span class="n">tarea_semanal</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+            <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+            <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+            <span class="n">reporte_rename</span><span class="p">(</span><span class="n">fecha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checkdia</span><span class="p">(</span><span class="n">tarea_mensual</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+            <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+            <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+            <span class="n">reporte_rename</span><span class="p">(</span><span class="n">fecha</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p><strong><em>Menu del orquestador manual</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">menu</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>Llama a las funciones importantes de orquestadores dependiendo del input
+de menu.</p>
+<p>1 ejcuta carga de crudos de TLK. 2 ejecuta la carga de crudos de zabbix
+y puede generar reportes. 3 Hace ambas funciones.</p>
+<p><strong>param menu:</strong> Opcion para definir que crudo pushear y/o generar reportes.<br />
+<strong>tpye menu:</strong> input(int)</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">menu</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;1 para carga TLK </span><span class="se">\n</span><span class="s2"> 2 Para carga zbx </span><span class="se">\n</span><span class="s2"> 3 para ambos </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">menu</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">orquestador_tlk</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">menu</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">orquestador_zbx</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">menu</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">orquestador_tlk</span><span class="p">()</span>
+        <span class="n">orquestador_zbx</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>Llamo a menu quien llamara a las otras funciones dependiendo del input del user.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">menu</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

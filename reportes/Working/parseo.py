@@ -51,7 +51,7 @@ def FileCheck(fn):
     **param fn:** Directorio a chequear.  
     **type fn:** str
 
-    **returns:** Returna 0 o 1 dependiendo si lo encontro o no respectivamente.
+    **returns:** Returna 0 o 1 dependiendo si lo encontro o no respectivamente.  
     **rtype:** int
     """
     try:

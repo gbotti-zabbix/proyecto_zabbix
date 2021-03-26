@@ -143,11 +143,11 @@ class DefiniciónEncabezados:
     Solo cuenta con un *constructor*.
     """
     def __init__(self, nombreHoja, encabezados):
-        """**param nombreHoja:** Nombre de la hoja.
-        **type query:** str
+        """**param nombreHoja:** Nombre de la hoja.  
+        **type nombreHoja:** str
 
         **param encabezados:** Lista de encabezados a insertar en conjunto con *nombreHoja*.  
-        **type tipo:** list(str)
+        **type encabezados:** list(str)
 
         **returns:** esta clase no tiene retornos.
         """

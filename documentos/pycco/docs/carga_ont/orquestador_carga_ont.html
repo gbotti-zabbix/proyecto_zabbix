@@ -119,9 +119,13 @@ ultima se carga en la variable <em>IP</em>. Se levanta una exepcion si <em>inter
 que o faltan datos en zabbix, o algo fallo en la consulta a la API.</p>
 </li>
 <li>
-<p><em>oid</em> llama a <em>get_oid()</em> pasando vendor y puerto para obtener un dic con las OID necesarias para monitorear la ONT.<br />
-<em>Etiqueta</em> simplemente es un valor ya presente en la consulta del registro de gestion con <em>get_rbs()</em>.<br />
-<em>Nombre</em> contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama <em>get_name()</em> con
+<p><em>oid</em> llama a <em>get_oid()</em> pasando vendor y puerto para obtener un dic con las OID necesarias para monitorear la ONT.  </p>
+</li>
+<li>
+<p><em>Etiqueta</em> simplemente es un valor ya presente en la consulta del registro de gestion con <em>get_rbs()</em>.  </p>
+</li>
+<li>
+<p><em>Nombre</em> contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama <em>get_name()</em> con
 un tag identificador <strong>&ldquo;Radio Base&rdquo;</strong>, <strong>puerto</strong> y <strong>etiqueta</strong>. zkey llama a get_zabbix_key() con puerto para obtener un dic
 con las Key RX y TX que utilizara cada item de la ONT.  </p>
 </li>

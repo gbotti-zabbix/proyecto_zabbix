@@ -80,7 +80,7 @@ def ont_check(opcion,hostid,parametro,auth):
     **param auth:** Key de Zabbix API.  
     **type auth:** str
 
-    **returns:** 1 si se encontro la ONT en zabbix, 0 si no se encontro.
+    **returns:** 1 si se encontro la ONT en zabbix, 0 si no se encontro.  
     **rtype:** int
     """
 

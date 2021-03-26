@@ -71,8 +71,10 @@ def orquestador_carga_ont(metodo):
         que o faltan datos en zabbix, o algo fallo en la consulta a la API.
         
         * *oid* llama a *get_oid()* pasando vendor y puerto para obtener un dic con las OID necesarias para monitorear la ONT.  
-        *Etiqueta* simplemente es un valor ya presente en la consulta del registro de gestion con *get_rbs()*.  
-        *Nombre* contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama *get_name()* con
+        
+        * *Etiqueta* simplemente es un valor ya presente en la consulta del registro de gestion con *get_rbs()*.  
+        
+        * *Nombre* contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama *get_name()* con
         un tag identificador **"Radio Base"**, **puerto** y **etiqueta**. zkey llama a get_zabbix_key() con puerto para obtener un dic
         con las Key RX y TX que utilizara cada item de la ONT.  
         

@@ -9,7 +9,7 @@ Este script permite logear en el archivo seteado en *file_log* **mensajes**, **h
 y marcar la entrada como **ERROR** o **INFO**.
 
 Todas las funciones requieren que se las llame pasando el string del *mensaje*. Dependiendo
-del flag que buscamos para la entrada en el log, llamamos a *info* o *error*.
+del flag que buscamos para la entrada en el log, llamamos a *info()* o *error()*.
 
 Para cambiar el archivo donde logear, modificar *file_log* en ***direcciones.py***
 

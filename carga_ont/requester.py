@@ -9,7 +9,7 @@ from direcciones_carga_ont import url
 Recibe una *url* de Zabbix API y un *payload*, con estos datos hace un request http utilizando
 el header seteado en encabezado.
 
-Para cambiar la direccion de la API editar la variable *URL* importada desde *direcciones_carga_ont*.
+Para cambiar la direccion de la API editar la variable *URL* importada desde **direcciones_carga_ont**.
 
 Contiene la funcion **requester**.
 """

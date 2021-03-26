@@ -20,11 +20,11 @@ ONTS en el Zabbix y realizar comparaciones de ONT creadas.
 Algunas funciones en este archivo no llaman a la API.
 
 Muchas son dependientes una de otras, para ver mejor como estan conectadas, 
-conviene estudiar *orquestador_carga_ont*.
+conviene estudiar **orquestador_carga_ont**.
 
 Contiene las funciones:  
     **get_rbs** - Saca un listado de ONTs a comprobar si ya existen en Zabbix.  
-    **ont_check** - Cheque el listado de *get_rbs* contra Zabbix mediante la Zabbix API.  
+    **ont_check** - Cheque el listado de *get_rbs()* contra Zabbix mediante la Zabbix API.  
     **host_get** - Mediante la Zabbix API, obtiene Host ID desde nombre de nodo.  
     **get_inter_id** - Mediante la Zabbix API, obtiene Interface ID de SNMP desde Host ID.  
     **get_app_id** - Mediante la Zabbix API, obtiene Application ID de App ONT desde Host ID.  
@@ -36,7 +36,7 @@ Contiene las funciones:
     **create_ont** - Mediante la Zabbix API, crea uno de los Item de la ONT (RX o TX).  
     Se puede hacer a mano, pero esta pensada para utilizar la info obtenida por los get listados anteriormente.  
     **create_graph** - Mediante la Zabbix API, crea la grafica de hasta dos Item. Pensada para usarse con los Item ID
-    generados por *create_ont*, pero tambien pueden pasarse los parametros a mano.
+    generados por *create_ont()*, pero tambien pueden pasarse los parametros a mano.
 """
 
 
@@ -159,7 +159,7 @@ def get_inter_id(hostid,auth):
 
     **returns:** Si se encuentra una interface type 2 con el host id
     pasado, devuelve el Interface ID e IP en formato dic. Si no encuentra el nodo
-    solo logea.
+    solo logea.  
     **rtype:** dic
     """ 
 
@@ -227,7 +227,7 @@ def get_oid(tipo,puerto):
 
     Recibe informacion de puerto en formato **SLOT/PUERTO/ONT** y nombre del **vendor**
     del nodo (por ahora solo zte). Luego de parsear los datos y realizar un pequeño
-    filtro, une las variables *base_* con una busqueda en la funcion *dic_oid_zte*, la cual
+    filtro, une las variables *base_* con una busqueda en la funcion *dic_oid_zte()*, la cual
     hace corresponder oids con puertos.
 
     Retorna un dicccionario con todas las oids necesarias para que Zabbix monitoree de forma
@@ -271,13 +271,13 @@ def dic_oid_zte(clave):
 
     Recive clave de diccionario conteniendo **SLOT/PUERTO** (sin el **/**), si esta
     clave se encuentra en dic, se devuelve el valor correspondiente a dicha clave.
-    Este valor es parte de la OID que *get_oid* intenta generar. 
+    Este valor es parte de la OID que *get_oid()* intenta generar. 
 
     **param clave:** Puerto PON en formato **SLOT/PUERTO**.  
     **type clave:** str
 
     **returns:** Si **SLOT/PUERTO** coincide en el dic, devuelve gragmento de OID
-    necesario para *get_oid*.  
+    necesario para *get_oid()*.  
     **rtype:** str
     """
 
@@ -498,7 +498,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
     en un nodo especifico, utililizando la Zabbix API con item.create.
 
     Estos parametros deberian generarse con las funciones *get_* que se encuentran mas arriba en el script
-    (*host_get, get_inter_id, get_app_id, get_app_id, get_oid, get_name, get_zabbix_key*).
+    (*host_get(), get_inter_id(), get_app_id(), get_app_id(), get_oid(), get_name(), get_zabbix_key()*).
     De todas formas esta funcion se puede llamar pasando los parametros completamente a mano.
 
     Retorna Item ID si la creacion fue exitosa.
@@ -581,7 +581,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
 def create_graph(nombre,itemid_1,itemid_2,llave):
     """***Crea graficas para ciertos Item ID***
 
-    Genera las graficas de los item creados por *create_ont*, de todas formas se pueden
+    Genera las graficas de los item creados por *create_ont()*, de todas formas se pueden
     pasar los parametros de forma manual si se desea crear una grafica nueva.
     Utiliza la Zabbix API con *graph.create*.
 

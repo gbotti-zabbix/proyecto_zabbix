@@ -54,10 +54,10 @@
 ONTS en el Zabbix y realizar comparaciones de ONT creadas. 
 Algunas funciones en este archivo no llaman a la API.</p>
 <p>Muchas son dependientes una de otras, para ver mejor como estan conectadas, 
-conviene estudiar <em>orquestador_carga_ont</em>.</p>
+conviene estudiar <strong>orquestador_carga_ont</strong>.</p>
 <p>Contiene las funciones:<br />
 <strong>get_rbs</strong> - Saca un listado de ONTs a comprobar si ya existen en Zabbix.<br />
-<strong>ont_check</strong> - Cheque el listado de <em>get_rbs</em> contra Zabbix mediante la Zabbix API.<br />
+<strong>ont_check</strong> - Cheque el listado de <em>get_rbs()</em> contra Zabbix mediante la Zabbix API.<br />
 <strong>host_get</strong> - Mediante la Zabbix API, obtiene Host ID desde nombre de nodo.<br />
 <strong>get_inter_id</strong> - Mediante la Zabbix API, obtiene Interface ID de SNMP desde Host ID.<br />
 <strong>get_app_id</strong> - Mediante la Zabbix API, obtiene Application ID de App ONT desde Host ID.<br />
@@ -69,7 +69,7 @@ conviene estudiar <em>orquestador_carga_ont</em>.</p>
 <strong>create_ont</strong> - Mediante la Zabbix API, crea uno de los Item de la ONT (RX o TX).<br />
    Se puede hacer a mano, pero esta pensada para utilizar la info obtenida por los get listados anteriormente.<br />
 <strong>create_graph</strong> - Mediante la Zabbix API, crea la grafica de hasta dos Item. Pensada para usarse con los Item ID
-   generados por <em>create_ont</em>, pero tambien pueden pasarse los parametros a mano.</p>
+   generados por <em>create_ont()</em>, pero tambien pueden pasarse los parametros a mano.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -241,7 +241,7 @@ Si no tiene interafaces SNMP o el nodo no existe en zabbix se logea un error.</p
 <strong>type auth:</strong> str</p>
 <p><strong>returns:</strong> Si se encuentra una interface type 2 con el host id
 pasado, devuelve el Interface ID e IP en formato dic. Si no encuentra el nodo
-solo logea.
+solo logea.<br />
 <strong>rtype:</strong> dic</p>
     </div>
     <div class='code'>
@@ -338,7 +338,7 @@ solo logea.<br />
       </div>
       <p>Recibe informacion de puerto en formato <strong>SLOT/PUERTO/ONT</strong> y nombre del <strong>vendor</strong>
 del nodo (por ahora solo zte). Luego de parsear los datos y realizar un pequeño
-filtro, une las variables <em>base_</em> con una busqueda en la funcion <em>dic_oid_zte</em>, la cual
+filtro, une las variables <em>base_</em> con una busqueda en la funcion <em>dic_oid_zte()</em>, la cual
 hace corresponder oids con puertos.</p>
 <p>Retorna un dicccionario con todas las oids necesarias para que Zabbix monitoree de forma
 efectiva una ONT.</p>
@@ -394,11 +394,11 @@ De ocurrir un error solo logea.<br />
       </div>
       <p>Recive clave de diccionario conteniendo <strong>SLOT/PUERTO</strong> (sin el <strong>/</strong>), si esta
 clave se encuentra en dic, se devuelve el valor correspondiente a dicha clave.
-Este valor es parte de la OID que <em>get_oid</em> intenta generar. </p>
+Este valor es parte de la OID que <em>get_oid()</em> intenta generar. </p>
 <p><strong>param clave:</strong> Puerto PON en formato <strong>SLOT/PUERTO</strong>.<br />
 <strong>type clave:</strong> str</p>
 <p><strong>returns:</strong> Si <strong>SLOT/PUERTO</strong> coincide en el dic, devuelve gragmento de OID
-necesario para <em>get_oid</em>.<br />
+necesario para <em>get_oid()</em>.<br />
 <strong>rtype:</strong> str</p>
     </div>
     <div class='code'>
@@ -670,7 +670,7 @@ con las str hardcodeadas en las variables RX y TX.</p>
       <p>A partir de los parametros pasados en la llamda de la funcion, se crea un Item correspondiente a una ONT
 en un nodo especifico, utililizando la Zabbix API con item.create.</p>
 <p>Estos parametros deberian generarse con las funciones <em>get_</em> que se encuentran mas arriba en el script
-(<em>host_get, get_inter_id, get_app_id, get_app_id, get_oid, get_name, get_zabbix_key</em>).
+(<em>host_get(), get_inter_id(), get_app_id(), get_app_id(), get_oid(), get_name(), get_zabbix_key()</em>).
 De todas formas esta funcion se puede llamar pasando los parametros completamente a mano.</p>
 <p>Retorna Item ID si la creacion fue exitosa.</p>
 <p>La item Key (<em>llave</em>) asignada al Item, debe ser unica en el nodo.</p>
@@ -760,7 +760,7 @@ no se producen retornos.<br />
       <div class='octowrap'>
         <a class='octothorpe' href='#section-26'>#</a>
       </div>
-      <p>Genera las graficas de los item creados por <em>create_ont</em>, de todas formas se pueden
+      <p>Genera las graficas de los item creados por <em>create_ont()</em>, de todas formas se pueden
 pasar los parametros de forma manual si se desea crear una grafica nueva.
 Utiliza la Zabbix API con <em>graph.create</em>.</p>
 <p>Solo puede crear graficas de hasta 2 item.</p>

@@ -14,8 +14,8 @@ Importar pickle es esencial para poder abrir los archivos parseados.
 
 Si se agregaran campos o se necesitara cambiar el funcionamiento de las consultas
 para el pusheos de crudos de zabbix, se debe editar la variables y funciones importadas
-desde *consultas*. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
-gestion, debemos modificar la funcion *f_procesar_resumne_tlk_BD*.
+desde **consultas**. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
+gestion, debemos modificar la funcion *f_procesar_resumne_tlk_BD()*.
 
 Para cambiar nombres de archivos parseados deberian editarse las variables y funciones importadas
 desde *direcciones*.
@@ -71,11 +71,11 @@ def f_cargar_inv_RBS_en_BD (archivo_csv_RBS):
 def f_procesar_resumne_tlk_BD():
     """***Borrado y carga en BD de tablas pertinentes a inventarios TLK/Gestion***
 
-    Consultas sql que borran y cargan los archivos parseados por *f_cargar_inv_en_BD* y
-    *f_cargar_inv_RBS_en_BD*.
+    Consultas sql que borran y cargan los archivos parseados por *f_cargar_inv_en_BD()* y
+    *f_cargar_inv_RBS_en_BD()*.
 
     Al llamar la funcion se ejecutan las consultas en orden, de forma parecida a 
-    lo definido en *flujo_db*, pero estas consultas solo afectan tablas relacionadas
+    lo definido en **flujo_db**, pero estas consultas solo afectan tablas relacionadas
     con los inventarios de TLK y gestion (RBS en ONT).
 
     Cada consulta va a compañada de un mensaje necesario a pasar a conector. Ademas
@@ -153,13 +153,13 @@ def f_procesar_resumne_tlk_BD():
 def pusheo_crudos_diarios_PON():
     """***Insert de archivo pickle a la BD (PON/Uplink).***
 
-    Comienza logeando el inicio de la tarea, llamando a *conector* y pasando sql que truncan tablas
+    Comienza logeando el inicio de la tarea, llamando a *conector()* y pasando sql que truncan tablas
     donde se insertaran los datos del dia.
 
-    Abre el archivo pickle marcado en *direcciones*, este archivo se "despiklea" en una lista de tuplas.
+    Abre el archivo pickle marcado en **direcciones**, este archivo se "despiklea" en una lista de tuplas.
 
     Para no sobrecargar la BD con inserts, se iteran 100 mil valores en la lista, se cargan a una nueva lista,
-    y esta utlima es la insertada en la BD en la tabla *crudos_diarios*. Para esto se llama *conector*
+    y esta utlima es la insertada en la BD en la tabla *crudos_diarios*. Para esto se llama *conector()*
     con el comando "many". La lista se limpia una ves insertado y se vuelven a cargar 100 mil valores mas.
     
     Al final se hace un ultimo insert para los valores que no llegan a iterar otro ciclo de 100 mil valores.
@@ -196,12 +196,12 @@ def pusheo_crudos_diarios_PON():
 def pusheo_crudos_diarios_ONT():
     """***Insert de archivo pickle a la BD (PON).***
 
-    Comienza logeando el inicio de la tarea, llamando a *conector* y pasando sql que truncan tablas
+    Comienza logeando el inicio de la tarea, llamando a *conector()* y pasando sql que truncan tablas
     donde se insertaran los datos del dia.
 
-    Abre el archivo pickle marcado en *direcciones*, este archivo se "despiklea" en una lista de tuplas.
+    Abre el archivo pickle marcado en **direcciones**, este archivo se "despiklea" en una lista de tuplas.
 
-    Se llama a *conector* pasando la lista junto con el comando "many" para insertar los datos en
+    Se llama a *conector()* pasando la lista junto con el comando "many" para insertar los datos en
     *crudos_diarios_ONT*. 
 
     Por ultimo se logea la finalizacion de la tarea.

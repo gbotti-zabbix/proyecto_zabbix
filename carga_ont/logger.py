@@ -11,7 +11,7 @@ y marcar la entrada como **ERROR** o **INFO**.
 Todas las funciones requieren que se las llame pasando el string del *mensaje*. Dependiendo
 del flag que buscamos para la entrada en el log, llamamos a *info()* o *error()*.
 
-Para cambiar el archivo donde logear, modificar *file_log* en ***direcciones.py***
+Para cambiar el archivo donde logear, modificar *file_log* en **direcciones.py**
 
 Contiene las funciones:
 

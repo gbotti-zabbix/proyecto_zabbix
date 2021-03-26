@@ -44,7 +44,7 @@
 y los guarda en archivos pickle para zabbix y csv para Telelink.</p>
 <p>Importar <strong>pickle</strong> y <strong>json</strong> es esencial para parsear Zabbix.</p>
 <p>Si se queire cambiar el nombre de los crudos a buscar o el nombre con el que se guardaran los crudos
-se debe editar las variables/funciones importadas desde direcciones.</p>
+se debe editar las variables/funciones importadas desde <strong>direcciones</strong>.</p>
 <p>Tambien se importa <em>modelos_nodos</em> para procesar los vendors de distinta forma, de necesitar diferenciar
 nuevos modelos, editar esta variable en direcciones.</p>
 <p>Contiene las funciones:
@@ -830,12 +830,12 @@ Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.<
 a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
 al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.</p>
 <p>Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
-para ONT traido desde <em>direcciones</em>.</p>
+para ONT traido desde <strong>direcciones</strong>.</p>
 <p>Ademas se logean errores y el comienzo y finalizacion de la funcion.</p>
 <p>Variables a cargar en las tuplas:
 <em>Tipo, Nodo, Nombre</em> y <em>Direccion</em> son claves dentro de la lista de facil acceso.</p>
-<p><em>Puerto</em> debe llamar a <em>regex_puerto</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
-<p><em>Etiqueta</em> debe llamar a <em>regex_etiqueta</em> usando la key name para generar dicha variable.</p>
+<p><em>Puerto</em> debe llamar a <em>regex_puerto()</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
+<p><em>Etiqueta</em> debe llamar a <em>regex_etiqueta()</em> usando la key name para generar dicha variable.</p>
 <p><em>Tiempo</em> es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
 unidades de tiempo.</p>
 <p><em>Promedio</em> y <em>pico</em> son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.</p>
@@ -912,12 +912,12 @@ Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.<
 a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
 al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.</p>
 <p>Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
-PON traido desde <em>direcciones</em>.</p>
+PON traido desde <strong>direcciones</strong>.</p>
 <p>Ademas se logean errores y el comienzo y finalizacion de la funcion.</p>
 <p>Variables a cargar en las tuplas:
 <em>Tipo, Nodo</em> y <em>Nombre</em> son claves dentro de la lista de facil acceso.</p>
-<p><em>Puerto</em> debe llamar a <em>regex_puerto</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
-<p><em>Direccion</em> debe llamar a <em>sacar_direccion</em> usando la variable <em>Nombre</em> para generar dicha variable.</p>
+<p><em>Puerto</em> debe llamar a <em>regex_puerto()</em> usando la variable <em>Nombre</em> y la string &ldquo;ONT&rdquo; para generar dicha variable.</p>
+<p><em>Direccion</em> debe llamar a <em>sacar_direccion()</em> usando la variable <em>Nombre</em> para generar dicha variable.</p>
 <p><em>Tiempo</em> es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
 unidades de tiempo.</p>
 <p><em>Promedio</em> y <em>pico</em> son Bits convertidos a Mbs para tener unidades de mejor lectura en los reportes.</p>

@@ -105,9 +105,9 @@ def orquestador_reportes():
     * **Si encuentra archivo TLK (*archivo_tlk*):**  
         Logea que encontro el archivo.
 
-        Se llama al funcion *f_parsear_inventario* pasando los nombres de archivos a generar.
+        Se llama al funcion *f_parsear_inventario()* pasando los nombres de archivos a generar.
 
-        Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_en_BD*.
+        Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_en_BD()*.
 
         Por ultimo ejecuta las consultas en la BD que generan la informacion util para los
         reportes y se logea la finalizacion del proceso
@@ -115,9 +115,9 @@ def orquestador_reportes():
     * **Si encuentra el archivo de Gestion(*archivo_rbs_DCS*):**  
         Logea que encontro el archivo.
 
-        Se llama al funcion *f_parseo_inventario_RBS* pasando los nombres de archivos a generar.
+        Se llama al funcion *f_parseo_inventario_RBS()()* pasando los nombres de archivos a generar.
 
-        Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_RBS_en_BD*.
+        Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_RBS_en_BD()*.
 
         Se logea la finalizacion del proceso.
 

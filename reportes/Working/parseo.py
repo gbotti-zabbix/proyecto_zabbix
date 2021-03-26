@@ -21,7 +21,7 @@ y los guarda en archivos pickle para zabbix y csv para Telelink.
 Importar **pickle** y **json** es esencial para parsear Zabbix.
 
 Si se queire cambiar el nombre de los crudos a buscar o el nombre con el que se guardaran los crudos
-se debe editar las variables/funciones importadas desde direcciones.
+se debe editar las variables/funciones importadas desde **direcciones**.
 
 Tambien se importa *modelos_nodos* para procesar los vendors de distinta forma, de necesitar diferenciar
 nuevos modelos, editar esta variable en direcciones.
@@ -392,16 +392,16 @@ def parseo_ont(opcion):
     al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.
 
     Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
-    para ONT traido desde *direcciones*.
+    para ONT traido desde **direcciones**.
 
     Ademas se logean errores y el comienzo y finalizacion de la funcion.
 
     Variables a cargar en las tuplas:
     *Tipo, Nodo, Nombre* y *Direccion* son claves dentro de la lista de facil acceso.
 
-    *Puerto* debe llamar a *regex_puerto* usando la variable *Nombre* y la string "ONT" para generar dicha variable.
+    *Puerto* debe llamar a *regex_puerto()* usando la variable *Nombre* y la string "ONT" para generar dicha variable.
 
-    *Etiqueta* debe llamar a *regex_etiqueta* usando la key name para generar dicha variable.
+    *Etiqueta* debe llamar a *regex_etiqueta()* usando la key name para generar dicha variable.
 
     *Tiempo* es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
     unidades de tiempo.
@@ -471,16 +471,16 @@ def parseo_pon(opcion):
     al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.
 
     Una ves pasado este ultimo filtro, las lista final con todas las tuplas formateadas se escribe en el archivo .pickle 
-    PON traido desde *direcciones*.
+    PON traido desde **direcciones**.
 
     Ademas se logean errores y el comienzo y finalizacion de la funcion.
 
     Variables a cargar en las tuplas:
     *Tipo, Nodo* y *Nombre* son claves dentro de la lista de facil acceso.
 
-    *Puerto* debe llamar a *regex_puerto* usando la variable *Nombre* y la string "ONT" para generar dicha variable.
+    *Puerto* debe llamar a *regex_puerto()* usando la variable *Nombre* y la string "ONT" para generar dicha variable.
 
-    *Direccion* debe llamar a *sacar_direccion* usando la variable *Nombre* para generar dicha variable.
+    *Direccion* debe llamar a *sacar_direccion()* usando la variable *Nombre* para generar dicha variable.
 
     *Tiempo* es una conversion de unix time a un formato humano. Zabbix utiliza EPOCH Unix Time para marcar
     unidades de tiempo.

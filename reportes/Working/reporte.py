@@ -16,14 +16,14 @@ from conector import conector
 
 Se hace un pull desde la BD para generar los reportes semanales y mensuales de PON y ONTs.
 
-Las funciones de crear generan y vinculan hojas y encabezados. Los *apend_data* cargan estos objetos
+Las funciones de crear generan y vinculan hojas y encabezados. Los *apend_data()* cargan estos objetos
 con los datos a escribir por hoja ademas de realizar algunos filtros.
 
-Por ultimo *reportes_xlsx* hace las correspondientes llamadas a las funciones y escribe los datos
+Por ultimo *reportes_xlsx()* hace las correspondientes llamadas a las funciones y escribe los datos
 en los archivos finales de reportes.
 
 Si se desea modificar encabezados o nombre de hojas, deben editarse las variables y funciones
-importadas desde *direcciones*. De la misma manera, si la informacion a extraer de la BD cambiara
+importadas desde **direcciones**. De la misma manera, si la informacion a extraer de la BD cambiara
 se deben editar las variables y funciones importadas desde consultas.
 
 Contiene las funciones:

@@ -11,7 +11,7 @@ Todas las variables de este archivo deberian funcionar con el modulo *conector*.
 mismo utilizado para los reportes PON y ONT. Por esto es enecesario el append inicial del directorio 
 reportes/Working al sys path.
 
-Si se quiere apuntar a otra BD cambiar *host_DB, user_DB, password_DB* y *database_DB* en *direcciones* 
+Si se quiere apuntar a otra BD cambiar *host_DB, user_DB, password_DB* y *database_DB* en **direcciones**
 (o importar variables sesde otro modulo).
 
 Contiene las funciones:  

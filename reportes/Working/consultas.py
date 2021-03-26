@@ -6,7 +6,7 @@ El constructor de estos objetos usa la query, que tipo de query es y el mensaje 
 
 Todas las variables de este archivo deberian funcionar con el modulo *conector*.
 
-Si se quiere apuntar a otra BD cambiar *host_DB*, *user_DB*, *password_DB* y *database_DB* en *direcciones* (o importar variables sesde otro modulo).
+Si se quiere apuntar a otra BD cambiar *host_DB*, *user_DB*, *password_DB* y *database_DB* en **direcciones** (o importar variables sesde otro modulo).
 
 Contiene la clase **consultas**.
 """

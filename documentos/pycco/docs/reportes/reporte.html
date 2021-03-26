@@ -40,12 +40,12 @@
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
       <p>Se hace un pull desde la BD para generar los reportes semanales y mensuales de PON y ONTs.</p>
-<p>Las funciones de crear generan y vinculan hojas y encabezados. Los <em>apend_data</em> cargan estos objetos
+<p>Las funciones de crear generan y vinculan hojas y encabezados. Los <em>apend_data()</em> cargan estos objetos
 con los datos a escribir por hoja ademas de realizar algunos filtros.</p>
-<p>Por ultimo <em>reportes_xlsx</em> hace las correspondientes llamadas a las funciones y escribe los datos
+<p>Por ultimo <em>reportes_xlsx()</em> hace las correspondientes llamadas a las funciones y escribe los datos
 en los archivos finales de reportes.</p>
 <p>Si se desea modificar encabezados o nombre de hojas, deben editarse las variables y funciones
-importadas desde <em>direcciones</em>. De la misma manera, si la informacion a extraer de la BD cambiara
+importadas desde <strong>direcciones</strong>. De la misma manera, si la informacion a extraer de la BD cambiara
 se deben editar las variables y funciones importadas desde consultas.</p>
 <p>Contiene las funciones:
    <strong>crear_hojas</strong> - Crea las hojas para determinado workbook.<br />

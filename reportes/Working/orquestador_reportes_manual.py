@@ -27,7 +27,7 @@ archivos finales de reportes consultando la BD.
 Se utilizan funciones que controlan dias y fechas para decidir que procedimientos ejecutar.
 
 El *orquestador_manual* solo tiene la funcion de coordinar los distintos eslabones de los reportes
-solo cuando hubo fallo con el *orquestador_automatico* o se pretende cargar crudos viejos a la BD.
+solo cuando hubo fallo con el **orquestador_automatico** o se pretende cargar crudos viejos a la BD.
 Las funcionalidades finas deben editarse en las funciones importadas y llamadas desde
 las funciones orquestador.
 
@@ -110,7 +110,7 @@ def crudo_rename(fecha):
     A partir de una fecha renombra los crudos generados por el orquestador manual.
 
     Debido a que reutiliza codigo del orquestador automatico, al quererse cargar crudos
-    de fechas pasadas, genera pickles con la fecha al momento de llamar el *orquestador_manual*.
+    de fechas pasadas, genera pickles con la fecha al momento de llamar el **orquestador_manual**.
     Por ejemplo, esto genera que un crudo del 13/02/2021 genere un archivo .pickle con la fecha
     26/02/21 (hoy) en el nombre. No solo no es correcto el nombre, sino que superpone los archivos
     si se cargan varias fechas el mismo dia.
@@ -137,7 +137,7 @@ def orquestador_tlk():
 
     Se llama al funcion *f_parsear_inventario* pasando los nombres de archivos a generar.
 
-    Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_en_BD*.
+    Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_en_BD()*.
 
     Por ultimo ejecuta las consultas en la BD que generan la informacion util para los
     reportes y se logea la finalizacion del proceso. De haber una expecion estas tambien
@@ -184,7 +184,7 @@ def orquestador_zbx():
     Se chequea la existencia de archivos crudos de Zabbix (Merged-Tends) con 
     la fecha pasada ante el input fecha. De encontrar el archivo:
 
-    Se llaman a las funciones de parseo tanto para ONT como PON con las direcciones
+    Se llaman a las funciones de *parseo()* tanto para ONT como PON con las direcciones
     de crudozabbix generadas en la variable crudozabbix. Una ves que finalizan se borra
     el archivo crudo (NDJSON), y se logea esto ultimo.
 

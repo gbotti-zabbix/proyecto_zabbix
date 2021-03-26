@@ -38,8 +38,8 @@ prosesamiento y generacion de reportes.</p>
 <p>Importar pickle es esencial para poder abrir los archivos parseados.</p>
 <p>Si se agregaran campos o se necesitara cambiar el funcionamiento de las consultas
 para el pusheos de crudos de zabbix, se debe editar la variables y funciones importadas
-desde <em>consultas</em>. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
-gestion, debemos modificar la funcion <em>f_procesar_resumne_tlk_BD</em>.</p>
+desde <strong>consultas</strong>. Si deseamos editar las consultas utilizadas en los pusheos de TLK y 
+gestion, debemos modificar la funcion <em>f_procesar_resumne_tlk_BD()</em>.</p>
 <p>Para cambiar nombres de archivos parseados deberian editarse las variables y funciones importadas
 desde <em>direcciones</em>.</p>
 <p>Contiene las funciones:<br />
@@ -150,10 +150,10 @@ carga el archivo.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-8'>#</a>
       </div>
-      <p>Consultas sql que borran y cargan los archivos parseados por <em>f_cargar_inv_en_BD</em> y
-<em>f_cargar_inv_RBS_en_BD</em>.</p>
+      <p>Consultas sql que borran y cargan los archivos parseados por <em>f_cargar_inv_en_BD()</em> y
+<em>f_cargar_inv_RBS_en_BD()</em>.</p>
 <p>Al llamar la funcion se ejecutan las consultas en orden, de forma parecida a 
-lo definido en <em>flujo_db</em>, pero estas consultas solo afectan tablas relacionadas
+lo definido en <strong>flujo_db</strong>, pero estas consultas solo afectan tablas relacionadas
 con los inventarios de TLK y gestion (RBS en ONT).</p>
 <p>Cada consulta va a compañada de un mensaje necesario a pasar a conector. Ademas
 se logea el inicio y finalizacion de la tarea.</p>
@@ -315,11 +315,11 @@ se logea el inicio y finalizacion de la tarea.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-18'>#</a>
       </div>
-      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector</em> y pasando sql que truncan tablas
+      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector()</em> y pasando sql que truncan tablas
 donde se insertaran los datos del dia.</p>
-<p>Abre el archivo pickle marcado en <em>direcciones</em>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
+<p>Abre el archivo pickle marcado en <strong>direcciones</strong>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
 <p>Para no sobrecargar la BD con inserts, se iteran 100 mil valores en la lista, se cargan a una nueva lista,
-y esta utlima es la insertada en la BD en la tabla <em>crudos_diarios</em>. Para esto se llama <em>conector</em>
+y esta utlima es la insertada en la BD en la tabla <em>crudos_diarios</em>. Para esto se llama <em>conector()</em>
 con el comando &ldquo;many&rdquo;. La lista se limpia una ves insertado y se vuelven a cargar 100 mil valores mas.</p>
 <p>Al final se hace un ultimo insert para los valores que no llegan a iterar otro ciclo de 100 mil valores.</p>
 <p>Tambien se logea la finalizacion de la tarea.</p>
@@ -368,10 +368,10 @@ con el comando &ldquo;many&rdquo;. La lista se limpia una ves insertado y se vue
       <div class='octowrap'>
         <a class='octothorpe' href='#section-20'>#</a>
       </div>
-      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector</em> y pasando sql que truncan tablas
+      <p>Comienza logeando el inicio de la tarea, llamando a <em>conector()</em> y pasando sql que truncan tablas
 donde se insertaran los datos del dia.</p>
-<p>Abre el archivo pickle marcado en <em>direcciones</em>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
-<p>Se llama a <em>conector</em> pasando la lista junto con el comando &ldquo;many&rdquo; para insertar los datos en
+<p>Abre el archivo pickle marcado en <strong>direcciones</strong>, este archivo se &ldquo;despiklea&rdquo; en una lista de tuplas.</p>
+<p>Se llama a <em>conector()</em> pasando la lista junto con el comando &ldquo;many&rdquo; para insertar los datos en
 <em>crudos_diarios_ONT</em>. </p>
 <p>Por ultimo se logea la finalizacion de la tarea.</p>
 <p><strong>returns:</strong> Esta funcion no tiene retornos.</p>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>requester.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>requester.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Request para Zabbix API</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">direcciones_carga_ont</span> <span class="kn">import</span> <span class="n">url</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Recibe una <em>url</em> de Zabbix API y un <em>payload</em>, con estos datos hace un request http utilizando
+el header seteado en encabezado.</p>
+<p>Para cambiar la direccion de la API editar la variable <em>URL</em> importada desde <em>direcciones_carga_ont</em>.</p>
+<p>Contiene la funcion <strong>requester</strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">encabezado</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json-rpc&quot;</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Request HTTP a la API de zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">requester</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Se pasa un <em>payload</em> con el request post en formato JavaScript. Con este se hace un post a la API
+de zabbix seteada en la <em>URL</em>. Para que esta conteste es obligatorio pasar el header seteado
+en la variable <em>encabezado</em>.</p>
+<p>Retorna un dict(JSON) con la respuesta  de la API.</p>
+<p><strong>param payload:</strong> String en JSON (JavaScript).<br />
+<strong>type payload:</strong> str</p>
+<p><strong>returns:</strong> JSON con respuesta JavaScript al request realizado.<br />
+<strong>rtype:</strong> dict(JSON)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">encabezado</span><span class="p">,</span><span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

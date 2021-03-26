@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>llamadas.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>llamadas.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span> 
+
+<span class="kn">from</span> <span class="nn">api</span> <span class="kn">import</span> <span class="n">usuario_sv</span><span class="p">,</span> <span class="n">contraseña_sv</span>
+<span class="kn">from</span> <span class="nn">requester</span> <span class="kn">import</span> <span class="n">requester</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>IMPORTO EL CONECTOR Y LOGGER DE REFACTOR</p>
+<h3>Llamadas a la Zabbix API y otras funciones utiles la creacion de ONT en Zabbix.</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;./reportes/Working&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">conector</span> <span class="kn">import</span> <span class="n">conector</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Funciones que llaman a la Zabbix API para obetener valores pertinentes a la creacion de 
+ONTS en el Zabbix y realizar comparaciones de ONT creadas. 
+Algunas funciones en este archivo no llaman a la API.</p>
+<p>Muchas son dependientes una de otras, para ver mejor como estan conectadas, 
+conviene estudiar <em>orquestador_carga_ont</em>.</p>
+<p>Contiene las funciones:<br />
+<strong>get_rbs</strong> - Saca un listado de ONTs a comprobar si ya existen en Zabbix.<br />
+<strong>ont_check</strong> - Cheque el listado de <em>get_rbs</em> contra Zabbix mediante la Zabbix API.<br />
+<strong>host_get</strong> - Mediante la Zabbix API, obtiene Host ID desde nombre de nodo.<br />
+<strong>get_inter_id</strong> - Mediante la Zabbix API, obtiene Interface ID de SNMP desde Host ID.<br />
+<strong>get_app_id</strong> - Mediante la Zabbix API, obtiene Application ID de App ONT desde Host ID.<br />
+<strong>get_oid</strong> - Con puerto y vendor, genera OIDs a utilizar en la creacion de los Item de ONT.<br />
+<strong>dic_oid_zte</strong> - Devuelve valores pertinentes de la OID a partir de claves de diccionarios.<br />
+<strong>get_name_auto</strong> - Genera nombre del Item a crear en Zabbix, utilziando SNMP Walk en Zabbix-Server.<br />
+<strong>get_name</strong> - Genera nombre del Item a crear en Zabbix.<br />
+<strong>get_zabbix_key</strong> - Genera la Key de los Item a crear en Zabbix. Estas deben ser unicas por nodo.<br />
+<strong>create_ont</strong> - Mediante la Zabbix API, crea uno de los Item de la ONT (RX o TX).<br />
+   Se puede hacer a mano, pero esta pensada para utilizar la info obtenida por los get listados anteriormente.<br />
+<strong>create_graph</strong> - Mediante la Zabbix API, crea la grafica de hasta dos Item. Pensada para usarse con los Item ID
+   generados por <em>create_ont</em>, pero tambien pueden pasarse los parametros a mano.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong><em>SELECT de ONTs con RBS en gestion.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_rbs</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Selecciona nombre de nodo, etiqueta de gesition, slot/puerto/ont del inventario de gestion.
+Devuelve el resultado en una lista de tuplas.</p>
+<p><strong>returns:</strong> Lista de tuplas con resultados del select.<br />
+<strong>rtype:</strong> list</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT `nodo`,`etiqueta_ont`,`slot`,`puerto`,`ont` FROM `t_servicios_RBS`&quot;</span>
+    <span class="n">rbs</span> <span class="o">=</span> <span class="n">conector</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;Consultando ONTS&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rbs</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong><em>Chequea la existencia de una ONT en Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">ont_check</span><span class="p">(</span><span class="n">opcion</span><span class="p">,</span><span class="n">hostid</span><span class="p">,</span><span class="n">parametro</span><span class="p">,</span><span class="n">auth</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Cunsulta mediante la API de Zabbix utilizando <em>item.get</em> la existencia de una ONT.</p>
+<p>Se puede utilizar la opcion <em>key_</em> y bucar la ONT por las key de items unicos en zabbix, o
+se puede utilizar el nombre del item.</p>
+<p>Ejemplo de <em>key</em>: <strong>PONRX[zxAnPonOnuIfRxOctets.ONT2/1/15]</strong></p>
+<p>Ejemplo de <em>nombre</em>: <strong>Radio Base : 2/1/15 : P47129-27160341-ANTEL-RADIOBASE-CELULAR : RX</strong></p>
+<p>Si encuentra la ONT devuelve 1, sino 0.</p>
+<p><strong>param opcion:</strong> Parametro a buscar, <em>key_</em> busca por llave de item.<br />
+<em>name</em> busca por nombre del item.<br />
+<strong>type opcion:</strong> str</p>
+<p><strong>param hostid:</strong> Host id identificador del nodo.<br />
+<strong>type hostid:</strong> str</p>
+<p><strong>param parametro:</strong> Dato a buscar. Dependiente de opcion.<br />
+<strong>type parametro:</strong> str</p>
+<p><strong>param auth:</strong> Key de Zabbix API.<br />
+<strong>type auth:</strong> str</p>
+<p><strong>returns:</strong> 1 si se encontro la ONT en zabbix, 0 si no se encontro.
+<strong>rtype:</strong> int</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">ont_check</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;item.get&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hostids&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hostid</span><span class="p">),</span>
+    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">opcion</span><span class="p">)],</span>
+        <span class="s2">&quot;search&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">opcion</span><span class="p">):</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parametro</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">auth</span><span class="p">),</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">chequeo</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">ont_check</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chequeo</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;******&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No se encontro la ONT: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parametro</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong><em>Obtiene Host ID a partir de nombre de nodo</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">host_get</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="n">auth</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>LLamando a la Zabbix API con <em>host.get</em>, a partir del nombre del nodo,
+obtiene el Host ID de dicho nodo.</p>
+<p>Ejemplo nombre de <em>nodo</em>: <strong>CORDON-04Z</strong></p>
+<p><strong>param nodo:</strong> Nombre de nodo a obtener Host ID.<br />
+<strong>type nodo:</strong> str</p>
+<p><strong>param auth:</strong> Key de Zabbix API.<br />
+<strong>type auth:</strong> str</p>
+<p><strong>returns:</strong> Si se encuentra nombre de nodo devuelve el Host ID en formato str.<br />
+Si no encuentra el nodo solo logea.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">host_get</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;host.get&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodo</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;hostid&quot;</span>    
+        <span class="p">},</span>
+        <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="n">auth</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">hostid</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">host_get</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hostid</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Host get no encontro el nodo: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodo</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hostid</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;hostid&quot;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong><em>Obtiene interface ID type 2 a partir de Host ID</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_inter_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">auth</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Llamando a a la Zabbix API con <em>hostinterface.get</em>, usando el Host ID,
+devuelve un interface ID e IP de la interface SNMP registrada en zabbix para ese nodo. 
+Si no tiene interafaces SNMP o el nodo no existe en zabbix se logea un error.</p>
+<p><strong>param hostid:</strong> Host id identificador del nodo.<br />
+<strong>type hostid:</strong> str</p>
+<p><strong>param auth:</strong> Key de Zabbix API.<br />
+<strong>type auth:</strong> str</p>
+<p><strong>returns:</strong> Si se encuentra una interface type 2 con el host id
+pasado, devuelve el Interface ID e IP en formato dic. Si no encuentra el nodo
+solo logea.
+<strong>rtype:</strong> dic</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">interfaceid</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;hostinterface.get&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;interfaceid&quot;</span><span class="p">,</span><span class="s2">&quot;hostid&quot;</span><span class="p">,</span><span class="s2">&quot;ip&quot;</span><span class="p">,</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;hostids&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hostid</span><span class="p">),</span>
+            <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span>
+            <span class="p">}</span>     
+        <span class="p">},</span>
+        <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">auth</span><span class="p">),</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">interfaceid</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">interfaceid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interfaceid</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No se encontro el hostid: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hostid</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inter_id</span> <span class="o">=</span> <span class="n">interfaceid</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;interfaceid&quot;</span><span class="p">]</span>
+        <span class="n">ip</span> <span class="o">=</span> <span class="n">interfaceid</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ip&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;inter_id&quot;</span><span class="p">:</span><span class="n">inter_id</span><span class="p">,</span><span class="s2">&quot;ip&quot;</span><span class="p">:</span><span class="n">ip</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong><em>Obtiene Application ID de ONT a partir de Host ID</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_app_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">auth</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Llamando a a la Zabbix API con <em>application.get</em>, usando el Host ID,
+devuelve un Application ID de la app ONT registrada en zabbix para ese nodo.
+Si no tiene app ONT o el nodo no existe en zabbix se logea un error.</p>
+<p><strong>param hostid:</strong> Host id identificador del nodo.<br />
+<strong>type hostid:</strong> str</p>
+<p><strong>param auth:</strong> Key de Zabbix API.<br />
+<strong>type auth:</strong> str</p>
+<p><strong>returns:</strong> Si se encuentra una Application ONT con el host id
+pasado, devuelve el Application ID en formato str. Si no encuentra el nodo
+solo logea.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">app_id</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;application.get&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;applicationid&quot;</span><span class="p">,</span><span class="s2">&quot;hostid&quot;</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;hostids&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hostid</span><span class="p">),</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ONT&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">auth</span><span class="p">),</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">app_id</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">app_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">app_id</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No se encontro el hostid: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hostid</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">app_id</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;applicationid&quot;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p><strong><em>Genera OID a partir de Vendor y Puerto.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_oid</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Recibe informacion de puerto en formato <strong>SLOT/PUERTO/ONT</strong> y nombre del <strong>vendor</strong>
+del nodo (por ahora solo zte). Luego de parsear los datos y realizar un pequeño
+filtro, une las variables <em>base_</em> con una busqueda en la funcion <em>dic_oid_zte</em>, la cual
+hace corresponder oids con puertos.</p>
+<p>Retorna un dicccionario con todas las oids necesarias para que Zabbix monitoree de forma
+efectiva una ONT.</p>
+<p><strong>param tipo:</strong> Vendor del nodo a generar OID (por ahora solo &ldquo;zte&rdquo;).<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>param puerto:</strong> Numero de puerto en formato <strong>SLOT/PUERTO/PON</strong>.<br />
+<strong>type puerto:</strong> str</p>
+<p><strong>returns:</strong> Si se logra generar la OID devuelve diccionario con oid_rx RX, oid_tx y oid_etiqueta.
+De ocurrir un error solo logea.<br />
+<strong>rtype:</strong> dic</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;zte&quot;</span><span class="p">:</span>
+        <span class="n">base_RX</span> <span class="o">=</span> <span class="s2">&quot;.1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.1.2852&quot;</span>
+        <span class="n">base_TX</span> <span class="o">=</span> <span class="s2">&quot;.1.3.6.1.4.1.3902.1082.500.4.2.2.2.1.44.2852&quot;</span>
+        <span class="n">base_etiqueta</span> <span class="o">=</span> <span class="s2">&quot;.1.3.6.1.4.1.3902.1082.500.10.2.3.3.1.2.2852&quot;</span>
+        <span class="n">puerto</span> <span class="o">=</span> <span class="n">puerto</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="n">slot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">puertopon</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ont</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">puerto</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">ont</span> <span class="o">&gt;</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;El valor de ONT es incorrecto&quot;</span><span class="p">)</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">oid_rx</span> <span class="o">=</span> <span class="n">base_RX</span> <span class="o">+</span> <span class="n">dic_oid_zte</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">puertopon</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+                <span class="n">oid_tx</span> <span class="o">=</span> <span class="n">base_TX</span> <span class="o">+</span> <span class="n">dic_oid_zte</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">puertopon</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+                <span class="n">oid_etiqueta</span> <span class="o">=</span> <span class="n">base_etiqueta</span> <span class="o">+</span> <span class="n">dic_oid_zte</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">puertopon</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;oid_rx&quot;</span><span class="p">:</span><span class="n">oid_rx</span><span class="p">,</span><span class="s2">&quot;oid_tx&quot;</span><span class="p">:</span><span class="n">oid_tx</span><span class="p">,</span><span class="s2">&quot;oid_etiqueta&quot;</span><span class="p">:</span><span class="n">oid_etiqueta</span><span class="p">}</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uno de los valores del puerto es incorrecto&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No se han integrado funcionalidades para las ont de </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tipo</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p><strong><em>Devuelve parte de las OID de ONT ZTE a partir de SLOT/PUERTO</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">dic_oid_zte</span><span class="p">(</span><span class="n">clave</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Recive clave de diccionario conteniendo <strong>SLOT/PUERTO</strong> (sin el <strong>/</strong>), si esta
+clave se encuentra en dic, se devuelve el valor correspondiente a dicha clave.
+Este valor es parte de la OID que <em>get_oid</em> intenta generar. </p>
+<p><strong>param clave:</strong> Puerto PON en formato <strong>SLOT/PUERTO</strong>.<br />
+<strong>type clave:</strong> str</p>
+<p><strong>returns:</strong> Si <strong>SLOT/PUERTO</strong> coincide en el dic, devuelve gragmento de OID
+necesario para <em>get_oid</em>.<br />
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;21&quot;</span><span class="p">:</span><span class="s2">&quot;78721&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;22&quot;</span><span class="p">:</span><span class="s2">&quot;78722&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;23&quot;</span><span class="p">:</span><span class="s2">&quot;78723&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;24&quot;</span><span class="p">:</span><span class="s2">&quot;78724&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;25&quot;</span><span class="p">:</span><span class="s2">&quot;78725&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;26&quot;</span><span class="p">:</span><span class="s2">&quot;78726&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;27&quot;</span><span class="p">:</span><span class="s2">&quot;78727&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;28&quot;</span><span class="p">:</span><span class="s2">&quot;78728&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;31&quot;</span><span class="p">:</span><span class="s2">&quot;78977&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;32&quot;</span><span class="p">:</span><span class="s2">&quot;78978&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;33&quot;</span><span class="p">:</span><span class="s2">&quot;78979&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;34&quot;</span><span class="p">:</span><span class="s2">&quot;78980&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;35&quot;</span><span class="p">:</span><span class="s2">&quot;78981&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;36&quot;</span><span class="p">:</span><span class="s2">&quot;78982&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;37&quot;</span><span class="p">:</span><span class="s2">&quot;78983&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;38&quot;</span><span class="p">:</span><span class="s2">&quot;78984&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;41&quot;</span><span class="p">:</span><span class="s2">&quot;79233&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;42&quot;</span><span class="p">:</span><span class="s2">&quot;79234&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;43&quot;</span><span class="p">:</span><span class="s2">&quot;79235&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;44&quot;</span><span class="p">:</span><span class="s2">&quot;79236&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;45&quot;</span><span class="p">:</span><span class="s2">&quot;79237&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;46&quot;</span><span class="p">:</span><span class="s2">&quot;79238&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;47&quot;</span><span class="p">:</span><span class="s2">&quot;79239&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;48&quot;</span><span class="p">:</span><span class="s2">&quot;79240&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;51&quot;</span><span class="p">:</span><span class="s2">&quot;79489&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;52&quot;</span><span class="p">:</span><span class="s2">&quot;79490&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;53&quot;</span><span class="p">:</span><span class="s2">&quot;79491&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;54&quot;</span><span class="p">:</span><span class="s2">&quot;79492&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;55&quot;</span><span class="p">:</span><span class="s2">&quot;79493&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;56&quot;</span><span class="p">:</span><span class="s2">&quot;79494&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;57&quot;</span><span class="p">:</span><span class="s2">&quot;79495&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;58&quot;</span><span class="p">:</span><span class="s2">&quot;79496&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;61&quot;</span><span class="p">:</span><span class="s2">&quot;79745&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;62&quot;</span><span class="p">:</span><span class="s2">&quot;79746&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;63&quot;</span><span class="p">:</span><span class="s2">&quot;79747&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;64&quot;</span><span class="p">:</span><span class="s2">&quot;79748&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;65&quot;</span><span class="p">:</span><span class="s2">&quot;79749&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;66&quot;</span><span class="p">:</span><span class="s2">&quot;79750&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;67&quot;</span><span class="p">:</span><span class="s2">&quot;79751&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;68&quot;</span><span class="p">:</span><span class="s2">&quot;79752&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;71&quot;</span><span class="p">:</span><span class="s2">&quot;80001&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;72&quot;</span><span class="p">:</span><span class="s2">&quot;80002&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;73&quot;</span><span class="p">:</span><span class="s2">&quot;80003&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;74&quot;</span><span class="p">:</span><span class="s2">&quot;80004&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;75&quot;</span><span class="p">:</span><span class="s2">&quot;80005&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;76&quot;</span><span class="p">:</span><span class="s2">&quot;80006&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;77&quot;</span><span class="p">:</span><span class="s2">&quot;80007&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;78&quot;</span><span class="p">:</span><span class="s2">&quot;80008&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;81&quot;</span><span class="p">:</span><span class="s2">&quot;80257&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;82&quot;</span><span class="p">:</span><span class="s2">&quot;80258&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;83&quot;</span><span class="p">:</span><span class="s2">&quot;80259&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;84&quot;</span><span class="p">:</span><span class="s2">&quot;80260&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;85&quot;</span><span class="p">:</span><span class="s2">&quot;80261&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;86&quot;</span><span class="p">:</span><span class="s2">&quot;80262&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;87&quot;</span><span class="p">:</span><span class="s2">&quot;80263&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;88&quot;</span><span class="p">:</span><span class="s2">&quot;80264&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;91&quot;</span><span class="p">:</span><span class="s2">&quot;80513&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;92&quot;</span><span class="p">:</span><span class="s2">&quot;80514&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;93&quot;</span><span class="p">:</span><span class="s2">&quot;80515&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;94&quot;</span><span class="p">:</span><span class="s2">&quot;80516&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;95&quot;</span><span class="p">:</span><span class="s2">&quot;80517&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;96&quot;</span><span class="p">:</span><span class="s2">&quot;80518&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;97&quot;</span><span class="p">:</span><span class="s2">&quot;80519&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;98&quot;</span><span class="p">:</span><span class="s2">&quot;80520&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;121&quot;</span><span class="p">:</span><span class="s2">&quot;81281&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;122&quot;</span><span class="p">:</span><span class="s2">&quot;81282&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;123&quot;</span><span class="p">:</span><span class="s2">&quot;81283&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;124&quot;</span><span class="p">:</span><span class="s2">&quot;81284&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;125&quot;</span><span class="p">:</span><span class="s2">&quot;81285&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;126&quot;</span><span class="p">:</span><span class="s2">&quot;81286&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;127&quot;</span><span class="p">:</span><span class="s2">&quot;81287&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;128&quot;</span><span class="p">:</span><span class="s2">&quot;81288&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;131&quot;</span><span class="p">:</span><span class="s2">&quot;81537&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;132&quot;</span><span class="p">:</span><span class="s2">&quot;81538&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;133&quot;</span><span class="p">:</span><span class="s2">&quot;81539&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;134&quot;</span><span class="p">:</span><span class="s2">&quot;81540&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;135&quot;</span><span class="p">:</span><span class="s2">&quot;81541&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;136&quot;</span><span class="p">:</span><span class="s2">&quot;81542&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;137&quot;</span><span class="p">:</span><span class="s2">&quot;81543&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;138&quot;</span><span class="p">:</span><span class="s2">&quot;81544&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;141&quot;</span><span class="p">:</span><span class="s2">&quot;81793&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;142&quot;</span><span class="p">:</span><span class="s2">&quot;81794&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;143&quot;</span><span class="p">:</span><span class="s2">&quot;81795&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;144&quot;</span><span class="p">:</span><span class="s2">&quot;81796&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;145&quot;</span><span class="p">:</span><span class="s2">&quot;81797&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;146&quot;</span><span class="p">:</span><span class="s2">&quot;81798&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;147&quot;</span><span class="p">:</span><span class="s2">&quot;81799&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;148&quot;</span><span class="p">:</span><span class="s2">&quot;81800&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;151&quot;</span><span class="p">:</span><span class="s2">&quot;82049&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;152&quot;</span><span class="p">:</span><span class="s2">&quot;82050&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;153&quot;</span><span class="p">:</span><span class="s2">&quot;82051&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;154&quot;</span><span class="p">:</span><span class="s2">&quot;82052&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;155&quot;</span><span class="p">:</span><span class="s2">&quot;82053&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;156&quot;</span><span class="p">:</span><span class="s2">&quot;82054&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;157&quot;</span><span class="p">:</span><span class="s2">&quot;82055&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;158&quot;</span><span class="p">:</span><span class="s2">&quot;82056&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;161&quot;</span><span class="p">:</span><span class="s2">&quot;82305&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;162&quot;</span><span class="p">:</span><span class="s2">&quot;82306&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;163&quot;</span><span class="p">:</span><span class="s2">&quot;82307&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;164&quot;</span><span class="p">:</span><span class="s2">&quot;82308&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;165&quot;</span><span class="p">:</span><span class="s2">&quot;82309&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;166&quot;</span><span class="p">:</span><span class="s2">&quot;82310&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;167&quot;</span><span class="p">:</span><span class="s2">&quot;82311&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;168&quot;</span><span class="p">:</span><span class="s2">&quot;82312&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;171&quot;</span><span class="p">:</span><span class="s2">&quot;82561&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;172&quot;</span><span class="p">:</span><span class="s2">&quot;82562&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;173&quot;</span><span class="p">:</span><span class="s2">&quot;82563&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;174&quot;</span><span class="p">:</span><span class="s2">&quot;82564&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;175&quot;</span><span class="p">:</span><span class="s2">&quot;82565&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;176&quot;</span><span class="p">:</span><span class="s2">&quot;82566&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;177&quot;</span><span class="p">:</span><span class="s2">&quot;82567&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;178&quot;</span><span class="p">:</span><span class="s2">&quot;82568&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;181&quot;</span><span class="p">:</span><span class="s2">&quot;82817&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;182&quot;</span><span class="p">:</span><span class="s2">&quot;82818&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;183&quot;</span><span class="p">:</span><span class="s2">&quot;82819&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;184&quot;</span><span class="p">:</span><span class="s2">&quot;82820&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;185&quot;</span><span class="p">:</span><span class="s2">&quot;82821&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;186&quot;</span><span class="p">:</span><span class="s2">&quot;82822&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;187&quot;</span><span class="p">:</span><span class="s2">&quot;82823&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;188&quot;</span><span class="p">:</span><span class="s2">&quot;82824&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;191&quot;</span><span class="p">:</span><span class="s2">&quot;83073&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;192&quot;</span><span class="p">:</span><span class="s2">&quot;83074&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;193&quot;</span><span class="p">:</span><span class="s2">&quot;83075&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;194&quot;</span><span class="p">:</span><span class="s2">&quot;83076&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;195&quot;</span><span class="p">:</span><span class="s2">&quot;83077&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;196&quot;</span><span class="p">:</span><span class="s2">&quot;83078&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;197&quot;</span><span class="p">:</span><span class="s2">&quot;83079&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;198&quot;</span><span class="p">:</span><span class="s2">&quot;83080&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">dic</span><span class="p">[</span><span class="n">clave</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p><strong><em>Genera nombre de ONT para Zabbix de forma automatica.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_name_auto</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">oid</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">tipo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Hace un SNMP Walk a el puerto del nodo identificado por ip y oid
+pasados a la funcion. Se hace  una coneccion ssh hacia el Zabbix_Server
+y desde este se hace el SNMP Walk hacia el nodo en gestion.</p>
+<p>El Walk se realiza con la <em>oid_etiqueta</em> generada por <em>dic_oid_zte</em>. Junto con la
+etiqueta que responda el nodo, y los parametros puerto y tipo pasados en la llamada
+de la funcion, se crean los nombres para los item RX y TX de la ONT a crear en zabbix.
+La funcion devuelve un dic con estos valores.</p>
+<p>Tipo puede ser &ldquo;ONT o &ldquo;Radio Base&rdquo;. El puerto tine formato <strong>SLOT/PUERTO/PON</strong>.</p>
+<p>Las variables <em>contraseña</em> y <em>usario</em> utilizadas para la conexion ssh se mantienen en <strong>api.pyc</strong>
+para que no sean leibles directamente desde el IDE.</p>
+<p><strong>param ip:</strong> IP de nodo a consultar por SNMP.<br />
+<strong>type ip:</strong> str</p>
+<p><strong>param oid:</strong> Oid etiqueta correspondiente al puerto a consultar por SNMP.<br />
+<strong>type oid:</strong> str</p>
+<p><strong>param puerto:</strong> Puerto PON en formato <strong>SLOT/PUERTO/ONT</strong>.<br />
+<strong>type puerto:</strong> str</p>
+<p><strong>param tipo:</strong> Escrbie en la etiqueta si es &ldquo;Radio Base&rdquo; o &ldquo;ONT&rdquo;.<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>returns:</strong> Si la consulta SNMP es correcta, devuelve dic de nombres RX y TX para
+nombrar ONTS en zabbix.<br />
+<strong>rtype:</strong> dic</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s2">&quot;sshpass -p </span><span class="si">{}</span><span class="s2"> ssh </span><span class="si">{}</span><span class="s2">@10.0.0.101 &#39;snmpwalk -v 2c -c private </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contraseña_sv</span><span class="p">,</span><span class="n">usuario_sv</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">oid</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">etiqueta</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">RX</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : RX&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">TX</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : TX&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;RX&quot;</span><span class="p">:</span><span class="n">RX</span><span class="p">,</span><span class="s2">&quot;TX&quot;</span><span class="p">:</span><span class="n">TX</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p><strong><em>Genera nombre de ONT para Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>A partir de los string tipo (<strong>&ldquo;Radio Base, &ldquo;ONT&rdquo;</strong>), puerto en foramto
+<strong>SLOT/PUERTO/ONT</strong> y <strong>etiqueta</strong>, genera y retorna el dic con los nombres 
+utilziados para la creacion de los Item RX y TX de ONT en Zabbix. </p>
+<p><strong>param tipo:</strong> Escrbie en la etiqueta si es &ldquo;Radio Base&rdquo; o &ldquo;ONT&rdquo;.<br />
+<strong>type tipo:</strong> str</p>
+<p><strong>param puerto:</strong> Puerto PON en formato <strong>SLOT/PUERTO/ONT</strong>.<br />
+<strong>type puerto:</strong> str</p>
+<p><strong>param etiqueta</strong> Etiqueta del puerto en gestion. <strong>Ej: P47129-27160341-ANTEL-RADIOBASE-CELULAR</strong><br />
+<strong>type etiqueta</strong> str</p>
+<p><strong>returns:</strong> Devuelve dic de nombres RX y TX para nombrar ONTS en zabbix.<br />
+<strong>rtype:</strong> dic</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">RX</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : RX&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">)</span>
+    <span class="n">TX</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2"> : TX&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;RX&quot;</span><span class="p">:</span><span class="n">RX</span><span class="p">,</span><span class="s2">&quot;TX&quot;</span><span class="p">:</span><span class="n">TX</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p><strong><em>Genera las key para crear Items en Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_zabbix_key</span><span class="p">(</span><span class="n">puerto</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p>Une en un str la variable puerto (<strong>SLOT/PUERTO/ONT</strong>), pasada en la llamada de la funcion,
+con las str hardcodeadas en las variables RX y TX.</p>
+<p>Devuelve un dic de key RX y TX.</p>
+<p><strong>param puerto:</strong> Puerto PON en formato <strong>SLOT/PUERTO/ONT</strong>.<br />
+<strong>type puerto:</strong> str</p>
+<p><strong>returns:</strong> Devuelve dic de keys RX y TX para crear ONTS en zabbix.<br />
+<strong>rtype:</strong> dic</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">TX</span> <span class="o">=</span> <span class="s2">&quot;PONTX[zxAnPonOnuIfTxOctets.ONT</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span>
+    <span class="n">RX</span> <span class="o">=</span> <span class="s2">&quot;PONRX[zxAnPonOnuIfRxOctets.ONT</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;RX&quot;</span><span class="p">:</span><span class="n">RX</span><span class="p">,</span><span class="s2">&quot;TX&quot;</span><span class="p">:</span><span class="n">TX</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p><strong><em>Crea un Item (RX o TX) de una ONT en Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">create_ont</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">llave</span><span class="p">,</span><span class="n">hostid</span><span class="p">,</span><span class="n">interfaceid</span><span class="p">,</span><span class="n">oid</span><span class="p">,</span><span class="n">appid</span><span class="p">,</span><span class="n">auth</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>A partir de los parametros pasados en la llamda de la funcion, se crea un Item correspondiente a una ONT
+en un nodo especifico, utililizando la Zabbix API con item.create.</p>
+<p>Estos parametros deberian generarse con las funciones <em>get_</em> que se encuentran mas arriba en el script
+(<em>host_get, get_inter_id, get_app_id, get_app_id, get_oid, get_name, get_zabbix_key</em>).
+De todas formas esta funcion se puede llamar pasando los parametros completamente a mano.</p>
+<p>Retorna Item ID si la creacion fue exitosa.</p>
+<p>La item Key (<em>llave</em>) asignada al Item, debe ser unica en el nodo.</p>
+<p><strong>param nombre:</strong> Nombre del Item a crear en Zabbix. Formato igual al generado por <em>get_name()</em>.<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>param llave:</strong> Key del Item a crear en Zabbix. Formato igual al generado por <em>get_zabbix_key()</em>.<br />
+<strong>type llave:</strong> str</p>
+<p><strong>param hostid:</strong> Host ID del nodo donde se creara el Item de ONT. Se puede obtenero con <em>host_get()</em>.<br />
+<strong>type hostid:</strong> str</p>
+<p><strong>param interfaceid:</strong> Interface ID type 2 (SNMP) del nodo donde se creara el item de ONT. Se puede
+obtener con <em>get_inter_id()</em>.<br />
+<strong>type interfaceid:</strong> str</p>
+<p><strong>param oid:</strong> Oid del Item a crear en Zabbix. Se puede obtener con <em>get_oid()</em>.<br />
+<strong>type oid:</strong> str</p>
+<p><strong>param appid:</strong> Application ID de la app ONT, del nodo donde se creara el Item en Zabbix.
+Se puede obtener con <em>get_app_id()</em>.<br />
+<strong>type appid:</strong> str</p>
+<p><strong>param auth:</strong> Zabbix API Key.<br />
+<strong>type auth:</strong> str</p>
+<p><strong>returns:</strong> Si la ONT se crea correctamente, devuelve un str con el Item ID del item recien creado.<br />
+Si la API retorna un error, la funcion retorna un 0 y logea el error informado por JSON desde la API.<br />
+Si hay un error durante la creacion del Item por alguna interrupcion, se logea que hubo un error pero
+no se producen retornos.<br />
+<strong>rtype:</strong> str/int.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">create_ont</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;item.create&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">nombre</span><span class="p">,</span>
+            <span class="s2">&quot;key_&quot;</span><span class="p">:</span> <span class="n">llave</span><span class="p">,</span>
+            <span class="s2">&quot;hostid&quot;</span><span class="p">:</span> <span class="n">hostid</span><span class="p">,</span>
+            <span class="s2">&quot;interfaceid&quot;</span><span class="p">:</span> <span class="n">interfaceid</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;snmp_community&quot;</span><span class="p">:</span> <span class="s2">&quot;{$SNMP_COMMUNITY}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;snmp_oid&quot;</span><span class="p">:</span> <span class="n">oid</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;bps&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;applications&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">appid</span>
+            <span class="p">],</span>
+        <span class="s2">&quot;preprocessing&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;10&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span>
+                <span class="p">},</span>
+            <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="mi">8</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="n">auth</span><span class="p">,</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">create_ont</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">create_ont</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">create_ont</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">32602</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;La ONT con nombre </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> genero el error </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">create_ont</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">create_ont</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">create_ont</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">]))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;******&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">create_ont</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="s2">&quot;itemids&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Algo salio mal al crear la ONT: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p><strong><em>Crea graficas para ciertos Item ID</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">create_graph</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">itemid_1</span><span class="p">,</span><span class="n">itemid_2</span><span class="p">,</span><span class="n">llave</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>Genera las graficas de los item creados por <em>create_ont</em>, de todas formas se pueden
+pasar los parametros de forma manual si se desea crear una grafica nueva.
+Utiliza la Zabbix API con <em>graph.create</em>.</p>
+<p>Solo puede crear graficas de hasta 2 item.</p>
+<p>Logea creacion de graficas y errores. Retorna int para error especifico.</p>
+<p><strong>param nombre:</strong> Nombre de la grafica a crear en Zabbix.
+Formato igual al generado por <em>get_name()</em> sin direccion (<strong>RX/TX</strong>).<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>param itemid_1:</strong> Item ID de una de las direcciones a graficar (RX o TX).<br />
+<strong>type itemid_1:</strong> str</p>
+<p><strong>param itemid_2:</strong> Item ID de una de las direcciones a graficar (RX o TX).<br />
+<strong>type itemid_2:</strong> str</p>
+<p><strong>param llave:</strong> Zabbix API Key.<br />
+<strong>type llave:</strong> str</p>
+<p><strong>returns:</strong> Si la grafica de la ONT se crea correctamente, logea la creacion de la grafica con el Graph ID sin retornos.<br />
+Si la API retorna un error, la funcion retorna un 0 y logea el error informado por JSON desde la API.<br />
+Si hay un error durante la creacion de la grafica por alguna interrupcion, se logea que hubo un error pero
+no se producen retornos.<br />
+<strong>rtype:</strong> int.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">create_graph</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;graph.create&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">),</span>
+            <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">900</span><span class="p">,</span>
+            <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+            <span class="s2">&quot;gitems&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;itemid&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itemid_1</span><span class="p">),</span>
+                    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;199C0D&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;itemid&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itemid_2</span><span class="p">),</span>
+                    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;F63100&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">llave</span><span class="p">),</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">create_graph</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">create_graph</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">create_graph</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">32602</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;La ONT con nombre </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> genero el error </span><span class="si">{}</span><span class="s2"> al crear su grafica&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">create_graph</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">create_graph</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">create_graph</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">]))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;******&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Algo salio mal al crear la grafica de la ONT: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

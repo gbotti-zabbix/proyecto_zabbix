@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>orquestador_carga_ont.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>orquestador_carga_ont.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Creacion Manual/Automatica de ONT en Zabbix</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">llamadas</span> <span class="kn">import</span> <span class="n">get_rbs</span><span class="p">,</span> <span class="n">ont_check</span><span class="p">,</span> <span class="n">host_get</span><span class="p">,</span> <span class="n">get_inter_id</span><span class="p">,</span> <span class="n">get_app_id</span><span class="p">,</span> <span class="n">get_oid</span><span class="p">,</span> <span class="n">create_ont</span><span class="p">,</span> <span class="n">get_name</span><span class="p">,</span> <span class="n">get_zabbix_key</span><span class="p">,</span> <span class="n">create_graph</span><span class="p">,</span> <span class="n">get_name_auto</span>
+<span class="kn">from</span> <span class="nn">sesiones</span> <span class="kn">import</span> <span class="n">autorizar</span><span class="p">,</span> <span class="n">logout</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>A partir del metodo con el que se llama a <em>orquestador_carga_ont()</em> se chequea
+la existencia de ONTs en Zabbix, y se crean items  y graficas para monitorearlas.</p>
+<p>Gran parte del proceso se hace con funciones importadas de llamadas, estas pueden
+utilizar la Zabbix API para devolver valroes utiles.</p>
+<p>Parte del proceso conlleva utiilizar datos guardados en <strong>api.pyc</strong>. Decidimos utilizar un
+archivo compilado para que no sea leibles por IDEs informacion de usuarios pertinentes
+a nuestro despliegue de zabbix.</p>
+<p>Contiene la funcion <strong>orquestador_carga_ont</strong>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Creacion Manual/Automatica de ONT en Zabbix</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">orquestador_carga_ont</span><span class="p">(</span><span class="n">metodo</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>En resumen, para <strong>crear una ONT</strong> se necesita un Item RX, otro TX y una grafica que agrupe los dos.<br />
+Para crear uno de estos items necesitamos obtener los siguentes valores:  </p>
+<ul>
+<li><strong>nombre:</strong> Surge a partir de un formato que agrupa un tag (<strong>&ldquo;Radio Base&rdquo;/&rdquo;ONT&rdquo;</strong>), <strong>puerto</strong> y <strong>etiqueta de gestion</strong>.  </li>
+<li><strong>zkey:</strong> Key del item en zabbix, existe para RX y TX, se genera concatenando una string base a el puerto.  </li>
+<li><strong>hostid:</strong> Se obtiene a partir del nombre del nodo en Zabbix.  </li>
+<li><strong>inter_id:</strong> Numero que identifica la interfaz SNMP dentro del nodo en Zabbix.  </li>
+<li><strong>oid:</strong> Direccion SNMP a la que Zabbix consultara la nodo el trafico de la ONT. Se genera a partir de cruces
+de puerto con datos fijos proporcionados por el vendor.  </li>
+<li><strong>appid:</strong> Numero que identifica la APP ONT dentro del nodo. Esto es un tag que facilita el filtro de items
+dentro del propio zabbix.  </li>
+<li><strong>llave:</strong> API Key para hacer las consultas a la api de zabbix. Se genera desde un usario con privilegios en la
+api.</li>
+</ul>
+<p>Para <strong>crear las graficas</strong> de estos items requerimos:  </p>
+<ul>
+<li><strong>nombreg:</strong> Es la misma variable que nombre, pero sin referirse a una direccion de trafico especifica(la grafica
+muestra ambas direcciones).  </li>
+<li><strong>itemid_1 y 2:</strong> ID de los item creados en Zabbix. Debemos tener un ID que corresponde al item creado para cada
+direccion.  </li>
+<li><strong>llave:</strong> API Key para hacer las consultas a la api de zabbix. Se genera desde un usario con privilegios en la
+api.</li>
+</ul>
+<p>Estos valores o la comparacion de la existencia de las ONT aveces requieren datos intermedios a recolectar desde
+zabbix, debajo se explica en detalle el proceso seguido por esta funcion.</p>
+<p>Dependiendo del metodo con el que se llame a la funcion, se ejectuan los siguentes
+procedimientos:</p>
+<ul>
+<li>
+<p><strong>Auto</strong>:</p>
+<ul>
+<li>
+<p>Se logea comienzo de la tarea, ademas se crean variables y listas utilizadas
+para la comparacion de ONT a crear en Zabbix.  </p>
+</li>
+<li>
+<p>Se carga la llamada de <em>autorizar()</em> en <em>llave</em>, esta contiene la Zabbix API Key utilizada
+mas adelante en las llamdas a la API. <em>lista_rbs</em> contendra todas las rbs de gestion al
+momento de ejecutar el script, para esto utiliza <em>get_rbs()</em>. La variable <em>contador_break</em>
+se deja definida pero no esta en uso.</p>
+</li>
+<li>
+<p>Comienza a iterarse sobre <em>lista_rbs</em> y se asigan las variables nodo y puerto (<strong>SLOT/PUERTO/ONT</strong>).
+Si la str al final de nodo no es Z, se descarta la ONT, se logea el descarte y crece el <strong>contador
+descartes</strong>. </p>
+</li>
+<li>
+<p>De pasar el filtro, <em>hostid</em> obtiene dicho ID llamando a <em>host_get()</em> con el nombre del nodo y la API Key.<br />
+Host ID identifica el nodo en zabbix. <em>inter_id</em> obtiene el Interface ID llamando a <em>get_inter_id()</em> con el
+host id obtenido anteriormente y la API Key. Interface ID identifica la interfaz SNMP dentro del nodo.<br />
+<em>Interface_id</em> tambien trae la IP del nodo en gestion (la utilizada en la interfaz SNMP en zabbix). Esta
+ultima se carga en la variable <em>IP</em>. Se levanta una exepcion si <em>inter_id</em> no trae la key ip, esto significa
+que o faltan datos en zabbix, o algo fallo en la consulta a la API.</p>
+</li>
+<li>
+<p><em>oid</em> llama a <em>get_oid()</em> pasando vendor y puerto para obtener un dic con las OID necesarias para monitorear la ONT.<br />
+<em>Etiqueta</em> simplemente es un valor ya presente en la consulta del registro de gestion con <em>get_rbs()</em>.<br />
+<em>Nombre</em> contendra un dic con los nombres de ambos item de la ONT (RX y TX), se llama <em>get_name()</em> con
+un tag identificador <strong>&ldquo;Radio Base&rdquo;</strong>, <strong>puerto</strong> y <strong>etiqueta</strong>. zkey llama a get_zabbix_key() con puerto para obtener un dic
+con las Key RX y TX que utilizara cada item de la ONT.  </p>
+</li>
+<li>
+<p><em>comparador</em> es una variable de str concatenadas, utiliaza en un if posterior para chequear que no hay ONT repetidas en
+el listado de gestion. <em>appid</em> llama a <em>get_app_id()</em> con el host id obtenido y la API key, esto trae el Application ID
+correspondiente a la APP ONT configurada en el nodo con la mencionada Host ID. El App ID es una forma facil de
+identificar que tipo de item es la ONT dentro de zabbix (diferenciar puertos pon de ont).  </p>
+</li>
+<li>
+<p>Luego de comparar si hay rbs repetidas se chequea si la ont ya existe en zabbix, para esto chequeo llama a la funcion
+<em>ont_check()</em>, donde <em>key_</em> elige de que forma se chequea (en este caso por Item Key), hostid es el nodo donde comprobar
+la existencia de la Item Key (cada item key es unica por nodo), <strong>zkey[&ldquo;RX&rdquo;]</strong> es la key a busca en el nodo y llave la 
+API Key.  </p>
+</li>
+<li>
+<p>Si <em>chequeo()</em> devuelve 0 se logea informacion de la ONT a cargar, se suma 1 a faltante (para contar cuantas
+ont se ingresaron), y se crean los Item de RX y TX con las variables <em>item_1/2</em>. Estas variables llaman a <em>create_ont()</em>
+con <em>nombre,zkey,oid</em> y la <em>direccion</em> del item como llave (Ej:<strong>[&ldquo;RX&rdquo;]</strong>); <em>hostid</em> sera el nodo donde crear los item, 
+<strong>inter_id[&ldquo;inter_id&rdquo;]</strong> señala que los item pertenecen a la interfaz SNMP del nodo, por ultimo <em>appid</em> es la APP ONT del nodo
+donde se estan creando los Items y <em>llave</em> la API Key.  </p>
+</li>
+<li>
+<p><em>nombreg</em> es nombre pero sin la farte donde se señala direccion del item. Las graficas en zabbix al contener RX y TX, no
+tienen una direccion especifica como nombre. La llamada a <em>create_graph()</em> creara las graficas para <em>item_1/2</em> con <em>nombreg</em>
+como nombre utilizando la AIP Key. </p>
+</li>
+<li>
+<p>Si <em>chequeo</em> da 1, signifca que la ONT ya existe en Zabbix y no sera creada. Esta ONT se suma a la lista <em>comparador</em> para
+poder logear un total de ONTs que no se crearon.<br />
+Por ultimo se logean ONT encontradas, repetidas, sin encontrar y descartadas, ademas de llamar a <em>logout()</em> con la <em>llave</em> 
+para dar de baja la API Key. De lo contrario se acumularian estas llaves cada ves que se ejecuta la maniobra.  </p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Manual</strong>: </p>
+<ul>
+<li>
+<p>El flujo del procedimiento es igual al de auto, pero se agregan inputs y los chequeos son mas directos. Solo
+se señalan diferencias importantes.  </p>
+</li>
+<li>
+<p><em>opcion</em> es un input para definir parte del tag del nombre del item a crear, 1 Escribe <strong>&ldquo;ONT :&rdquo;</strong>, 2 escribe <strong>&ldquo;Radio Base :&rdquo;</strong>.
+Esto se define en la variable tipo, concatenada mas adelante al momento de crear el nombre del item. Para nodo tambien
+se ejecuta un input pidiendo el nombre del nodo como se registra en gestion. Mismo caso para puerto donde se espera un
+formato <strong>SLOT/PUERTO/ONT</strong>.</p>
+</li>
+<li>
+<p><em>opcion_e</em> permite ingresar la etiqueta de gestion a mano, precionado 1. De precionar enter el sistema busca automaticamente
+la etiqueta ejecutando un SNMP Walk desde Zabbix-Server. Si ya contamos con la etiqueta y podemos evitar este procedimiento,
+mejor. A partir de esto nombre se crea con la etiqueta ingresada a mano o con la extraida con el Walk. Se levanta una exepcion
+en caso de que no se pueda hacer el Walk al puerto ingresado o conteste un error, en este caso se da de baja la API key y se 
+debe reinicar el procedimiento.</p>
+</li>
+<li>
+<p>Se chequea la existencia de la ONT de la misma forma que el procedimiento automatico, y se realizan las mismas acciones de
+creacion de Items y graficas con sus correspondientes logeos. Por ultimo hay una exepcion general de ocurrir un error en cualquier
+parte del proceso.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>param metodo:</strong> Define si se ejecuta el proceso <strong>manual</strong> o <strong>auto</strong> para la creacion
+de ONTs en Zabbix.<br />
+<strong>type metodo:</strong> str</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">metodo</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza la carga manual de ONTs&quot;</span><span class="p">)</span>
+            <span class="n">opcion</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Carga: </span><span class="se">\n</span><span class="s2"> 1- ONT </span><span class="se">\n</span><span class="s2"> 2- ONT con RBS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="k">while</span> <span class="n">opcion</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">opcion</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Opcion incorrecta </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">opcion</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Carga: </span><span class="se">\n</span><span class="s2"> 1- ONT </span><span class="se">\n</span><span class="s2"> 2- ONT con RBS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">opcion</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">tipo</span> <span class="o">=</span> <span class="s2">&quot;ONT&quot;</span>
+                <span class="k">elif</span> <span class="n">opcion</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">tipo</span> <span class="o">=</span> <span class="s2">&quot;Radio Base&quot;</span>
+            <span class="n">nodo</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese nombre de nodo en Gestion:</span><span class="se">\n</span><span class="s2">Ejemplo: AGUADA-13Z</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">puerto</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese Slot/Puerto/ONT:</span><span class="se">\n</span><span class="s2">Ejemplo: 17/1/4</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">llave</span> <span class="o">=</span> <span class="n">autorizar</span><span class="p">()</span>
+            <span class="n">hostid</span> <span class="o">=</span> <span class="n">host_get</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+            <span class="n">inter_id</span> <span class="o">=</span> <span class="n">get_inter_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;ip&quot;</span><span class="p">]</span>
+            <span class="n">oid</span> <span class="o">=</span> <span class="n">get_oid</span><span class="p">(</span><span class="s2">&quot;zte&quot;</span><span class="p">,</span><span class="n">puerto</span><span class="p">)</span>
+            <span class="n">opcion_e</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese 1 para ingresar etitquetas, sino precione enter para continuar</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opcion_e</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+                <span class="n">etiqueta</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese la etiqueta:</span><span class="se">\n</span><span class="s2">Ejemplo: GP0801-22024459-PINAZO-MORAN</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">nombre</span> <span class="o">=</span> <span class="n">get_name</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nombre</span> <span class="o">=</span> <span class="n">get_name_auto</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">oid</span><span class="p">[</span><span class="s2">&quot;oid_etiqueta&quot;</span><span class="p">],</span><span class="n">puerto</span><span class="p">,</span><span class="n">tipo</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">ee</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: No se pudo generar nombre para </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="n">puerto</span><span class="p">))</span>
+                    <span class="n">logout</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">zkey</span> <span class="o">=</span> <span class="n">get_zabbix_key</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span>
+            <span class="n">appid</span> <span class="o">=</span> <span class="n">get_app_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+            <span class="n">chequeo</span> <span class="o">=</span> <span class="n">ont_check</span><span class="p">(</span><span class="s2">&quot;key_&quot;</span><span class="p">,</span><span class="n">hostid</span><span class="p">,</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">llave</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chequeo</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodo</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">zkey</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nombre</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;******&quot;</span><span class="p">)</span>
+                <span class="n">itemid_1</span> <span class="o">=</span> <span class="n">create_ont</span><span class="p">(</span><span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">hostid</span><span class="p">,</span><span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;inter_id&quot;</span><span class="p">],</span><span class="n">oid</span><span class="p">[</span><span class="s2">&quot;oid_rx&quot;</span><span class="p">],</span><span class="n">appid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="n">itemid_2</span> <span class="o">=</span> <span class="n">create_ont</span><span class="p">(</span><span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;TX&quot;</span><span class="p">],</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;TX&quot;</span><span class="p">],</span><span class="n">hostid</span><span class="p">,</span><span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;inter_id&quot;</span><span class="p">],</span><span class="n">oid</span><span class="p">[</span><span class="s2">&quot;oid_tx&quot;</span><span class="p">],</span><span class="n">appid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="n">nombreg</span> <span class="o">=</span> <span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+                <span class="n">create_graph</span><span class="p">(</span><span class="n">nombreg</span><span class="p">,</span><span class="n">itemid_1</span><span class="p">,</span><span class="n">itemid_2</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Los item de ONT </span><span class="si">{}</span><span class="s2"> en el nodo </span><span class="si">{}</span><span class="s2"> deberian estar creados.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">nodo</span><span class="p">))</span>
+                <span class="n">logout</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">chequeo</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: La ONT </span><span class="si">{}</span><span class="s2"> con puerto </span><span class="si">{}</span><span class="s2"> ya esta siendo monitoreada en el nodo </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nombre</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">nodo</span><span class="p">))</span>
+                <span class="n">logout</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;El nodo </span><span class="si">{}</span><span class="s2"> o puerto </span><span class="si">{}</span><span class="s2"> no existen en Zabbix&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">))</span>
+            <span class="n">logout</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">metodo</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comienza la carga automatica de ONTs&quot;</span><span class="p">)</span>
+        <span class="n">lista</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">repetidas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">faltante</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">encontrado</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">descarte</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">llave</span> <span class="o">=</span> <span class="n">autorizar</span><span class="p">()</span>
+        <span class="n">lista_rbs</span> <span class="o">=</span> <span class="n">get_rbs</span><span class="p">()</span>
+        <span class="n">contador_break</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">rbs</span> <span class="ow">in</span> <span class="n">lista_rbs</span><span class="p">:</span>
+            <span class="n">nodo</span> <span class="o">=</span> <span class="n">rbs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">puerto</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">rbs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se descarto la ONT </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="n">puerto</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">rbs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">descarte</span> <span class="o">=</span> <span class="n">descarte</span> <span class="o">+</span><span class="mi">1</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hostid</span> <span class="o">=</span> <span class="n">host_get</span><span class="p">(</span><span class="n">nodo</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="n">inter_id</span> <span class="o">=</span> <span class="n">get_inter_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">ip</span> <span class="o">=</span> <span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;ip&quot;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">faltante</span> <span class="o">=</span> <span class="n">faltante</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">pass</span>
+                <span class="n">oid</span> <span class="o">=</span> <span class="n">get_oid</span><span class="p">(</span><span class="s2">&quot;zte&quot;</span><span class="p">,</span><span class="n">puerto</span><span class="p">)</span>
+                <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">rbs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">nombre</span> <span class="o">=</span> <span class="n">get_name</span><span class="p">(</span><span class="s2">&quot;Radio Base&quot;</span><span class="p">,</span><span class="n">puerto</span><span class="p">,</span><span class="n">etiqueta</span><span class="p">)</span>
+                <span class="n">zkey</span> <span class="o">=</span> <span class="n">get_zabbix_key</span><span class="p">(</span><span class="n">puerto</span><span class="p">)</span>
+                <span class="n">comparador</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nodo</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">])</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">hostid</span><span class="p">)</span>
+                <span class="n">appid</span> <span class="o">=</span> <span class="n">get_app_id</span><span class="p">(</span><span class="n">hostid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">comparador</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+                    <span class="n">repetidas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comparador</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">chequeo</span> <span class="o">=</span> <span class="n">ont_check</span><span class="p">(</span><span class="s2">&quot;key_&quot;</span><span class="p">,</span><span class="n">hostid</span><span class="p">,</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">llave</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">chequeo</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">contador_break</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                            <span class="k">break</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodo</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">zkey</span><span class="p">))</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nombre</span><span class="p">))</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;******&quot;</span><span class="p">)</span>
+                        <span class="n">lista</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comparador</span><span class="p">)</span>
+                        <span class="n">faltante</span> <span class="o">=</span> <span class="n">faltante</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">itemid_1</span> <span class="o">=</span> <span class="n">create_ont</span><span class="p">(</span><span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">],</span><span class="n">hostid</span><span class="p">,</span><span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;inter_id&quot;</span><span class="p">],</span><span class="n">oid</span><span class="p">[</span><span class="s2">&quot;oid_rx&quot;</span><span class="p">],</span><span class="n">appid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                        <span class="n">itemid_2</span> <span class="o">=</span> <span class="n">create_ont</span><span class="p">(</span><span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;TX&quot;</span><span class="p">],</span><span class="n">zkey</span><span class="p">[</span><span class="s2">&quot;TX&quot;</span><span class="p">],</span><span class="n">hostid</span><span class="p">,</span><span class="n">inter_id</span><span class="p">[</span><span class="s2">&quot;inter_id&quot;</span><span class="p">],</span><span class="n">oid</span><span class="p">[</span><span class="s2">&quot;oid_tx&quot;</span><span class="p">],</span><span class="n">appid</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                        <span class="n">nombreg</span> <span class="o">=</span> <span class="n">nombre</span><span class="p">[</span><span class="s2">&quot;RX&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+                        <span class="n">create_graph</span><span class="p">(</span><span class="n">nombreg</span><span class="p">,</span><span class="n">itemid_1</span><span class="p">,</span><span class="n">itemid_2</span><span class="p">,</span><span class="n">llave</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">chequeo</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">encontrado</span> <span class="o">=</span> <span class="n">encontrado</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">lista</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comparador</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> ONTs encontradas,</span><span class="si">{}</span><span class="s2"> repetidas, </span><span class="si">{}</span><span class="s2"> sin encontrar y </span><span class="si">{}</span><span class="s2"> descartadas&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encontrado</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">repetidas</span><span class="p">),</span><span class="n">faltante</span><span class="p">,</span><span class="n">descarte</span><span class="p">))</span>
+        <span class="n">logout</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h3>Menu</h3>
+<p>Menu para llamar a <em>orquestador_carga_ont()</em> con variables de sistema al ejectutar
+<strong>orquestador_carga_ont.py</strong>.</p>
+<ul>
+<li><strong>auto</strong> ejecuta la carga automatica de ONTs a Zabbix.  </li>
+<li><strong>manual</strong> despliega inputs para crear una ONT a mano.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+    <span class="n">orquestador_carga_ont</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
+    <span class="n">orquestador_carga_ont</span><span class="p">(</span><span class="s2">&quot;manual&quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>logger.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>logger.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Logeo de scripts</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">direcciones_carga_ont</span> <span class="kn">import</span> <span class="n">file_log</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Este script permite logear en el archivo seteado en <em>file_log</em> <strong>mensajes</strong>, <strong>hora</strong> de ejcucion 
+y marcar la entrada como <strong>ERROR</strong> o <strong>INFO</strong>.</p>
+<p>Todas las funciones requieren que se las llame pasando el string del <em>mensaje</em>. Dependiendo
+del flag que buscamos para la entrada en el log, llamamos a <em>info</em> o <em>error</em>.</p>
+<p>Para cambiar el archivo donde logear, modificar <em>file_log</em> en <strong><em>direcciones.py</em></strong></p>
+<p>Contiene las funciones:</p>
+<ul>
+<li><strong>error</strong> - Ingresa una entrada a <em>file log</em>, al final del archivo, con <strong>ERROR HORA Y FECHA MENSAJE</strong></li>
+<li><strong>info</strong> - Ingresa una entrada a <em>file log</em>, al final del archivo, con <strong>INFO HORA Y FECHA MENSAJE</strong></li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Ingresa un ERROR a el archivo file_log</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">mensaje</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>param mensaje</strong>: El mensaje a marcar como <strong>ERROR</strong> en el <em>file_log</em><br />
+<strong>type mensaje</strong>: str</p>
+<p><strong>returns</strong>: no hay retorno. Escribe en <em>file_log</em>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log</span><span class="p">:</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
+        <span class="n">hora</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">logeo</span> <span class="o">=</span> <span class="n">tipo</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hora</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">mensaje</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">logeo</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Ingresa un INFO a el archivo file_log</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="n">mensaje</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong>param mensaje</strong>: El mensaje a marcar como <strong>INFO</strong> en el <em>file_log</em><br />
+<strong>type mensaje</strong>: str</p>
+<p><strong>returns</strong>: no hay retorno. Escribe en <em>file_log</em>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log</span><span class="p">:</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+        <span class="n">hora</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">logeo</span> <span class="o">=</span> <span class="n">tipo</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hora</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">mensaje</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">logeo</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>sesiones_manual.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>sesiones_manual.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h3>Logeo y deslogeo contra la Zabbix API manual</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">requester</span> <span class="kn">import</span> <span class="n">requester</span>
+<span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Al autorizar devuelve una llave en formato str utilizada para hacer consultas
+a la API. Utiliza el <em>usuario</em> y <em>contraseña</em> solicitado al llamar <em>autorizar()</em>.</p>
+<p><em>logaut()</em> da de baja estas llaves para que no se acumulen ni queden activadas fuera
+de uso. Debe pasarse la llave a deslogear en formato str.</p>
+<p>Para llamar a la funcion <em>autorizar()</em> se debe ejcutar el script con el argumento de sistema logeo.<br />
+Para dar de baja una key se debe ejcutar el script con el argumento de sistema deslogeo.<br />
+<strong>Ej: CLI: .~\proyecto_zabbix\carga_ont\sesiones_manual.py logeo</strong></p>
+<p>Contiene las funciones:<br />
+<strong>autorizar:</strong> Devuelve una string con una API key.<br />
+<strong>logout:</strong> Da de baja una API key.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong><em>Genera una API Key</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">autorizar</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Solicita un <em>usuario</em> y <em>contraseña</em> de Zabbix en formato string. 
+Este user debe tener definido en zabbix permisos para ulitlizar la API.</p>
+<p>Devuelve un string con una API Key.</p>
+<p><strong>param user:</strong> Usuario de zabbix en formato string.<br />
+<strong>type user:</strong> input(str)</p>
+<p><strong>param password:</strong> Password de zabbix en formato string.<br />
+<strong>type password:</strong> input(str)</p>
+<p><strong>returns:</strong> API Key generada con el user API.<br />
+<strong>rtype:</strong> str.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">autorizar</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;user.login&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese User:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Ingrese Password:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">llave</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">autorizar</span><span class="p">)</span>
+    <span class="n">llave</span> <span class="o">=</span> <span class="n">llave</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">llave</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong><em>Da de baja una API Key</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">logout</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Cuando se la llama, solicita la Key a bajar en formato string.</p>
+<p>La exepcion busca informar de que la key no pudo ser deslogeada o ya habia
+sido dada de baja. Se imprime en pantalla si el deslogeo fue correcto.</p>
+<p><strong>param user:</strong> API Key a deslogear en formato string.<br />
+<strong>type user:</strong> input(str)</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+<h2>Menu con argumentos de sistema</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">llave</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Ingrese Key a deslogear:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logout</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;user.logout&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;auth&quot;</span><span class="p">:</span> <span class="n">llave</span>
+    <span class="p">}</span>
+    <span class="n">deslogeo</span> <span class="o">=</span> <span class="n">requester</span><span class="p">(</span><span class="n">logout</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">deslogeo</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Deslogeo correcto&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ocurrio un error al intentar deslogar el id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">llave</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Para llamar a la funcion logeo se debe ejcutar el script con el argumento de sistema logeo.
+Para dar de baja una key se debe ejcutar el script con el argumento de sistema deslogeo.
+<strong>Ej: CLI: .~\proyecto_zabbix\carga_ont\sesiones_manual.py logeo</strong></p>
+<p>La exepcion informa que ninguna opcion pasada es correcta.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;logeo&quot;</span><span class="p">:</span>
+        <span class="n">autorizar</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;deslogeo&quot;</span><span class="p">:</span>
+        <span class="n">logout</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No usaste ningun argumento. Las opciones son:</span><span class="se">\n</span><span class="s2"> * </span><span class="se">\&quot;</span><span class="s2">logeo</span><span class="se">\&quot;</span><span class="s2"> para obtener una ID </span><span class="se">\n</span><span class="s2"> * </span><span class="se">\&quot;</span><span class="s2">deslogeo</span><span class="se">\&quot;</span><span class="s2"> para borrar un sesion ID&quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

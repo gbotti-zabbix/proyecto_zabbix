@@ -10,8 +10,8 @@ inventario de Telelink.
 Escribe la diferencia total de puertos desde cada inventario, ademas de 
 la informacion de los puertos que no se encontraron.
 
-Esta informacion se escribe para ambos listados con el formato:
-FECHA(YYYY/MM/DD) : Zabbix/TLK : NOMBRE DE NODO-NUMERO DE NODO_PLACA/PUERTO PON.  
+Esta informacion se escribe para ambos listados con el formato:  
+**FECHA(YYYY/MM/DD) : Zabbix/TLK : NOMBRE DE NODO-NUMERO DE NODO_PLACA/PUERTO PON.**  
 **Ej**: 2021/2/18 : Zabbix : P-MOLINO-26Z_7/7.
 
 Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:35.  

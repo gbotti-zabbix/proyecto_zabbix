@@ -32,19 +32,17 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>Las funciones llaman a conector() junto con un mensaje especifico y la consulta SELECT.</p>
-<p>Todas las variables de este archivo deberian funcionar con el modulo conector. Este modulo es el 
+      <p>Las funciones llaman a <em>conector()</em> junto con un mensaje especifico y la consulta SELECT.</p>
+<p>Todas las variables de este archivo deberian funcionar con el modulo <em>conector</em>. Este modulo es el 
 mismo utilizado para los reportes PON y ONT. Por esto es enecesario el append inicial del directorio 
 reportes/Working al sys path.</p>
-<p>Si se quiere apuntar a otra BD cambiar host_DB, user_DB, password_DB y database_DB en direcciones 
+<p>Si se quiere apuntar a otra BD cambiar <em>host_DB, user_DB, password_DB</em> y <em>database_DB</em> en <em>direcciones</em> 
 (o importar variables sesde otro modulo).</p>
-<p>Contiene las funciones:</p>
-<ul>
-<li><strong>get_rbs</strong>: Trae todas las radiobases en ONT registradas en gestion.</li>
-<li><strong>get_rbs_tlk</strong>: Trae todas las radiobases en ONT registradas en Telelink.</li>
-<li><strong>get_puertos_pon_tlk</strong>: Trae todos los puertos PON registrados en Telelink.</li>
-<li><strong>get_puertos_pon_zbx</strong>: Trae todos los puertos PON y Uplink monitoreados por zabbix.</li>
-</ul>
+<p>Contiene las funciones:<br />
+<strong>get_rbs</strong>: Trae todas las radiobases en ONT registradas en gestion.<br />
+<strong>get_rbs_tlk</strong>: Trae todas las radiobases en ONT registradas en Telelink.<br />
+<strong>get_puertos_pon_tlk</strong>: Trae todos los puertos PON registrados en Telelink.<br />
+<strong>get_puertos_pon_zbx</strong>: Trae todos los puertos PON y Uplink monitoreados por zabbix.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -56,7 +54,7 @@ reportes/Working al sys path.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
       </div>
-      <p><strong>SELECT de ONTs con RBS en gestion</strong></p>
+      <p><strong><em>SELECT de ONTs con RBS en gestion</em></strong></p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_rbs</span><span class="p">():</span></pre></div>
@@ -70,10 +68,8 @@ reportes/Working al sys path.</p>
       </div>
       <p>Selecciona nombre de nodo, etiqueta de gesition, slot/puerto/ont del inventario de gestion.
 Devuelve el resultado en una lista de tuplas.</p>
-<ul>
-<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
-<li><strong>rtype</strong>: list</li>
-</ul>
+<p><strong>returns</strong>: Lista de tuplas con resultados del select.<br />
+<strong>rtype</strong>: list</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT `nodo`,`etiqueta_ont`,`slot`,`puerto`,`ont` FROM `t_servicios_RBS`&quot;</span>
@@ -87,7 +83,7 @@ Devuelve el resultado en una lista de tuplas.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
       </div>
-      <p><strong>SELECT de ONTs con RBS en TLK.</strong></p>
+      <p><strong><em>SELECT de ONTs con RBS en TLK.</em></strong></p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_rbs_tlk</span><span class="p">():</span></pre></div>
@@ -101,10 +97,8 @@ Devuelve el resultado en una lista de tuplas.</p>
       </div>
       <p>Selecciona nombre de nodo/slot/puerto y numero de ONT del inventario de TLK.
 Devuelve el resultado en una lista de tuplas.</p>
-<ul>
-<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
-<li><strong>rtype</strong>: list</li>
-</ul>
+<p><strong>returns</strong>: Lista de tuplas con resultados del select.<br />
+<strong>rtype</strong>: list</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `id_tlk`, `nro_ont` FROM `t_reporte_puertos_telelink` WHERE `rbs_ont_tlk` &gt; 0&quot;</span>
@@ -118,7 +112,7 @@ Devuelve el resultado en una lista de tuplas.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-6'>#</a>
       </div>
-      <p><strong>SELECT de puertos PON en TLK.</strong></p>
+      <p><strong><em>SELECT de puertos PON en TLK.</em></strong></p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_puertos_pon_tlk</span><span class="p">():</span></pre></div>
@@ -130,12 +124,10 @@ Devuelve el resultado en una lista de tuplas.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <p>Selecciona nombre de nodo/slot/puerto PON del inventario de TLK.
+      <p>Selecciona nombre de nodo/slot/puerto PON del inventario de TLK.<br />
 Devuelve el resultado en una lista de tuplas.</p>
-<ul>
-<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
-<li><strong>rtype</strong>: list</li>
-</ul>
+<p><strong>returns</strong>: Lista de tuplas con resultados del select.
+<strong>rtype</strong>: list</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `id_tlk` FROM `t_resumen_servicios_tlk`&quot;</span>
@@ -149,7 +141,7 @@ Devuelve el resultado en una lista de tuplas.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-8'>#</a>
       </div>
-      <p><strong>SELECT de puertos PON monitoreados por Zabbix.</strong></p>
+      <p><strong><em>SELECT de puertos PON monitoreados por Zabbix.</em></strong></p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="k">def</span> <span class="nf">get_puertos_pon_zbx</span><span class="p">():</span></pre></div>
@@ -165,10 +157,8 @@ Devuelve el resultado en una lista de tuplas.</p>
 hace el selecto sobre la direccion RX debido a que todo puerto tiene ambas direcciones
 y al compararlo contra TLK esto no tiene importancia.</p>
 <p>Devuelve el resultado en una lista de tuplas.</p>
-<ul>
-<li><strong>returns</strong>: Lista de tuplas con resultados del select.</li>
-<li><strong>rtype</strong>: list</li>
-</ul>
+<p><strong>returns</strong>: Lista de tuplas con resultados del select.<br />
+<strong>rtype</strong>: list</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="n">sql</span> <span class="o">=</span><span class="s2">&quot;SELECT `nodo`, `puerto`FROM `reporte_semanal` WHERE `direccion` = &#39;RX&#39;&quot;</span>

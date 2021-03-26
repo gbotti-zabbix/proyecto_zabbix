@@ -4,14 +4,14 @@ El archivo cuenta con direcciones de directorios donde guardar achivos especific
 algunos datos utilizados para filtros de puertos y/o nodos.
 """
 
-#**Archivos de Auditoria**  
+#***Archivos de Auditoria***  
 """ Directorios donde se guardan archivos de auditorias por tecnologia.
 """
 auditoria_ont = "/var/lib/reportes-zabbix/auditorias/auditoria_ont.txt"
 
 auditoria_pon = "/var/lib/reportes-zabbix/auditorias/auditoria_pon.txt"
 
-#**Filtros de puertos uplink y nodos de 19 pulgadas**  
+#***Filtros de puertos uplink y nodos de 19 pulgadas#***  
 """ Datos para filtros en las comparaciones de puertos
 
 **c300_19p**: Lista de nodos C300 de 19 pulgadas.

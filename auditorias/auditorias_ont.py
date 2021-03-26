@@ -12,10 +12,10 @@ Escribe la diferencia total de puertos desde cada inventario, ademas de
 la informacion de los puertos que no se encontraron.
 
 Esta informacion se escribe para ambos listados con el formato:
-NOMBRE DE NODO-NUMERO DE NODO-PLACA/PUERTO/ONT. Ej: ATAHUALPA-03Z_16/2/1.
+**NOMBRE DE NODO-NUMERO DE NODO-PLACA/PUERTO/ONT. Ej: ATAHUALPA-03Z_16/2/1.**
 
-Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:30.
-30 18 5 * * /usr/local/bin/python3.8 /etc/proyecto_zabbix/auditorias/auditorias_ont.py
+Este script es manejado por el CRON. Este lo llama todos los 5 de mes a las 18:30.  
+**30 18 5 * * /usr/local/bin/python3.8 /etc/proyecto_zabbix/auditorias/auditorias_ont.py**
 
 Contiene la funcion **auditar_ont**.
 """

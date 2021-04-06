@@ -22,7 +22,7 @@ Las funciones llamadas detectan crudos a parsear, los pushean a la BD y generan 
 de consultas necesarioas para crear datos utiles para los reportes. Por ultimo crean los
 archivos finales de reportes consultando la BD.
 
-Se utilizan funciones que controlan dias y fechas para decidir que procedimientos ejecutar.
+Se utilizan funciones que controlan dias, fechas y horas para decidir que procedimientos ejecutar.
 
 El orquestador solo tiene la funcion de coordinar los distintos eslabones de los reportes.
 Las funcionalidades finas deben editarse en las funciones importadas y llamadas desde
@@ -34,6 +34,7 @@ el proceso con su correspondiente PID.
 
 Contiene las funciones:  
     **checkFileExistance** - Chequea que el archivo crudo a parsear exista.  
+    **checkhora** - Chequea si al momento de ejecutarlo es la hora pasada como str.
     **checklunes** - Chequea que sea lunes.  
     **checkdia** - Chequea que sea primero de mes.  
     **orquestador_reportes** -  Orquesta la llamada a las funciones encargadas
@@ -62,6 +63,25 @@ def checkFileExistance(filePath):
         return False
     except IOError as e:
         return False
+
+def checkhora(hora):
+    """***Comprueba si es x hora***
+
+    Comprueba si al momento de llamar la funcion la hora actual
+    es igual a la pasada en hora. Devuelve 1 de ser iguales las horas,
+    de lo contrario retorna 0.  
+    
+    **param hora:** Hora en formato str a chequear.  
+    **type hora:** str
+
+    **returns:** 1 o 0 dependiendo si es es la hora filtrada o no.  
+    **rtpye:** int
+    """
+    hora_now = datetime.now().time().strftime("%H")
+    if hora_now == hora:
+        return 0
+    else:
+        return 1
 
 
 def checklunes():
@@ -101,6 +121,10 @@ def orquestador_reportes():
     Comienza con un ciclo while de 30 min de sleep entre ciclo. En cada ciclo se chequea
     la existencia de archivos crudos de TLK, gestion o Zabbix. De encontrar alguno, comienza
     las tareas de ingreso de crudos diarios, flujos de datos en al BD y/o generacion de reportes.
+
+    * **Se verifica que no sean las 00 o 03 hs**
+        De no ser las 00 o 03 hs se continua. Esto se utiliza para asegurarnos que se copien los crudos
+        provenientes de ritaf y/o Zabbix antes de intentar parcearlos.
 
     * **Si encuentra archivo TLK (*archivo_tlk*):**  
         Logea que encontro el archivo.
@@ -144,48 +168,49 @@ def orquestador_reportes():
 
     try:
         while True:
-            if checkFileExistance(archivo_tlk):
-                logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
-                logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
-                f_parsear_inventario (archivo_tlk,archivo_tlk_dst,archivo_tlk_viejo)
+            if checkhora("03") = 0:
+                if checkFileExistance(archivo_tlk):
+                    logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
+                    logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
+                    f_parsear_inventario (archivo_tlk,archivo_tlk_dst,archivo_tlk_viejo)
 
-                f_cargar_inv_en_BD(archivo_tlk_dst)
+                    f_cargar_inv_en_BD(archivo_tlk_dst)
 
-                f_procesar_resumne_tlk_BD()
-                logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
+                    f_procesar_resumne_tlk_BD()
+                    logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
 
-            elif checkFileExistance(archivo_rbs_DCS):
-                logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
-                logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
-                f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
+                elif checkFileExistance(archivo_rbs_DCS):
+                    logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
+                    logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
+                    f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
 
-                f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
+                    f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
 
-                logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
+                    logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
 
-            elif checkFileExistance(crudozabbix()):
-                parseo_ont("auto")
-                parseo_pon("auto")
-                os.remove(crudozabbix())
-                logger.info("Se borro archivo crudozabbix")
-                pusheo_crudos_diarios_PON()
-                pusheo_crudos_diarios_ONT()
-                os.system(limpiar_pickle_pon)
-                os.system(limpiar_pickle_ont)
-                flujos("dia")
-                if checklunes() == 1:
-                    flujos("semana")
-                    reportes_xlsx("PON","semana")
-                    reportes_xlsx("ONT","semana")
-                if checkdia() == 1:
-                    flujos("mes")
-                    reportes_xlsx("PON","mes")
-                    reportes_xlsx("ONT","mes")
+            elif checkhora("00") = 0:
+                if checkFileExistance(crudozabbix()):
+                    parseo_ont("auto")
+                    parseo_pon("auto")
+                    os.remove(crudozabbix())
+                    logger.info("Se borro archivo crudozabbix")
+                    pusheo_crudos_diarios_PON()
+                    pusheo_crudos_diarios_ONT()
+                    os.system(limpiar_pickle_pon)
+                    os.system(limpiar_pickle_ont)
+                    flujos("dia")
+                    if checklunes() == 1:
+                        flujos("semana")
+                        reportes_xlsx("PON","semana")
+                        reportes_xlsx("ONT","semana")
+                    if checkdia() == 1:
+                        flujos("mes")
+                        reportes_xlsx("PON","mes")
+                        reportes_xlsx("ONT","mes")
             else:
                 time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
-        time.sleep(1200)
         orquestador_reportes()
 
 #**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**

@@ -46,7 +46,7 @@ de los reportes a partir de info de Zabbix, Telelink y Gestion.</p>
 <p>Las funciones llamadas detectan crudos a parsear, los pushean a la BD y generan los flujos
 de consultas necesarioas para crear datos utiles para los reportes. Por ultimo crean los
 archivos finales de reportes consultando la BD.</p>
-<p>Se utilizan funciones que controlan dias y fechas para decidir que procedimientos ejecutar.</p>
+<p>Se utilizan funciones que controlan dias, fechas y horas para decidir que procedimientos ejecutar.</p>
 <p>El orquestador solo tiene la funcion de coordinar los distintos eslabones de los reportes.
 Las funcionalidades finas deben editarse en las funciones importadas y llamadas desde
 <em>orquestador_reportes()</em>.</p>
@@ -55,7 +55,8 @@ por lo que no captura la terminal desde la que se ejecuta. Para detener el scrip
 el proceso con su correspondiente PID.</p>
 <p>Contiene las funciones:<br />
 <strong>checkFileExistance</strong> - Chequea que el archivo crudo a parsear exista.<br />
-<strong>checklunes</strong> - Chequea que sea lunes.<br />
+<strong>checkhora</strong> - Chequea si al momento de ejecutarlo es la hora pasada como str.
+    <strong>checklunes</strong> - Chequea que sea lunes.<br />
 <strong>checkdia</strong> - Chequea que sea primero de mes.<br />
 <strong>orquestador_reportes</strong> -  Orquesta la llamada a las funciones encargadas
     de todo el proceso de generacion de reportes. Parseo de curdos, pusheos, etc.<br />
@@ -107,10 +108,10 @@ True, de lo contrario devuelve False.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
       </div>
-      <p><strong><em>Chequea si es Lunes</em></strong></p>
+      <p><strong><em>Comprueba si es x hora</em></strong></p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checklunes</span><span class="p">():</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checkhora</span><span class="p">(</span><span class="n">hora</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -118,6 +119,40 @@ True, de lo contrario devuelve False.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Comprueba si al momento de llamar la funcion la hora actual
+es igual a la pasada en hora. Devuelve 1 de ser iguales las horas,
+de lo contrario retorna 0.  </p>
+<p><strong>param hora:</strong> Hora en formato str a chequear.<br />
+<strong>type hora:</strong> str</p>
+<p><strong>returns:</strong> 1 o 0 dependiendo si es es la hora filtrada o no.<br />
+<strong>rtpye:</strong> int</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">hora_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hora_now</span> <span class="o">==</span> <span class="n">hora</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong><em>Chequea si es Lunes</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">checklunes</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <p>Comprueba si al momento de llamar la funcion es Lunes.
 De serlo devuelve 1, de lo contrario 0</p>
@@ -132,10 +167,10 @@ De serlo devuelve 1, de lo contrario 0</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       <p><strong><em>Chequea si es primero de mes</em></strong></p>
     </div>
@@ -144,10 +179,10 @@ De serlo devuelve 1, de lo contrario 0</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <p>Comprueba si al momento de llamar la funcion es primero de mes.
 De serlo devuelve 1, de lo contrario 0.</p>
@@ -162,10 +197,10 @@ De serlo devuelve 1, de lo contrario 0.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       <p><strong><em>Gestiona/llama todas las funciones relevante a los reportes</em></strong></p>
     </div>
@@ -174,15 +209,20 @@ De serlo devuelve 1, de lo contrario 0.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
       <p>Comienza con un ciclo while de 30 min de sleep entre ciclo. En cada ciclo se chequea
 la existencia de archivos crudos de TLK, gestion o Zabbix. De encontrar alguno, comienza
 las tareas de ingreso de crudos diarios, flujos de datos en al BD y/o generacion de reportes.</p>
 <ul>
+<li>
+<p><strong>Se verifica que no sean las 00 o 03 hs</strong>
+    De no ser las 00 o 03 hs se continua. Esto se utiliza para asegurarnos que se copien los crudos
+    provenientes de ritaf y/o Zabbix antes de intentar parcearlos.</p>
+</li>
 <li>
 <p><strong>Si encuentra archivo TLK (<em>archivo_tlk</em>):</strong><br />
     Logea que encontro el archivo.</p>
@@ -217,56 +257,57 @@ se crean los reportes .xlsx de ONT y PON.</p>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_tlk</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario TLK encontrado: </span><span class="si">{</span><span class="n">archivo_tlk</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
-                <span class="n">f_parsear_inventario</span> <span class="p">(</span><span class="n">archivo_tlk</span><span class="p">,</span><span class="n">archivo_tlk_dst</span><span class="p">,</span><span class="n">archivo_tlk_viejo</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;03&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_tlk</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario TLK encontrado: </span><span class="si">{</span><span class="n">archivo_tlk</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
+                    <span class="n">f_parsear_inventario</span> <span class="p">(</span><span class="n">archivo_tlk</span><span class="p">,</span><span class="n">archivo_tlk_dst</span><span class="p">,</span><span class="n">archivo_tlk_viejo</span><span class="p">)</span>
 
-                <span class="n">f_cargar_inv_en_BD</span><span class="p">(</span><span class="n">archivo_tlk_dst</span><span class="p">)</span>
+                    <span class="n">f_cargar_inv_en_BD</span><span class="p">(</span><span class="n">archivo_tlk_dst</span><span class="p">)</span>
 
-                <span class="n">f_procesar_resumne_tlk_BD</span><span class="p">()</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">f_procesar_resumne_tlk_BD</span><span class="p">()</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario RBS encontrado: </span><span class="si">{</span><span class="n">archivo_rbs_DCS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
-                <span class="n">f_parseo_inventario_RBS</span> <span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">,</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span><span class="n">archivo_rbs_DCS_old</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario RBS encontrado: </span><span class="si">{</span><span class="n">archivo_rbs_DCS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
+                    <span class="n">f_parseo_inventario_RBS</span> <span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">,</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span><span class="n">archivo_rbs_DCS_old</span><span class="p">)</span>
 
-                <span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">(</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">)</span>
+                    <span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">(</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">)</span>
 
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">()):</span>
-                <span class="n">parseo_ont</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
-                <span class="n">parseo_pon</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">())</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se borro archivo crudozabbix&quot;</span><span class="p">)</span>
-                <span class="n">pusheo_crudos_diarios_PON</span><span class="p">()</span>
-                <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">()</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_pon</span><span class="p">)</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_ont</span><span class="p">)</span>
-                <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;dia&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">checklunes</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
-                    <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
-                    <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">checkdia</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
-                    <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
-                    <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;00&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">()):</span>
+                    <span class="n">parseo_ont</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+                    <span class="n">parseo_pon</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">())</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se borro archivo crudozabbix&quot;</span><span class="p">)</span>
+                    <span class="n">pusheo_crudos_diarios_PON</span><span class="p">()</span>
+                    <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">()</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_pon</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_ont</span><span class="p">)</span>
+                    <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;dia&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">checklunes</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+                        <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+                        <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">checkdia</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+                        <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
+                        <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1200</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1200</span><span class="p">)</span>
         <span class="n">orquestador_reportes</span><span class="p">()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
       <p><strong>Se crea y ejecuta demonio para la funcion <em>orquestador_reportes</em>.</strong></p>
     </div>

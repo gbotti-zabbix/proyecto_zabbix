@@ -168,7 +168,7 @@ def orquestador_reportes():
 
     try:
         while True:
-            if checkhora("03") = 0:
+            if checkhora("03") == 0:
                 if checkFileExistance(archivo_tlk):
                     logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
                     logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
@@ -188,7 +188,7 @@ def orquestador_reportes():
 
                     logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
 
-            elif checkhora("00") = 0:
+            elif checkhora("00") == 0:
                 if checkFileExistance(crudozabbix()):
                     parseo_ont("auto")
                     parseo_pon("auto")

@@ -257,7 +257,7 @@ se crean los reportes .xlsx de ONT y PON.</p>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;03&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;03&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_tlk</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario TLK encontrado: </span><span class="si">{</span><span class="n">archivo_tlk</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
@@ -277,7 +277,7 @@ se crean los reportes .xlsx de ONT y PON.</p>
 
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;00&quot;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;00&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">()):</span>
                     <span class="n">parseo_ont</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
                     <span class="n">parseo_pon</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>

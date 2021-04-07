@@ -168,45 +168,45 @@ def orquestador_reportes():
 
     try:
         while True:
-            #if checkhora("03") == 0:
-            if checkFileExistance(archivo_tlk):
-                logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
-                logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
-                f_parsear_inventario (archivo_tlk,archivo_tlk_dst,archivo_tlk_viejo)
+            if checkhora("03") == 0:
+                if checkFileExistance(archivo_tlk):
+                    logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
+                    logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
+                    f_parsear_inventario (archivo_tlk,archivo_tlk_dst,archivo_tlk_viejo)
 
-                f_cargar_inv_en_BD(archivo_tlk_dst)
+                    f_cargar_inv_en_BD(archivo_tlk_dst)
 
-                f_procesar_resumne_tlk_BD()
-                logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
+                    f_procesar_resumne_tlk_BD()
+                    logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
 
-            elif checkFileExistance(archivo_rbs_DCS):
-                logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
-                logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
-                f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
+                elif checkFileExistance(archivo_rbs_DCS):
+                    logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
+                    logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<")
+                    f_parseo_inventario_RBS (archivo_rbs_DCS,archivo_rbs_DCS_dst,archivo_rbs_DCS_old)
 
-                f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
+                    f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
 
-                logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
+                    logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
 
-            #elif checkhora("00") == 0:
-            if checkFileExistance(crudozabbix()):
-                parseo_ont("auto")
-                parseo_pon("auto")
-                os.remove(crudozabbix())
-                logger.info("Se borro archivo crudozabbix")
-                pusheo_crudos_diarios_PON()
-                pusheo_crudos_diarios_ONT()
-                os.system(limpiar_pickle_pon)
-                os.system(limpiar_pickle_ont)
-                flujos("dia")
-                if checklunes() == 1:
-                    flujos("semana")
-                    reportes_xlsx("PON","semana")
-                    reportes_xlsx("ONT","semana")
-                if checkdia() == 1:
-                    flujos("mes")
-                    reportes_xlsx("PON","mes")
-                    reportes_xlsx("ONT","mes")
+            elif checkhora("00") == 0:
+                if checkFileExistance(crudozabbix()):
+                    parseo_ont("auto")
+                    parseo_pon("auto")
+                    os.remove(crudozabbix())
+                    logger.info("Se borro archivo crudozabbix")
+                    pusheo_crudos_diarios_PON()
+                    pusheo_crudos_diarios_ONT()
+                    os.system(limpiar_pickle_pon)
+                    os.system(limpiar_pickle_ont)
+                    flujos("dia")
+                    if checklunes() == 1:
+                        flujos("semana")
+                        reportes_xlsx("PON","semana")
+                        reportes_xlsx("ONT","semana")
+                    if checkdia() == 1:
+                        flujos("mes")
+                        reportes_xlsx("PON","mes")
+                        reportes_xlsx("ONT","mes")
             else:
                 time.sleep(1200)
     except Exception as e:

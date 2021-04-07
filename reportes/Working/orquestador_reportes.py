@@ -79,9 +79,9 @@ def checkhora(hora):
     """
     hora_now = datetime.now().time().strftime("%H")
     if hora_now == hora:
-        return 0
-    else:
         return 1
+    else:
+        return 0
 
 
 def checklunes():

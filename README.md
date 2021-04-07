@@ -1,3 +1,1 @@
 # Ingreso_Cod_TLK
- 
-##ALGUN DIA HAY QUE HACER ALGO CON ESTO

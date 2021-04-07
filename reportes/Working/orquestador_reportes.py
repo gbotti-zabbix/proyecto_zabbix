@@ -214,7 +214,6 @@ def orquestador_reportes():
         logger.error(traceback.format_exc())
         orquestador_reportes()
 
-orquestador_reportes()
 #**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**
 daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
 daemon.start()

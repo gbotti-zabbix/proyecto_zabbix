@@ -167,10 +167,8 @@ def orquestador_reportes():
     """
 
     try:
-        print("ANDA")
         while True:
             if checkhora("03") == 1 or checkhora("00") == 1:
-                print("Duermo 1")
                 time.sleep(1200)
             else:
                 if checkFileExistance(archivo_tlk):
@@ -211,7 +209,6 @@ def orquestador_reportes():
                         reportes_xlsx("PON","mes")
                         reportes_xlsx("ONT","mes")
                 else:
-                    print("Duermo 2")
                     time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
@@ -219,5 +216,5 @@ def orquestador_reportes():
 
 orquestador_reportes()
 #**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**
-#daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
-#daemon.start()
+daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
+daemon.start()

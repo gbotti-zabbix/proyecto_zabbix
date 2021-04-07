@@ -169,6 +169,7 @@ def orquestador_reportes():
     try:
         while True:
             if checkhora("03") == 0:
+                print("Entre al 03")
                 if checkFileExistance(archivo_tlk):
                     logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
                     logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
@@ -189,6 +190,7 @@ def orquestador_reportes():
                     logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
 
             elif checkhora("00") == 0:
+                print("Entre al 00")
                 if checkFileExistance(crudozabbix()):
                     parseo_ont("auto")
                     parseo_pon("auto")
@@ -208,11 +210,12 @@ def orquestador_reportes():
                         reportes_xlsx("PON","mes")
                         reportes_xlsx("ONT","mes")
             else:
+                print("Duermo")
                 time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
         orquestador_reportes()
 
 #**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**
-daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
-daemon.start()
+#daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
+#daemon.start()

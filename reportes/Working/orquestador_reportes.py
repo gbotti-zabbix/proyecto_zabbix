@@ -169,8 +169,10 @@ def orquestador_reportes():
     try:
         print("ANDA")
         while True:
-            if checkhora("03") == 0:
-                print("Entre al 03")
+            if checkhora("03") == 1 or checkhora("00") == 1:
+                print("Duermo 1")
+                time.sleep(1200)
+            else:
                 if checkFileExistance(archivo_tlk):
                     logger.info(f'Arvhivo inventario TLK encontrado: {archivo_tlk}')
                     logger.info("\n>>>>>>>>>>COMIENZO PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<")
@@ -190,9 +192,7 @@ def orquestador_reportes():
 
                     logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
 
-            elif checkhora("00") == 0:
-                print("Entre al 00")
-                if checkFileExistance(crudozabbix()):
+                elif checkFileExistance(crudozabbix()):
                     parseo_ont("auto")
                     parseo_pon("auto")
                     os.remove(crudozabbix())
@@ -210,9 +210,9 @@ def orquestador_reportes():
                         flujos("mes")
                         reportes_xlsx("PON","mes")
                         reportes_xlsx("ONT","mes")
-            else:
-                print("Duermo")
-                time.sleep(1200)
+                else:
+                    print("Duermo 2")
+                    time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
         orquestador_reportes()

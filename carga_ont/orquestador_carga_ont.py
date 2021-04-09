@@ -169,7 +169,7 @@ def orquestador_carga_ont(metodo):
                     logout(llave)
                     raise SystemExit(0)
             zkey = get_zabbix_key(puerto)
-            print("zkey {}".format(zkey]))
+            print("zkey {}".format(zkey))
             appid = get_app_id(hostid,llave)
             print("app id {}".format(appid))
             chequeo = ont_check("key_",hostid,zkey["RX"],llave)

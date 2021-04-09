@@ -143,19 +143,12 @@ def orquestador_carga_ont(metodo):
                 elif opcion == 2:
                     tipo = "Radio Base"
             nodo = input("Ingrese nombre de nodo en Gestion:\nEjemplo: AGUADA-13Z\n")
-            print("Nodo {}".format(nodo))
             puerto = input("Ingrese Slot/Puerto/ONT:\nEjemplo: 17/1/4\n")
-            print("Puerto {}".format(puerto))
             llave = autorizar()
-            print("Llave {}".format(llave))
             hostid = host_get(nodo,llave)
-            print("hostid {}".format(hostid))
             inter_id = get_inter_id(hostid,llave)
-            print("inter_id {}".format(inter_id["inter_id"]))
             ip = inter_id["ip"]
-            print("ip {}".format(inter_id["ip"]))
             oid = get_oid("zte",puerto)
-            print("oid {}".format(oid))
             opcion_e = input("Ingrese 1 para ingresar etitquetas, sino precione enter para continuar\n")
             if opcion_e == "1":
                 etiqueta = input("Ingrese la etiqueta:\nEjemplo: GP0801-22024459-PINAZO-MORAN\n")
@@ -163,25 +156,19 @@ def orquestador_carga_ont(metodo):
             else:
                 try:
                     nombre = get_name_auto(ip,oid["oid_etiqueta"],puerto,tipo)
-                    print("nombre {}".format(nombre))
                 except IndexError as ee:
                     print("ERROR: No se pudo generar nombre para {}".format(nodo,"/",puerto))
                     logout(llave)
                     raise SystemExit(0)
             zkey = get_zabbix_key(puerto)
-            print("zkey {}".format(zkey))
             appid = get_app_id(hostid,llave)
-            print("app id {}".format(appid))
             chequeo = ont_check("key_",hostid,zkey["RX"],llave)
-            print("chequeo {}".format(chequeo))
             if chequeo == 0:
                 logger.info(str(nodo)+(" ")+str(zkey))
                 logger.info(str(nombre))
                 logger.info("******")
                 itemid_1 = create_ont(nombre["RX"],zkey["RX"],hostid,inter_id["inter_id"],oid["oid_rx"],appid,llave)
-                print("item1 {}".format(itemid_1))
                 itemid_2 = create_ont(nombre["TX"],zkey["TX"],hostid,inter_id["inter_id"],oid["oid_tx"],appid,llave)
-                print("item2 {}".format(itemid_2))
                 nombreg = nombre["RX"][:-5]
                 create_graph(nombreg,itemid_1,itemid_2,llave)
                 print("Los item de ONT {} en el nodo {} deberian estar creados.".format(nombre,nodo))

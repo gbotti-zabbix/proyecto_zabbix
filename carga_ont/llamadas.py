@@ -554,11 +554,15 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
         "preprocessing": [
                 {
                     "type": "10",
-            "params":""
+            "params":"",
+            "error_handler": "1",
+            "error_handler_params": ""
                 },
             {
             "type": "1",
-            "params": 8
+            "params": 8,
+            "error_handler": "1",
+            "error_handler_params": ""
             }
         ]
         },

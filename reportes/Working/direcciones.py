@@ -333,4 +333,4 @@ def direccioens_testeo():
     host_DB="192.168.211.4"
     user_DB="reportes"
     password_DB="antel2020"
-    database_DB="reportes_zabbix_test"
+    database_DB="reportes_zabbix"

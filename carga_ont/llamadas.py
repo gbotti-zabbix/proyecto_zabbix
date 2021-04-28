@@ -542,7 +542,7 @@ def create_ont(nombre,llave,hostid,interfaceid,oid,appid,auth):
             "key_": llave,
             "hostid": hostid,
             "interfaceid": interfaceid,
-        "type": 4,
+        "type": 20,
             "value_type": "3",
             "snmp_community": "{$SNMP_COMMUNITY}",
         "snmp_oid": oid,

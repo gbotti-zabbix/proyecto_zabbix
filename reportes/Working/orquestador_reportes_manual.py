@@ -121,7 +121,7 @@ def crudo_rename(fecha):
     **returns:** Esta funcion no tiene retornos.
     """
     os.rename("/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(datetime.today().date()),"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle".format(fecha))
-    os.rename("/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(datetime.today().date()),"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}.pickle_ONT".format(fecha))
+    os.rename("/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(datetime.today().date()),"/var/lib/reportes-zabbix/crudos/Merged-Trends-{}_ONT.pickle".format(fecha))
 
 def reporte_rename(fecha):
     """***NO SE HA IMPLEMENTADO ESTA FUNCION Y ESTA VACIA***"""

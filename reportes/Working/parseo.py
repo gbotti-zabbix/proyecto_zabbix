@@ -520,7 +520,7 @@ def parseo_pon(opcion):
                     Pico = float(linea['max'])/1024/1024
                     id_zabbix = str(Nodo + "_" + Puerto + "_" + Direccion)
                     id_tlk = str(Nodo + "_" + Puerto)
-                    if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000):
+                    if (Direccion == "TX" and Pico < 2500 and Promedio < 2500) or (Direccion == "RX" and Pico < 1250 and Promedio < 1250) or (Puerto == "21/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "22/1" and Pico < 10000 and Promedio < 10000) or (Puerto == "9/0" and Pico < 10000 and Promedio < 10000) or (Puerto == "10/0" and Pico < 10000 and Promedio < 10000):
                         tupla = (id_zabbix, id_tlk, Tipo, Nodo,Puerto,Direccion,Tiempo[1],Tiempo[0],Promedio,Pico)
                         lista_tuplas.append(tupla)
                         contador_carga = contador_carga + 1

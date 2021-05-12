@@ -27,7 +27,7 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">from</span> <span class="nn">daemonize</span> <span class="kn">import</span> <span class="n">Daemonize</span>
-<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">archivo_tlk</span><span class="p">,</span> <span class="n">archivo_tlk_dst</span><span class="p">,</span> <span class="n">archivo_tlk_viejo</span><span class="p">,</span> <span class="n">archivo_rbs_DCS</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_old</span><span class="p">,</span> <span class="n">crudozabbix</span><span class="p">,</span> <span class="n">limpiar_pickle_pon</span><span class="p">,</span> <span class="n">limpiar_pickle_ont</span><span class="p">,</span> <span class="n">pid</span>
+<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">archivo_tlk</span><span class="p">,</span> <span class="n">archivo_tlk_dst</span><span class="p">,</span> <span class="n">archivo_tlk_viejo</span><span class="p">,</span> <span class="n">archivo_rbs_DCS</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_old</span><span class="p">,</span> <span class="n">crudozabbix</span><span class="p">,</span> <span class="n">limpiar_pickle_pon</span><span class="p">,</span> <span class="n">limpiar_pickle_ont</span><span class="p">,</span> <span class="n">pid</span>,</span> <span class="n">pusheo_diario_ok</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pusheo</span> <span class="kn">import</span> <span class="n">f_cargar_inv_en_BD</span><span class="p">,</span><span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_PON</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">,</span> <span class="n">f_procesar_resumne_tlk_BD</span>
 <span class="kn">from</span> <span class="nn">parseo</span> <span class="kn">import</span> <span class="n">parseo_ont</span><span class="p">,</span> <span class="n">parseo_pon</span><span class="p">,</span> <span class="n">f_parsear_inventario</span><span class="p">,</span> <span class="n">f_parseo_inventario_RBS</span>
@@ -244,7 +244,8 @@ reportes y se logea la finalizacion del proceso</p>
     el archivo crudo (NDJSON), y se logea esto ultimo.</p>
 <p>Se pushean los crudos diarios de PON y ONT a la BD.</p>
 <p>Se limpian archivos pickle con mas de 30 dias.</p>
-<p>Se llaman a los flujos de la BD que debene realizarse todos los dias.</p>
+<p>Se llaman a los flujos de la BD que debene realizarse todos los dias. Cuando termina, usa el sender
+de zabbix para registar que se termino la tarea.</p>
 <p>Si checklunes retorna 1, se ejecutan flujos de BD correspondientes a la semana y
 se crean los reportes .xlsx de ONT y PON.</p>
 <p>Si checkdia retorna 1, se ejecutan flujos de BD correspondientes a la semana y
@@ -288,6 +289,7 @@ se crean los reportes .xlsx de ONT y PON.</p>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_pon</span><span class="p">)</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_ont</span><span class="p">)</span>
                     <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;dia&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">checklunes</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
                         <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>

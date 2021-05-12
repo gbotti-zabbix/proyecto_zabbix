@@ -153,7 +153,8 @@ def orquestador_reportes():
 
         Se limpian archivos pickle con mas de 30 dias.
 
-        Se llaman a los flujos de la BD que debene realizarse todos los dias.
+        Se llaman a los flujos de la BD que debene realizarse todos los dias. Cuando termina, usa el sender
+        de zabbix para registar que se termino la tarea.
 
         Si checklunes retorna 1, se ejecutan flujos de BD correspondientes a la semana y
         se crean los reportes .xlsx de ONT y PON.

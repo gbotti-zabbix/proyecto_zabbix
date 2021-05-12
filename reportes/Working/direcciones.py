@@ -97,6 +97,10 @@ def archivo_pickle_PON():
 limpiar_pickle_pon = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*.pickle\" -type f -mtime +30 -exec rm -f {} \;"
 limpiar_pickle_ont = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*_ONT.pickle\" -type f -mtime +30 -exec rm -f {} \;"
 
+#Zabbix sender
+
+pusheo_diario_ok = "zabbix_sender -z 10.0.0.101 -s Zabbix-Reportes -k scriptreportes  -o 0"
+
 ##Reporte Zabbix##
 
 def excel_PON_semanal():

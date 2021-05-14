@@ -194,13 +194,13 @@ def orquestador_reportes():
                 elif checkFileExistance(crudozabbix()):
                     parseo_ont("auto")
                     parseo_pon("auto")
-                    os.remove(crudozabbix())
                     logger.info("Se borro archivo crudozabbix")
                     pusheo_crudos_diarios_PON()
                     pusheo_crudos_diarios_ONT()
                     os.system(limpiar_pickle_pon)
                     os.system(limpiar_pickle_ont)
                     flujos("dia")
+                    os.remove(crudozabbix())
                     os.system(pusheo_diario_ok)
                     if checklunes() == 1:
                         flujos("semana")

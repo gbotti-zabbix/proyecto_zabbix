@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+#HOLA ESTOY PROBANDO ESTA NUEVA FUNCION
+def ():
+    break
+
 from datetime import date
 
 """ ###Direcciones de archivos o datos hardcodeados utilizados para todos los demas scripts.

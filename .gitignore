@@ -62,3 +62,6 @@ documentos/sphinxs/Makefile
 carga_ont/__pycache__/sesiones.cpython-38.pyc
 rbs_parseado.csv
 carga_ont/__pycache__/sesiones.cpython-38.pyc
+reportes/Working/__pycache__/conector.cpython-38.pyc
+reportes/Working/__pycache__/direcciones.cpython-38.pyc
+reportes/Working/__pycache__/logger.cpython-38.pyc

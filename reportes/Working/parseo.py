@@ -304,6 +304,8 @@ def regex_puerto(nombre,tipo):
         match_puerto = re.search("([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
     if match_puerto:
         Puerto = match_puerto.group()
+    else:
+        Puerto = "DROP"
     return Puerto
 
 
@@ -509,11 +511,14 @@ def parseo_pon(opcion):
             crudo = crudo.read().splitlines()
             for linea in crudo:
                 linea = json.loads(linea)
-                if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]):
+                if ("C300" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("MA5800" in linea["groups"] and "Network interfaces" in linea["applications"]) or ("ISAM-FX" in linea["groups"] and "Network interfaces" in linea["applications"]):
                     Tipo = sacar_grupo(linea["groups"])
                     Nodo = linea["host"]["host"]
                     Nombre = linea["name"]
                     Puerto = regex_puerto(Nombre,"PON")[2:]
+                    if Puerto == "OP":
+                        contador_error = contador_error + 1
+                        continue
                     Direccion = sacar_direccion(Nombre)
                     Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
                     Promedio = float(linea["avg"])/1024/1024

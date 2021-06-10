@@ -207,7 +207,7 @@ C300 y z_19 por C300 de 19 pulgadas).
 c300_19p = ["G-AZNAREZ-01Z", "MARISCALA-01Z", "A-ARENA-01Z"]
 
 ######MODELOS DE NODOS EN PRODUCCION ######
-modelos_nodos = ["MA5600T","MA5800","C300","ISAM FX","C600"]
+modelos_nodos = ["MA5600T","MA5800","C300","ISAM-FX","C600"]
 
 ###### NUMERO DE LOS PUERTOS DE UPLINK ######
 puertos_uplink = ["21/1","22/1"]

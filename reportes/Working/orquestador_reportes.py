@@ -7,7 +7,7 @@ import os
 import traceback
 
 from daemonize import Daemonize
-from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid, pusheo_diario_ok
+from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid, pusheo_diario_ok, limpiar_reporte_semanal, limpiar_reporte_mensual
 from datetime import datetime
 from pusheo import f_cargar_inv_en_BD,f_cargar_inv_RBS_en_BD, pusheo_crudos_diarios_PON, pusheo_crudos_diarios_ONT, f_procesar_resumne_tlk_BD
 from parseo import parseo_ont, parseo_pon, f_parsear_inventario, f_parseo_inventario_RBS
@@ -206,10 +206,12 @@ def orquestador_reportes():
                         flujos("semana")
                         reportes_xlsx("PON","semana")
                         reportes_xlsx("ONT","semana")
+                        os.system(limpiar_reporte_semanal)
                     if checkdia() == 1:
                         flujos("mes")
                         reportes_xlsx("PON","mes")
                         reportes_xlsx("ONT","mes")
+                        os.system(limpiar_reporte_mensual)
                 else:
                     time.sleep(1200)
     except Exception as e:

@@ -96,6 +96,8 @@ def archivo_pickle_PON():
 #***Comandos para limpiar .pickle de ONT y PON con mas de 30 dias de antiguedad.***
 limpiar_pickle_pon = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*.pickle\" -type f -mtime +30 -exec rm -f {} \;"
 limpiar_pickle_ont = "find /var/lib/reportes-zabbix/crudos/ -name \"Merged-Trends-*_ONT.pickle\" -type f -mtime +30 -exec rm -f {} \;"
+limpiar_reporte_semanal = "find /var/lib/reportes-zabbix/reportes_semanales/ -name \"Reporte_Semanal*\" -type f -mtime +60 -exec rm -f {} \;"
+limpiar_reporte_mensual = "find /var/lib/reportes-zabbix/reportes_mensuales/ -name \"Reporte_Mensual*\" -type f -mtime +180 -exec rm -f {} \;"
 
 #***Zabbix sender.***
 pusheo_diario_ok = "zabbix_sender -z 10.0.0.101 -s Zabbix-Reportes -k scriptreportes  -o 0"

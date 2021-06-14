@@ -309,6 +309,25 @@ def regex_puerto(nombre,tipo):
     return Puerto
 
 
+def regex_puerto_nokia(nombre):
+    match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
+    if match_puerto:
+        Puerto = match_puerto.group()[2:]
+        return Puerto
+    elif "nt-a:xfp:1" in nombre:
+        Puerto = "a/1"
+        return Puerto
+    elif "nt-a:xfp:2" in nombre:
+        Puerto = "a/2"
+        return Puerto
+    elif "nt-b:xfp:1" in nombre:
+        Puerto = "b/1"
+        return Puerto
+    else:
+        Puerto = "DROP"
+        return Puerto
+
+
 def regex_etiqueta(nombre):
     """**Extrae etiqueta de gestion en un formato especifico a partir de string**
 
@@ -515,10 +534,15 @@ def parseo_pon(opcion):
                     Tipo = sacar_grupo(linea["groups"])
                     Nodo = linea["host"]["host"]
                     Nombre = linea["name"]
-                    Puerto = regex_puerto(Nombre,"PON")[2:]
-                    if Puerto == "OP":
-                        contador_error = contador_error + 1
-                        continue
+                    if "ISAM-FX" in linea["groups"]:
+                        Puerto = regex_puerto_nokia(Nombre)
+                        if Puerto == "DROP":
+                            continue
+                    else:
+                        Puerto = regex_puerto(Nombre,"PON")[2:]
+                        if Puerto == "OP":
+                            contador_error = contador_error + 1
+                            continue
                     Direccion = sacar_direccion(Nombre)
                     Tiempo = datetime.fromtimestamp(linea["clock"]).strftime('%Y-%m-%d %H:%M:%S').split()
                     Promedio = float(linea["avg"])/1024/1024

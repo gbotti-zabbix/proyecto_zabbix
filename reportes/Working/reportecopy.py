@@ -269,10 +269,10 @@ def reportes_xlsx(tipo,periodo):
             apend_data_ONT(workbook,hojas_ONT,periodo)
             if periodo == "mes":
                 workbook.save(filename="/home/reportes/test_ont.xlsx")
-                os.chmod(excel_ONT_mensual(),0o755)
+                os.chmod("/home/reportes/test_ont.xlsx",0o755)
             elif periodo == "semana":
                 workbook.save(filename="/home/reportes/test_ont.xlsx")
-                os.chmod(excel_ONT_semanal(),0o755)
+                os.chmod("/home/reportes/test_ont.xlsx",0o755)
             logger.info("Se culmino la creacion del reporte {} de ONT".format(periodo))
 
     elif tipo == "PON":
@@ -282,10 +282,10 @@ def reportes_xlsx(tipo,periodo):
             apend_data_PON(workbook,hojas_PON,periodo)
             if periodo == "mes":
                 workbook.save(filename="/home/reportes/test_PON.xlsx")
-                os.chmod(excel_PON_mensual(),0o755)
+                os.chmod("/home/reportes/test_ont.xlsx",0o755)
             elif periodo == "semana":
                 workbook.save(filename="/home/reportes/test_PON.xlsx")
-                os.chmod(excel_PON_semanal(),0o755)
+                os.chmod("/home/reportes/test_ont.xlsx",0o755)
             logger.info("Se culmino la creacion del reporte {} de PON".format(periodo))
 
 

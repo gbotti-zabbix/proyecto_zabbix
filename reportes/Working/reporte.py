@@ -147,10 +147,10 @@ def apend_data_PON(workbook,hojas,periodo):
         datos = dato[12]
         emp = dato[13]
         rbs = dato[14]
-        if (direccion == "RX" and puerto in (puertos_uplink or puertos_uplink_n)) or (direccion == "RX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "RX" and nodo in c300_19p and puerto in puertos_uplink_19):
+        if (direccion == "RX" and (puerto in puertos_uplink) or (puerto in puertos_uplink_n)) or (direccion == "RX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "RX" and nodo in c300_19p and puerto in puertos_uplink_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Bajada Uplink"].append(lista_append)
-        elif (direccion == "TX" and puerto in (puertos_uplink or puertos_uplink_n)) or (direccion == "TX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "TX" and nodo in c300_19p and puerto in puertos_uplink_19):
+        elif (direccion == "TX" and (puerto in puertos_uplink) or (puerto in puertos_uplink_n)) or (direccion == "TX" and tipo == "MA5800" and puerto in puertos_uplink_h) or (direccion == "TX" and nodo in c300_19p and puerto in puertos_uplink_19):
             lista_append = [tipo,nodo,puerto,hora,fecha,pico,(pico*100)/10000,prom_hora_pico,prom_picos_diarios,promedio_hora]
             workbook["Subida Uplink"].append(lista_append)
         elif ((direccion == "TX") and (nodo in c300_19p) and (puerto not in puertos_uplink_omitidos_z_19)) or ((direccion == "TX") and (nodo not in c300_19p) and (puerto not in puertos_uplink_omitidos_z)):

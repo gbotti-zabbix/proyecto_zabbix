@@ -7,7 +7,7 @@ import os
 import traceback
 
 from daemonize import Daemonize
-from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid, pusheo_diario_ok, limpiar_reporte_semanal, limpiar_reporte_mensual
+from direcciones import archivo_tlk, archivo_tlk_dst, archivo_tlk_viejo, archivo_rbs_DCS, archivo_rbs_DCS_dst, archivo_rbs_DCS_old, crudozabbix, limpiar_pickle_pon, limpiar_pickle_ont, pid, pusheo_diario_ok, limpiar_reporte_semanal, limpiar_reporte_mensual, restart_bd
 from datetime import datetime
 from pusheo import f_cargar_inv_en_BD,f_cargar_inv_RBS_en_BD, pusheo_crudos_diarios_PON, pusheo_crudos_diarios_ONT, f_procesar_resumne_tlk_BD
 from parseo import parseo_ont, parseo_pon, f_parsear_inventario, f_parseo_inventario_RBS
@@ -169,6 +169,7 @@ def orquestador_reportes():
 
     try:
         while True:
+            os.system(pusheo_diario_ok)
             if checkhora("03") == 1 or checkhora("00") == 1:
                 time.sleep(1200)
             else:
@@ -181,6 +182,7 @@ def orquestador_reportes():
 
                     f_procesar_resumne_tlk_BD()
                     logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO TELELINK<<<<<<<<<<<<\n\n")
+                    os.system(pusheo_diario_ok)
 
                 elif checkFileExistance(archivo_rbs_DCS):
                     logger.info(f'Arvhivo inventario RBS encontrado: {archivo_rbs_DCS}')
@@ -190,8 +192,10 @@ def orquestador_reportes():
                     f_cargar_inv_RBS_en_BD(archivo_rbs_DCS_dst)
 
                     logger.info(">>>>>>>>>>FIN PROCESAMIENTO INVENTARIO RBS<<<<<<<<<<<<\n\n")
+                    os.system(pusheo_diario_ok)
 
                 elif checkFileExistance(crudozabbix()):
+                    os.system(pusheo_diario_ok)
                     parseo_ont("auto")
                     parseo_pon("auto")
                     logger.info("Se borro archivo crudozabbix")
@@ -207,17 +211,29 @@ def orquestador_reportes():
                         reportes_xlsx("PON","semana")
                         reportes_xlsx("ONT","semana")
                         os.system(limpiar_reporte_semanal)
+                        os.system(pusheo_diario_ok)
                     if checkdia() == 1:
                         flujos("mes")
                         reportes_xlsx("PON","mes")
                         reportes_xlsx("ONT","mes")
                         os.system(limpiar_reporte_mensual)
+                        os.system(pusheo_diario_ok)
                 else:
                     time.sleep(1200)
     except Exception as e:
         logger.error(traceback.format_exc())
         orquestador_reportes()
 
-#**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**
-daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
-daemon.start()
+def start():
+    #Avisa que se ejcuta el script
+    logger.info("Se llamo al orquestador")
+    os.system(pusheo_diario_ok)
+    #Cuando se llama al script resetea la BD
+    logger.info("Se intenta reinicar la BD")
+    os.system(restart_bd)
+    logger.info("BD reiniciada")
+    #**Se crea y ejecuta demonio para la funcion *orquestador_reportes*.**
+    daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
+    daemon.start()
+
+start()

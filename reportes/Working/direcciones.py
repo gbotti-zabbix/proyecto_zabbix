@@ -101,7 +101,7 @@ limpiar_reporte_mensual = "find /var/lib/reportes-zabbix/reportes_mensuales/ -na
 
 #***Zabbix sender.***
 pusheo_diario_ok = "zabbix_sender -z 10.0.0.101 -s Zabbix-Reportes -k scriptreportes  -o 0"
-
+restart_bd = "systemctl restart mariadb"
 ##Reporte Zabbix##
 
 def excel_PON_semanal():

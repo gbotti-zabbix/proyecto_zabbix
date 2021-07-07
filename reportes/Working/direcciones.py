@@ -214,6 +214,8 @@ puertos_uplink = ["21/1","22/1"]
 
 puertos_uplink_h = ["9/0","10/0"]
 
+puertos_uplink_n = ["a/1","a/2","b/1"]
+
 puertos_uplink_19 = ["19/1","20/1"]
 
 puertos_uplink_omitidos_z = ["21/2","21/3","21/4","22/2","22/3","22/4",]

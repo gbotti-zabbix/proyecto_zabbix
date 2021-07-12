@@ -53,6 +53,7 @@ nuevos modelos, editar esta variable en direcciones.</p>
 <strong>f_parseo_inventario_RBS</strong> - Parsea el archivo crudo de gestion para pushearlo a la BD. RBS en ONT.<br />
 <strong>sacar_grupo</strong> -  Revisa a que el valor a parsear corresponda a un nodo deseado.<br />
 <strong>regex_puerto</strong> -  Extrae el numero de puerto en el formato deseado, a partir de una string.<br />
+<strong>regex_puerto_nokia</strong> - Como el anterior pero especificamente para nodos nokia.<br />
 <strong>regex_etiqueta</strong> -  Extrae la etiqueta de puerto en el formato deseado, a partir de una string.<br />
 <strong>sacar_direccion</strong> -  Traduce Bit Sent/Recieved a TX o RX segun corresponda.<br />
 <strong>metodo</strong> - Parametro utilizado por los orquestadores, define crudozabbix dependiendo el parametro en
@@ -674,7 +675,7 @@ esperados y devuelve el grupo como tipo.</p>
         <a class='octothorpe' href='#section-41'>#</a>
       </div>
       <p>A partir de una string extrae el numero de puerto en formato <strong>PLACA/PUERTO</strong> para PON/Uplink y
-<strong>PLACA/PUERTO/ONT</strong> para las ONT.</p>
+<strong>PLACA/PUERTO/ONT</strong> para las ONT.  </p>
 <p><strong>param nombre:</strong> String a buscar puerto.<br />
 <strong>type nombre:</strong> str</p>
 <p><strong>param tipo:</strong> Definir si se quiere obtener puerto para PON/Uplink o ONT. Recibe &ldquo;PON&rdquo;/&rdquo;ONT&rdquo;.<br />
@@ -690,6 +691,8 @@ esperados y devuelve el grupo como tipo.</p>
         <span class="n">match_puerto</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{1,2})&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match_puerto</span><span class="p">:</span>
         <span class="n">Puerto</span> <span class="o">=</span> <span class="n">match_puerto</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;DROP&quot;</span>
     <span class="k">return</span> <span class="n">Puerto</span></pre></div>
     </div>
   </div>
@@ -699,10 +702,10 @@ esperados y devuelve el grupo como tipo.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-42'>#</a>
       </div>
-      <p><strong>Extrae etiqueta de gestion en un formato especifico a partir de string</strong></p>
+      <p><strong><em>Extrae puertos de nokia con formato especifico.</em></strong></p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="k">def</span> <span class="nf">regex_etiqueta</span><span class="p">(</span><span class="n">nombre</span><span class="p">):</span></pre></div>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">regex_puerto_nokia</span><span class="p">(</span><span class="n">nombre</span><span class="p">):</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -710,6 +713,51 @@ esperados y devuelve el grupo como tipo.</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>A partir de una string extrae el numero de puerto en formato <strong>PLACA/PUERTO</strong> para
+nodos nokia. Tambien asigna letras a los puertos de uplink.</p>
+<p><strong>param nombre:</strong> String a buscar el puerto.<br />
+<strong>type nombre:</strong> str</p>
+<p><strong>returns:</strong> Puerto en formato <strong>PLACA/PUERTO</strong> para PON/Uplink. Uplink es con letra
+para la placa.
+<strong>rtype:</strong> str</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">match_puerto</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})&quot;</span><span class="p">,</span><span class="n">nombre</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match_puerto</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="n">match_puerto</span><span class="o">.</span><span class="n">group</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">Puerto</span>
+    <span class="k">elif</span> <span class="s2">&quot;nt-a:xfp:1&quot;</span> <span class="ow">in</span> <span class="n">nombre</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;a/1&quot;</span>
+        <span class="k">return</span> <span class="n">Puerto</span>
+    <span class="k">elif</span> <span class="s2">&quot;nt-a:xfp:2&quot;</span> <span class="ow">in</span> <span class="n">nombre</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;a/2&quot;</span>
+        <span class="k">return</span> <span class="n">Puerto</span>
+    <span class="k">elif</span> <span class="s2">&quot;nt-b:xfp:1&quot;</span> <span class="ow">in</span> <span class="n">nombre</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;b/1&quot;</span>
+        <span class="k">return</span> <span class="n">Puerto</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Puerto</span> <span class="o">=</span> <span class="s2">&quot;DROP&quot;</span>
+        <span class="k">return</span> <span class="n">Puerto</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <p><strong><em>Extrae etiqueta de gestion en un formato especifico a partir de string</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">regex_etiqueta</span><span class="p">(</span><span class="n">nombre</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
       </div>
       <p>A partir de una string extrae la etiqueta de gestion como fue ingresada a Zabbix. Este valor viene
 en el name desde Zabbix solamente para ONT.</p>
@@ -728,10 +776,10 @@ en el name desde Zabbix solamente para ONT.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-44'>
+  <div class='section' id='section-46'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-44'>#</a>
+        <a class='octothorpe' href='#section-46'>#</a>
       </div>
       <p><strong><em>Extrae direccion en formato TX/RX a partir de string</em></strong></p>
     </div>
@@ -740,10 +788,10 @@ en el name desde Zabbix solamente para ONT.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-45'>
+  <div class='section' id='section-47'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-45'>#</a>
+        <a class='octothorpe' href='#section-47'>#</a>
       </div>
       <p>A partir de una string extrae direccion del trafico del puerto. Este valor viene
 en la misma string donde se saca el puerto y etiqueta.</p>
@@ -765,10 +813,10 @@ en la misma string donde se saca el puerto y etiqueta.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-46'>
+  <div class='section' id='section-48'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-46'>#</a>
+        <a class='octothorpe' href='#section-48'>#</a>
       </div>
       <p><strong><em>Define crudozabbix</em></strong></p>
     </div>
@@ -777,10 +825,10 @@ en la misma string donde se saca el puerto y etiqueta.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-47'>
+  <div class='section' id='section-49'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-47'>#</a>
+        <a class='octothorpe' href='#section-49'>#</a>
       </div>
       <p>A partir de una string define si ejectuar la funcion <em>curdozabbix()</em> traida desde
 <em>direcciones</em> o utliza la pasada desde el <em>orquestador_manual</em>.</p>
@@ -801,10 +849,10 @@ donde buscar el archivo crudo.<br />
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-48'>
+  <div class='section' id='section-50'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-48'>#</a>
+        <a class='octothorpe' href='#section-50'>#</a>
       </div>
       <p>Parseo de ONT
 <strong><em>Parsea crudos de zabbix y crea .pickle para reportes ONT.</em></strong></p>
@@ -814,10 +862,10 @@ donde buscar el archivo crudo.<br />
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-49'>
+  <div class='section' id='section-51'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-49'>#</a>
+        <a class='octothorpe' href='#section-51'>#</a>
       </div>
       <p>Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
 hace append a una lista de tuplas formadas por Modelo de nodo, Nodo, Puerto, Direccion,
@@ -883,10 +931,10 @@ a utilizar (orquestador_manual o auto).<br />
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-50'>
+  <div class='section' id='section-52'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-50'>#</a>
+        <a class='octothorpe' href='#section-52'>#</a>
       </div>
       <p><strong><em>Parsea crudos de zabbix y crea .pickle para reportes PON/Uplink.</em></strong></p>
     </div>
@@ -895,10 +943,10 @@ a utilizar (orquestador_manual o auto).<br />
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-51'>
+  <div class='section' id='section-53'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-51'>#</a>
+        <a class='octothorpe' href='#section-53'>#</a>
       </div>
       <p>Recorre cada linea del archivo crudozabbix. Luego de pasar por filtros
 hace append a una lista de tuplas formadas por Id Zabbix y TLK (utilziadas para agilizar 
@@ -906,8 +954,11 @@ consultas en la BD), Modelo de nodo, Nodo, Puerto, Direccion, Hora en la que se 
 Fecha en la que se realizo la medida, Promedio de la hora donde se realizo el pico, 
 Pico, estas dos ultimas en Bps.</p>
 <p>Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
-del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications. 
+del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications.
 Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.</p>
+<p>Con nokia se toman pasos extra para detectar los puertos ya que tienen un formato peculiar de nombrase 
+las interfaces en SNMP. Si alguno de los regex utilizados para encontrar puertos y direcciones desde el crudo 
+retorna un valor inesperado, se dropea todo ese indice de la lista y se continua con el siguente.</p>
 <p>Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
 a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
 al momento de monitorearlas. Ejemplo un puerto de 2.5 Gbps de capacidad registrando 4 Gbps de trafico.</p>
@@ -941,18 +992,26 @@ a utilizar (<em>orquestador_manual</em> o <em>auto</em>).<br />
             <span class="n">crudo</span> <span class="o">=</span> <span class="n">crudo</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">linea</span> <span class="ow">in</span> <span class="n">crudo</span><span class="p">:</span>
                 <span class="n">linea</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">linea</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;C300&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;MA5800&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;C300&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;MA5800&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;ISAM-FX&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;Network interfaces&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;applications&quot;</span><span class="p">]):</span>
                     <span class="n">Tipo</span> <span class="o">=</span> <span class="n">sacar_grupo</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">])</span>
                     <span class="n">Nodo</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">]</span>
                     <span class="n">Nombre</span> <span class="o">=</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-                    <span class="n">Puerto</span> <span class="o">=</span> <span class="n">regex_puerto</span><span class="p">(</span><span class="n">Nombre</span><span class="p">,</span><span class="s2">&quot;PON&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+                    <span class="k">if</span> <span class="s2">&quot;ISAM-FX&quot;</span> <span class="ow">in</span> <span class="n">linea</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]:</span>
+                        <span class="n">Puerto</span> <span class="o">=</span> <span class="n">regex_puerto_nokia</span><span class="p">(</span><span class="n">Nombre</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;DROP&quot;</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Puerto</span> <span class="o">=</span> <span class="n">regex_puerto</span><span class="p">(</span><span class="n">Nombre</span><span class="p">,</span><span class="s2">&quot;PON&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+                        <span class="k">if</span> <span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;OP&quot;</span><span class="p">:</span>
+                            <span class="n">contador_error</span> <span class="o">=</span> <span class="n">contador_error</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
                     <span class="n">Direccion</span> <span class="o">=</span> <span class="n">sacar_direccion</span><span class="p">(</span><span class="n">Nombre</span><span class="p">)</span>
                     <span class="n">Tiempo</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;clock&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="n">Promedio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
                     <span class="n">Pico</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">linea</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span>
                     <span class="n">id_zabbix</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Nodo</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Puerto</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Direccion</span><span class="p">)</span>
                     <span class="n">id_tlk</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Nodo</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Puerto</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">2500</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">2500</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">1250</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">1250</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;21/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;22/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;TX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">2500</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">2500</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Direccion</span> <span class="o">==</span> <span class="s2">&quot;RX&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">1250</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">1250</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;21/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;22/1&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;9/0&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Puerto</span> <span class="o">==</span> <span class="s2">&quot;10/0&quot;</span> <span class="ow">and</span> <span class="n">Pico</span> <span class="o">&lt;</span> <span class="mi">10000</span> <span class="ow">and</span> <span class="n">Promedio</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">):</span>
                         <span class="n">tupla</span> <span class="o">=</span> <span class="p">(</span><span class="n">id_zabbix</span><span class="p">,</span> <span class="n">id_tlk</span><span class="p">,</span> <span class="n">Tipo</span><span class="p">,</span> <span class="n">Nodo</span><span class="p">,</span><span class="n">Puerto</span><span class="p">,</span><span class="n">Direccion</span><span class="p">,</span><span class="n">Tiempo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Tiempo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Promedio</span><span class="p">,</span><span class="n">Pico</span><span class="p">)</span>
                         <span class="n">lista_tuplas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tupla</span><span class="p">)</span>
                         <span class="n">contador_carga</span> <span class="o">=</span> <span class="n">contador_carga</span> <span class="o">+</span> <span class="mi">1</span>

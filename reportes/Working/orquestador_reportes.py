@@ -32,6 +32,9 @@ Una ves ejecutado el script, se genera un daemon de linux con su correspondiente
 por lo que no captura la terminal desde la que se ejecuta. Para detener el script se debe matar
 el proceso con su correspondiente PID.
 
+Las funciones de **orquestador** y **start** envian mensajes a zabbix para avisar que esta funcionando
+el script. Si zabbix deja de recibir estos mensajes, intentara ejecutar el orquestador.
+
 Contiene las funciones:  
     **checkFileExistance** - Chequea que el archivo crudo a parsear exista.  
     **checkhora** - Chequea si al momento de ejecutarlo es la hora pasada como str.
@@ -39,7 +42,8 @@ Contiene las funciones:
     **checkdia** - Chequea que sea primero de mes.  
     **orquestador_reportes** -  Orquesta la llamada a las funciones encargadas
     de todo el proceso de generacion de reportes. Parseo de curdos, pusheos, etc.  
-    **deamon** - Genera un daemon desde el codigo python de orquestador.  
+    **start** - Genera un daemon desde el codigo python de orquestador, se reinicia la BD
+    e informa a zabbix que se ejcuta el script.
 """
 
 def checkFileExistance(filePath):
@@ -122,6 +126,10 @@ def orquestador_reportes():
     la existencia de archivos crudos de TLK, gestion o Zabbix. De encontrar alguno, comienza
     las tareas de ingreso de crudos diarios, flujos de datos en al BD y/o generacion de reportes.
 
+    En varias parte del proceso se utiliza un *os.system()* con la variable *pusheo_diario_ok*, esto se
+    utiliza para registar en zabbix que el script se encuentra funcionando. Si este dejara de enviar
+    los mensajes, zabbix intenta ejecutar el orquestador.
+
     * **Se verifica que no sean las 00 o 03 hs**
         De no ser las 00 o 03 hs se continua. Esto se utiliza para asegurarnos que se copien los crudos
         provenientes de ritaf y/o Zabbix antes de intentar parcearlos.
@@ -139,7 +147,7 @@ def orquestador_reportes():
     * **Si encuentra el archivo de Gestion(*archivo_rbs_DCS*):**  
         Logea que encontro el archivo.
 
-        Se llama al funcion *f_parseo_inventario_RBS()()* pasando los nombres de archivos a generar.
+        Se llama al funcion *f_parseo_inventario_RBS()* pasando los nombres de archivos a generar.
 
         Luego se carga el parseo diario a la BD con la funcion *f_cargar_inv_RBS_en_BD()*.
 
@@ -153,14 +161,13 @@ def orquestador_reportes():
 
         Se limpian archivos pickle con mas de 30 dias.
 
-        Se llaman a los flujos de la BD que debene realizarse todos los dias. Cuando termina, usa el sender
-        de zabbix para registar que se termino la tarea.
+        Se llaman a los flujos de la BD que debene realizarse todos los dias.
 
         Si checklunes retorna 1, se ejecutan flujos de BD correspondientes a la semana y
-        se crean los reportes .xlsx de ONT y PON.
+        se crean los reportes .xlsx de ONT y PON. Tambien borra reportes semanales con mas de 60 días.
 
         Si checkdia retorna 1, se ejecutan flujos de BD correspondientes a la semana y
-        se crean los reportes .xlsx de ONT y PON.
+        se crean los reportes .xlsx de ONT y PON. Tambien borra reportes mensuales con mas de 180 días.
     
     Por ultimo se captura cualquier exepcion en el proceso y se logea.
     
@@ -225,6 +232,18 @@ def orquestador_reportes():
         orquestador_reportes()
 
 def start():
+    """***Crea el deamon a partir del codigo y reinicia la BD.***
+
+    Esta funcion pone a marchar el orquestador, avisando a zabbix que se
+    esta ejecutando el codigo. 
+    
+    Como el codigo muchas veces fallaba porque la BD quedaba capturando 
+    memoria RAM, cuando se inicia por primera ves el orquestador tambien 
+    se reinicia el servidor de la BD.
+
+    **returns:** Esta funcion no tiene retornos.
+    """
+
     #Avisa que se ejcuta el script
     logger.info("Se llamo al orquestador")
     os.system(pusheo_diario_ok)
@@ -236,4 +255,5 @@ def start():
     daemon = Daemonize(app="orquestador_reportes", pid=pid, action=orquestador_reportes)
     daemon.start()
 
+#Se llama a la funcion start.
 start()

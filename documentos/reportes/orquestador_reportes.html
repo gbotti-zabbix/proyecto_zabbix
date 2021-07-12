@@ -27,7 +27,7 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">from</span> <span class="nn">daemonize</span> <span class="kn">import</span> <span class="n">Daemonize</span>
-<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">archivo_tlk</span><span class="p">,</span> <span class="n">archivo_tlk_dst</span><span class="p">,</span> <span class="n">archivo_tlk_viejo</span><span class="p">,</span> <span class="n">archivo_rbs_DCS</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_old</span><span class="p">,</span> <span class="n">crudozabbix</span><span class="p">,</span> <span class="n">limpiar_pickle_pon</span><span class="p">,</span> <span class="n">limpiar_pickle_ont</span><span class="p">,</span> <span class="n">pid</span>,</span> <span class="n">pusheo_diario_ok</span>
+<span class="kn">from</span> <span class="nn">direcciones</span> <span class="kn">import</span> <span class="n">archivo_tlk</span><span class="p">,</span> <span class="n">archivo_tlk_dst</span><span class="p">,</span> <span class="n">archivo_tlk_viejo</span><span class="p">,</span> <span class="n">archivo_rbs_DCS</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_dst</span><span class="p">,</span> <span class="n">archivo_rbs_DCS_old</span><span class="p">,</span> <span class="n">crudozabbix</span><span class="p">,</span> <span class="n">limpiar_pickle_pon</span><span class="p">,</span> <span class="n">limpiar_pickle_ont</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">pusheo_diario_ok</span><span class="p">,</span> <span class="n">limpiar_reporte_semanal</span><span class="p">,</span> <span class="n">limpiar_reporte_mensual</span><span class="p">,</span> <span class="n">restart_bd</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pusheo</span> <span class="kn">import</span> <span class="n">f_cargar_inv_en_BD</span><span class="p">,</span><span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_PON</span><span class="p">,</span> <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">,</span> <span class="n">f_procesar_resumne_tlk_BD</span>
 <span class="kn">from</span> <span class="nn">parseo</span> <span class="kn">import</span> <span class="n">parseo_ont</span><span class="p">,</span> <span class="n">parseo_pon</span><span class="p">,</span> <span class="n">f_parsear_inventario</span><span class="p">,</span> <span class="n">f_parseo_inventario_RBS</span>
@@ -53,6 +53,8 @@ Las funcionalidades finas deben editarse en las funciones importadas y llamadas 
 <p>Una ves ejecutado el script, se genera un daemon de linux con su correspondiente PID y Socket,
 por lo que no captura la terminal desde la que se ejecuta. Para detener el script se debe matar
 el proceso con su correspondiente PID.</p>
+<p>Las funciones de <strong>orquestador</strong> y <strong>start</strong> envian mensajes a zabbix para avisar que esta funcionando
+el script. Si zabbix deja de recibir estos mensajes, intentara ejecutar el orquestador.</p>
 <p>Contiene las funciones:<br />
 <strong>checkFileExistance</strong> - Chequea que el archivo crudo a parsear exista.<br />
 <strong>checkhora</strong> - Chequea si al momento de ejecutarlo es la hora pasada como str.
@@ -60,7 +62,8 @@ el proceso con su correspondiente PID.</p>
 <strong>checkdia</strong> - Chequea que sea primero de mes.<br />
 <strong>orquestador_reportes</strong> -  Orquesta la llamada a las funciones encargadas
     de todo el proceso de generacion de reportes. Parseo de curdos, pusheos, etc.<br />
-<strong>deamon</strong> - Genera un daemon desde el codigo python de orquestador.  </p>
+<strong>start</strong> - Genera un daemon desde el codigo python de orquestador, se reinicia la BD
+    e informa a zabbix que se ejcuta el script.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre></pre></div>
@@ -217,6 +220,9 @@ De serlo devuelve 1, de lo contrario 0.</p>
       <p>Comienza con un ciclo while de 30 min de sleep entre ciclo. En cada ciclo se chequea
 la existencia de archivos crudos de TLK, gestion o Zabbix. De encontrar alguno, comienza
 las tareas de ingreso de crudos diarios, flujos de datos en al BD y/o generacion de reportes.</p>
+<p>En varias parte del proceso se utiliza un <em>os.system()</em> con la variable <em>pusheo_diario_ok</em>, esto se
+utiliza para registar en zabbix que el script se encuentra funcionando. Si este dejara de enviar
+los mensajes, zabbix intenta ejecutar el orquestador.</p>
 <ul>
 <li>
 <p><strong>Se verifica que no sean las 00 o 03 hs</strong>
@@ -234,7 +240,7 @@ reportes y se logea la finalizacion del proceso</p>
 <li>
 <p><strong>Si encuentra el archivo de Gestion(<em>archivo_rbs_DCS</em>):</strong><br />
     Logea que encontro el archivo.</p>
-<p>Se llama al funcion <em>f_parseo_inventario_RBS()()</em> pasando los nombres de archivos a generar.</p>
+<p>Se llama al funcion <em>f_parseo_inventario_RBS()</em> pasando los nombres de archivos a generar.</p>
 <p>Luego se carga el parseo diario a la BD con la funcion <em>f_cargar_inv_RBS_en_BD()</em>.</p>
 <p>Se logea la finalizacion del proceso.</p>
 </li>
@@ -244,12 +250,11 @@ reportes y se logea la finalizacion del proceso</p>
     el archivo crudo (NDJSON), y se logea esto ultimo.</p>
 <p>Se pushean los crudos diarios de PON y ONT a la BD.</p>
 <p>Se limpian archivos pickle con mas de 30 dias.</p>
-<p>Se llaman a los flujos de la BD que debene realizarse todos los dias. Cuando termina, usa el sender
-de zabbix para registar que se termino la tarea.</p>
+<p>Se llaman a los flujos de la BD que debene realizarse todos los dias.</p>
 <p>Si checklunes retorna 1, se ejecutan flujos de BD correspondientes a la semana y
-se crean los reportes .xlsx de ONT y PON.</p>
+se crean los reportes .xlsx de ONT y PON. Tambien borra reportes semanales con mas de 60 días.</p>
 <p>Si checkdia retorna 1, se ejecutan flujos de BD correspondientes a la semana y
-se crean los reportes .xlsx de ONT y PON.</p>
+se crean los reportes .xlsx de ONT y PON. Tambien borra reportes mensuales con mas de 180 días.</p>
 </li>
 </ul>
 <p>Por ultimo se captura cualquier exepcion en el proceso y se logea.</p>
@@ -258,7 +263,10 @@ se crean los reportes .xlsx de ONT y PON.</p>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;03&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;03&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;00&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1200</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_tlk</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario TLK encontrado: </span><span class="si">{</span><span class="n">archivo_tlk</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;COMIENZO PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&quot;</span><span class="p">)</span>
@@ -268,6 +276,7 @@ se crean los reportes .xlsx de ONT y PON.</p>
 
                     <span class="n">f_procesar_resumne_tlk_BD</span><span class="p">()</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO TELELINK&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
 
                 <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">archivo_rbs_DCS</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Arvhivo inventario RBS encontrado: </span><span class="si">{</span><span class="n">archivo_rbs_DCS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -277,29 +286,34 @@ se crean los reportes .xlsx de ONT y PON.</p>
                     <span class="n">f_cargar_inv_RBS_en_BD</span><span class="p">(</span><span class="n">archivo_rbs_DCS_dst</span><span class="p">)</span>
 
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;FIN PROCESAMIENTO INVENTARIO RBS&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">checkhora</span><span class="p">(</span><span class="s2">&quot;00&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">()):</span>
+                <span class="k">elif</span> <span class="n">checkFileExistance</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">()):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
                     <span class="n">parseo_ont</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
                     <span class="n">parseo_pon</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
-                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">())</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se borro archivo crudozabbix&quot;</span><span class="p">)</span>
                     <span class="n">pusheo_crudos_diarios_PON</span><span class="p">()</span>
                     <span class="n">pusheo_crudos_diarios_ONT</span><span class="p">()</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_pon</span><span class="p">)</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_pickle_ont</span><span class="p">)</span>
                     <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;dia&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">crudozabbix</span><span class="p">())</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">checklunes</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
                         <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
                         <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;semana&quot;</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_reporte_semanal</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">checkdia</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">flujos</span><span class="p">(</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
                         <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;PON&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
                         <span class="n">reportes_xlsx</span><span class="p">(</span><span class="s2">&quot;ONT&quot;</span><span class="p">,</span><span class="s2">&quot;mes&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1200</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">limpiar_reporte_mensual</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1200</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
         <span class="n">orquestador_reportes</span><span class="p">()</span></pre></div>
@@ -311,11 +325,79 @@ se crean los reportes .xlsx de ONT y PON.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-12'>#</a>
       </div>
+      <p><strong><em>Crea el deamon a partir del codigo y reinicia la BD.</em></strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">start</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Esta funcion pone a marchar el orquestador, avisando a zabbix que se
+esta ejecutando el codigo. </p>
+<p>Como el codigo muchas veces fallaba porque la BD quedaba capturando 
+memoria RAM, cuando se inicia por primera ves el orquestador tambien 
+se reinicia el servidor de la BD.</p>
+<p><strong>returns:</strong> Esta funcion no tiene retornos.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Avisa que se ejcuta el script</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se llamo al orquestador&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">pusheo_diario_ok</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Cuando se llama al script resetea la BD</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Se intenta reinicar la BD&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">restart_bd</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;BD reiniciada&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
       <p><strong>Se crea y ejecuta demonio para la funcion <em>orquestador_reportes</em>.</strong></p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="n">daemon</span> <span class="o">=</span> <span class="n">Daemonize</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="s2">&quot;orquestador_reportes&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">orquestador_reportes</span><span class="p">)</span>
-<span class="n">daemon</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+      <div class="highlight"><pre>    <span class="n">daemon</span> <span class="o">=</span> <span class="n">Daemonize</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="s2">&quot;orquestador_reportes&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">orquestador_reportes</span><span class="p">)</span>
+    <span class="n">daemon</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>Se llama a la funcion start.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">start</span><span class="p">()</span>
 
 </pre></div>
     </div>

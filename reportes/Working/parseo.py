@@ -32,6 +32,7 @@ Contiene las funciones:
     **f_parseo_inventario_RBS** - Parsea el archivo crudo de gestion para pushearlo a la BD. RBS en ONT.  
     **sacar_grupo** -  Revisa a que el valor a parsear corresponda a un nodo deseado.  
     **regex_puerto** -  Extrae el numero de puerto en el formato deseado, a partir de una string.  
+    **regex_puerto_nokia** - Como el anterior pero especificamente para nodos nokia.  
     **regex_etiqueta** -  Extrae la etiqueta de puerto en el formato deseado, a partir de una string.  
     **sacar_direccion** -  Traduce Bit Sent/Recieved a TX o RX segun corresponda.  
     **metodo** - Parametro utilizado por los orquestadores, define crudozabbix dependiendo el parametro en
@@ -282,10 +283,10 @@ def sacar_grupo(grupos):
 
 
 def regex_puerto(nombre,tipo):
-    """***Extrae puerto en un formato especifico a partir de string***
+    """***Extrae puerto en un formato especifico a partir de string***  
 
     A partir de una string extrae el numero de puerto en formato **PLACA/PUERTO** para PON/Uplink y
-    **PLACA/PUERTO/ONT** para las ONT.
+    **PLACA/PUERTO/ONT** para las ONT.  
 
     **param nombre:** String a buscar puerto.  
     **type nombre:** str
@@ -310,6 +311,18 @@ def regex_puerto(nombre,tipo):
 
 
 def regex_puerto_nokia(nombre):
+    """***Extrae puertos de nokia con formato especifico.***
+    
+    A partir de una string extrae el numero de puerto en formato **PLACA/PUERTO** para
+    nodos nokia. Tambien asigna letras a los puertos de uplink.
+
+    **param nombre:** String a buscar el puerto.  
+    **type nombre:** str
+
+    **returns:** Puerto en formato **PLACA/PUERTO** para PON/Uplink. Uplink es con letra
+    para la placa.
+    **rtype:** str
+    """
     match_puerto = re.search("([0-9])[/-]([0-9]{1,2})[/-]([0-9]{1,2})",nombre)
     if match_puerto:
         Puerto = match_puerto.group()[2:]
@@ -329,7 +342,7 @@ def regex_puerto_nokia(nombre):
 
 
 def regex_etiqueta(nombre):
-    """**Extrae etiqueta de gestion en un formato especifico a partir de string**
+    """***Extrae etiqueta de gestion en un formato especifico a partir de string***
 
     A partir de una string extrae la etiqueta de gestion como fue ingresada a Zabbix. Este valor viene
     en el name desde Zabbix solamente para ONT.
@@ -484,8 +497,12 @@ def parseo_pon(opcion):
     Pico, estas dos ultimas en Bps.
 
     Primero cada linea es traducida de JSON a LIST. Luego se chequea que la linea (ahora list)
-    del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications. 
+    del archivo crudo contenga modelos de nodos que sabemos parsear ademas de Network Interfaces en la key applications.
     Si esto es True, se traucen valos de la lista a variables a cargar en la tupla.
+
+    Con nokia se toman pasos extra para detectar los puertos ya que tienen un formato peculiar de nombrase 
+    las interfaces en SNMP. Si alguno de los regex utilizados para encontrar puertos y direcciones desde el crudo 
+    retorna un valor inesperado, se dropea todo ese indice de la lista y se continua con el siguente.
 
     Antes de crear las tuplas y hacer el append, tambien se chequean que ciertas medidas en correspondencia
     a TX o RX no sobrepasen ciertos valores. Esto surge por registros de numeros imposibles en las interfaces
